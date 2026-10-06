@@ -38,8 +38,8 @@ steamcommunity.com/id/byzosc · blog.zosc.com
 `app/src/components/Footer.astro`——死的 sameAs 比没有更糟，会破坏 Google 的实体聚合。**
 
 ### 需要用户操作（无 API 通道）
-- [ ] **把 Mac / 路由器的 DNS 改成 `223.5.5.5` + `119.29.29.29`** —— 否则 zosc.com 打不开。
-      原因是前任主人阿里云残留 zone 的粘滞委派，我们删不掉，只能换解析器。详见 DONE.md 2026-10-07
+- [ ] ~~改 Mac DNS~~ 已撤销：zosc.com 打不开只是 NS 切换的正常传播，
+      最晚 2026-10-08 16:26 SGT 自愈，无需任何操作。详见 DONE.md 2026-10-07
 - [ ] 发一封测试信到 `hi@zosc.com` 确认转发（本机无 MTA / 无 SMTP 凭据，发不了）
 
 ### 可做
