@@ -51,9 +51,9 @@ export default defineConfig({
     // Old WordPress blog permalinks — straight to the standalone blog (avoids
     // a hop through /blog/<slug>).
     '/2017/06/06/18/28/29/2831/wind/uncategorized/zosc/':
-      'https://zerblion.github.io/zero-build-blog/',
+      'https://blog.zosc.com/',
     '/2017/07/01/02/28/51/6714/silence-is-a-eternal-theme/uncategorized/zosc/':
-      'https://zerblion.github.io/zero-build-blog/',
+      'https://blog.zosc.com/',
   },
 
   adapter: vercel()
