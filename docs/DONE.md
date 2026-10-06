@@ -1,3 +1,42 @@
+## 2026-10-06 域名与品牌迁移：zerb.net / ZERB → zosc.com / zosc（本轮全部完成）
+
+**背景**：`zosc.com` 于 2026-10-05 过户到 Dynadot（万网过期竞价拍得，¥8,057.49 含一年续费，
+到期 2028-08-04）。WHOIS 实测隐私保护生效——注册人姓名 REDACTED，地址/电话/邮箱全是 Dynadot 的，
+用户真实信息零泄露。
+
+### 做了什么
+
+| 层 | 内容 |
+|---|---|
+| DNS | NS → `keaton/wren.ns.cloudflare.com`（**Cloudflare 按 zone 分配 NS，不是账号通用**，照抄 zerb.net 的 carlos/sydney 会永远 pending）。A → `76.76.21.21` 橙云代理，与 zerb.net 同配置 |
+| Vercel | `net-website` 项目加 `zosc.com` + `www.zosc.com`；`zerb.net` / `www.zerb.net` 设 **301 → zosc.com**，逐页保留路径 |
+| 站内 | 19 文件 `zerb`→`zosc`；核心是 `astro.config.mjs` 的 `site` —— 它决定 canonical/sitemap/og:url。改之前 zosc.com 每页 canonical 都指回 zerb.net，等于告诉 Google「zosc.com 只是副本」 |
+| 品牌 | `ZERB LION` → `ZOSC LION` → 最终定为**小写 `zosc`**（用户 2026-10-06 拍板）。schema `name: 'zosc'`，别名保留 `byzosc / ZERB / ZERB LION / zerbLion` 供 Google 关联新旧实体 |
+| GitHub | 用户名 `zerbLion` → `byzosc`（**无 API，只能网页端**）。profile 字段 name/blog/twitter/location 已用 API 更新 |
+| 博客 | 绑 `blog.zosc.com`（Cloudflare CNAME → `byzosc.github.io`，灰云直连以便签证书）。**解除了对 GitHub 用户名的依赖**，以后改名只动一条 DNS |
+| 邮件 | `hi@zosc.com` + catch-all → `zcbgood@gmail.com`；`zerb.net` 原三条规则一并改到新邮箱。MX/SPF 手动补齐 |
+| 图标 | favicon 三个 PNG 改名对齐引用；`favicon.svg` 原来一直是 **Astro 默认 logo**，换成 Z 标；`favicon.ico` 重做 |
+
+### 踩过的坑（下次别再犯）
+
+1. **Cloudflare 的 NS 按 zone 分配**。我让用户照 zerb.net 填 carlos/sydney，导致 zone 一直 pending。
+   正确做法：先 `GET /zones` 读该 zone 的 `name_servers`。
+2. **全局替换必须保护真实资源**。受保护清单：`zerblion@gmail.com`（当时）、`zerblion.github.io`、
+   `github.com/zerbLion`、`steamcommunity.com/id/zerblion`、`zerb.cc.cd`、`zerbnet-media`（R2 bucket）、
+   `zerb-net-tools`、`zerb-logo.png`、`zerb-cc-cd`（项目 slug）。
+   **`com.zerblion.motionpilot.cep` 绝对不能改**——Adobe CEP 扩展标识符，改了已上架版本作废。
+3. **替换会造出死链**。`x.com/zoscLion` 是替换生成的，实测 404；真实 handle 是 `x.com/byzosc`。
+   **替换后要逐条验证外链真实存在**。
+4. **替换会造出「引用改了但文件没改名」**。favicon 三个 PNG 因此全 404 且无人发现。
+   **全局替换后必须跑一遍「引用的资源文件是否真实存在」**。
+5. **GitHub 改名会断 Pages**（仓库 URL 重定向，但 `<user>.github.io` 不重定向），
+   且 **profile README 仓库名必须等于用户名**，否则主页介绍消失（已把 `ZerbLion` 仓库改名为 `byzosc`）。
+6. **Cloudflare Email Routing 的权限分两层**：`Zone·Email Routing Rules`（规则）与
+   `Account·Email Routing Addresses`（收件地址）。「启用」端点两者都不覆盖，
+   但**启用的实质只是写规则 + 加 MX，这两件都能用 API 做完**，不必推给用户。
+7. **本机 systemd-resolved 会缓存域名接通前的 NXDOMAIN**，导致自测 HTTP 000。
+   验证时用 `--resolve` 指到边缘 IP，或查公共解析器；**别据此判断站点有问题**。
+
 ﻿# DONE.md
 
 ## 已完成的重要修改
