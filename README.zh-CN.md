@@ -78,6 +78,6 @@ npm run build          # 生产构建
 
 <div align="center">
 
-由 [**ZOSC**](https://github.com/zerbLion) 设计、撰写、构建 · [zosc.com](https://zosc.com)
+由 [**ZOSC**](https://github.com/byzosc) 设计、撰写、构建 · [zosc.com](https://zosc.com)
 
 </div>

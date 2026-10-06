@@ -78,6 +78,6 @@ This repo is **public for reference, not open source.** Everything — the code 
 
 <div align="center">
 
-Designed, written and built by [**ZOSC**](https://github.com/zerbLion) · [zosc.com](https://zosc.com)
+Designed, written and built by [**ZOSC**](https://github.com/byzosc) · [zosc.com](https://zosc.com)
 
 </div>
