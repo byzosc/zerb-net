@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ ZOSC — Motion · Visual · Code
+# ⚡ zosc — Motion · Visual · Code
 
 [English](README.md) · **中文**
 
@@ -19,7 +19,7 @@
 
 ## 🤔 这是什么
 
-**ZOSC(Zosc)** 的个人作品集 —— 动效、视觉、代码合于一处。它原本是一份 WordPress 静态导出,后来用 **Astro** 从零重建为一个快速、以动效为先的站点,围绕三大板块组织:
+**zosc(Zosc)** 的个人作品集 —— 动效、视觉、代码合于一处。它原本是一份 WordPress 静态导出,后来用 **Astro** 从零重建为一个快速、以动效为先的站点,围绕三大板块组织:
 
 - **Motion** —— 运动的系统,会呼吸的界面。
 - **Visual** —— 世界、表面与光。
@@ -72,12 +72,12 @@ npm run build          # 生产构建
 
 ## 📜 许可 —— 保留所有权利
 
-本仓库**仅公开供参考,并非开源**。所有内容 —— **代码** 和 **作品**(图、视频、文字、品牌)—— 均 **© 2026 ZOSC,保留所有权利**。欢迎阅读、学习,但**未经许可不得**复制、再用或转发任何部分。详见 [LICENSE](LICENSE)。
+本仓库**仅公开供参考,并非开源**。所有内容 —— **代码** 和 **作品**(图、视频、文字、品牌)—— 均 **© 2026 zosc,保留所有权利**。欢迎阅读、学习,但**未经许可不得**复制、再用或转发任何部分。详见 [LICENSE](LICENSE)。
 
 ---
 
 <div align="center">
 
-由 [**ZOSC**](https://github.com/byzosc) 设计、撰写、构建 · [zosc.com](https://zosc.com)
+由 [**zosc**](https://github.com/byzosc) 设计、撰写、构建 · [zosc.com](https://zosc.com)
 
 </div>

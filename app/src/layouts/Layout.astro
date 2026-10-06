@@ -14,8 +14,8 @@ interface Props {
 }
 
 const {
-  title = 'ZOSC — Motion · Visual · Code',
-  description = 'ZOSC (ZOSC) — a motion designer, visual artist & developer. Motion, visual art, and living interactive interfaces; proficient in After Effects, Cinema 4D, Octane.',
+  title = 'zosc — Motion · Visual · Code',
+  description = 'zosc — a motion designer, visual artist & developer. Motion, visual art, and living interactive interfaces; proficient in After Effects, Cinema 4D, Octane.',
 } = Astro.props;
 
 const SITE = 'https://zosc.com';
@@ -24,8 +24,8 @@ const ogImage = new URL('/media/images/common/brand/cropped-logo_high2.png', SIT
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'ZOSC',
-  alternateName: ['byZOSC', 'ZERB', 'ZERB LION', 'zerbLion'],
+  name: 'zosc',
+  alternateName: ['byzosc', 'ZERB', 'ZERB LION', 'zerbLion'],
   url: SITE,
   jobTitle: 'Motion Designer, Visual Artist & Developer',
   sameAs: [
@@ -37,14 +37,14 @@ const person = {
   ],
 };
 // WebSite schema — tells Google the site name to show in search results.
-// Long-game target: own the query "ZOSC" itself. No competing entity holds it —
-// only unrelated Open Sound Control docs — so ZOSC leads the alternate names.
+// Long-game target: own the query "zosc" itself. No competing entity holds it —
+// only unrelated Open Sound Control docs — so zosc leads the alternate names.
 // ZERB / ZERB LION stay listed so Google links the old identity to this one.
 const website = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'ZOSC',
-  alternateName: ['byZOSC', 'ZERB', 'ZERB LION'],
+  name: 'zosc',
+  alternateName: ['byzosc', 'ZERB', 'ZERB LION'],
   url: SITE,
 };
 ---
@@ -53,10 +53,10 @@ const website = {
 <html lang="en">
   <head>
     <!--
-      ZOSC — Motion · Visual · Code  ·  https://zosc.com
-      © 2026 ZOSC. All rights reserved — code and creative work.
+      zosc — Motion · Visual · Code  ·  https://zosc.com
+      © 2026 zosc. All rights reserved — code and creative work.
       Source-available for reference, NOT open source. Don't copy or republish.
-      Designed, written & built by ZOSC — https://github.com/byzosc
+      Designed, written & built by zosc — https://github.com/byzosc
     -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -79,10 +79,10 @@ const website = {
     </script>
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="author" content="ZOSC (ZOSC)" />
+    <meta name="author" content="zosc" />
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="ZOSC" />
+    <meta property="og:site_name" content="zosc" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />

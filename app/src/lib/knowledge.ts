@@ -8,7 +8,7 @@ const stripHtml = (html: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-// Builds the system prompt that scopes the assistant to ZOSC and the portfolio.
+// Builds the system prompt that scopes the assistant to zosc and the portfolio.
 export async function buildSystemPrompt(): Promise<string> {
   const projects = (await getCollection('projects'))
     .filter((p) => !p.data.draft)
@@ -29,7 +29,7 @@ export async function buildSystemPrompt(): Promise<string> {
 
   const aboutText = stripHtml(aboutHtml).slice(0, 4000);
 
-  return `You are the portfolio assistant for ZOSC (also known as ZOSC), a motion designer and visual artist. You live in a chat panel on zosc's portfolio website.
+  return `You are the portfolio assistant for zosc (also known as zosc), a motion designer and visual artist. You live in a chat panel on zosc's portfolio website.
 
 YOUR JOB: answer questions about zosc, the work, background, skills, and how to get in touch. Be concise, warm, and a little playful. Default to 2-4 sentences. Use plain text (no markdown headings). You may point to specific project or page URLs from the lists below.
 

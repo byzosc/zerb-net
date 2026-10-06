@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ ZOSC — Motion · Visual · Code
+# ⚡ zosc — Motion · Visual · Code
 
 **English** · [中文](README.zh-CN.md)
 
@@ -19,7 +19,7 @@
 
 ## 🤔 What this is
 
-The personal portfolio of **ZOSC (Zosc)** — motion design, visual art, and code under one roof. It began as a WordPress export and was rebuilt from scratch into a fast, motion-first **Astro** site, organized around three pillars:
+The personal portfolio of **zosc (Zosc)** — motion design, visual art, and code under one roof. It began as a WordPress export and was rebuilt from scratch into a fast, motion-first **Astro** site, organized around three pillars:
 
 - **Motion** — systems of movement, interfaces that breathe.
 - **Visual** — worlds, surfaces and light.
@@ -72,12 +72,12 @@ npm run build          # production build
 
 ## 📜 License — All Rights Reserved
 
-This repo is **public for reference, not open source.** Everything — the code **and** the creative work (images, video, text, brand) — is **© 2026 ZOSC, all rights reserved**. You're welcome to read and learn from it; you may **not** copy, reuse, or republish any part without permission. See [LICENSE](LICENSE).
+This repo is **public for reference, not open source.** Everything — the code **and** the creative work (images, video, text, brand) — is **© 2026 zosc, all rights reserved**. You're welcome to read and learn from it; you may **not** copy, reuse, or republish any part without permission. See [LICENSE](LICENSE).
 
 ---
 
 <div align="center">
 
-Designed, written and built by [**ZOSC**](https://github.com/byzosc) · [zosc.com](https://zosc.com)
+Designed, written and built by [**zosc**](https://github.com/byzosc) · [zosc.com](https://zosc.com)
 
 </div>
