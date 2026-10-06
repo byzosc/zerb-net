@@ -1,3 +1,40 @@
+## 2026-10-07 01:39 SGT GSC 首页已索引，已请求重抓
+
+```
+网址检查 https://zosc.com/
+  网址在 Google 服务中     ✓
+  网页索引状态  已编入索引  ✓
+  HTTPS                    ✓
+  → 已点「要求建立索引」(2026-10-07 01:39 SGT)
+```
+
+**为什么要重抓**：Googlebot 在 10-06 抓到的是改名过程中的**中间版本**，
+快照标题是 `ZOSC LION — Motion · Visual · Code`。当天改名分两步
+（`ZERB LION` → `ZOSC LION` → 用户拍板的小写 `zosc`），正好被抓在中间那一刻。
+线上实况早已是 `zosc — Motion · Visual · Code`（已核），**不是漏改**。
+`ZOSC LION` 这个标题会稀释裸词 `zosc`，所以必须刷掉，只能靠「要求建立索引」插队，等不来。
+
+**同轮修掉的外部实体信号**（GitHub 页面权重高、爬得勤，往往比自己的站更早被用来确认「zosc 是谁」）：
+```
+profile README        "Hi, I'm ZERB LION" → zosc；全部博客链接 → blog.zosc.com
+scripts/update-blog.mjs  SITE 常量 → blog.zosc.com   ← 根因：不改它，Action 每次把死链写回来
+workflows             BLOG_REPO / STATS_USER → byzosc
+4 个仓库 homepage     zerb.net → zosc.com / blog.zosc.com
+zerb-net 仓库描述     "ZERB LION's personal portfolio" → "zosc's ..."
+```
+**关键事实：`zerblion.github.io` 在改用户名后是 404**（实测）——GitHub 只对仓库 URL 做跳转，
+`<用户名>.github.io` 不跳。所以 profile 上那整块博客链接此前全是死链。
+
+**未处理（用户要求先不动，交给另一个 agent）**：`zero-build-blog` 仓库里
+`README.md:113` / `README.zh-CN.md:113` 的署名 `@ZerbLion`、`index.html:30` 的页脚链接、
+posts/ 下 8 篇文章正文里的 `github.com/ZerbLion/...`。这些**不是死链**（GitHub 对用户名和
+仓库改名都会跳转），只是还在显示旧名字。
+
+### 下一步对照
+- 1–3 天：GSC「网页索引状态」报表数据出来（新资源固定延迟，不是故障）
+- 重抓生效后：搜索结果标题应变成小写 `zosc`
+- favicon 的地球图标：Google 单独抓站点图标且缓存很久，三个图标文件实测均 200，只能等
+
 ## 2026-10-07 zosc.com「打不开」= 正常的 NS 切换传播（更正同日早先的错误结论）
 
 **结论：域名、注册商、注册局、Cloudflare 四处全部正确，无需任何操作，也不该找 Dynadot。**
