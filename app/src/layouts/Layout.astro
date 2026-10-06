@@ -14,8 +14,8 @@ interface Props {
 }
 
 const {
-  title = 'ZOSC LION — Motion · Visual · Code',
-  description = 'ZOSC LION (ZOSC) — a motion designer, visual artist & developer. Motion, visual art, and living interactive interfaces; proficient in After Effects, Cinema 4D, Octane.',
+  title = 'ZOSC — Motion · Visual · Code',
+  description = 'ZOSC (ZOSC) — a motion designer, visual artist & developer. Motion, visual art, and living interactive interfaces; proficient in After Effects, Cinema 4D, Octane.',
 } = Astro.props;
 
 const SITE = 'https://zosc.com';
@@ -24,8 +24,8 @@ const ogImage = new URL('/media/images/common/brand/cropped-logo_high2.png', SIT
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'ZOSC LION',
-  alternateName: ['ZOSC', 'ZOSC LION', 'byZOSC', 'ZERB', 'ZERB LION', 'zerbLion'],
+  name: 'ZOSC',
+  alternateName: ['byZOSC', 'ZERB', 'ZERB LION', 'zerbLion'],
   url: SITE,
   jobTitle: 'Motion Designer, Visual Artist & Developer',
   sameAs: [
@@ -43,8 +43,8 @@ const person = {
 const website = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'ZOSC LION',
-  alternateName: ['ZOSC', 'ZOSC LION', 'ZERB', 'ZERB LION'],
+  name: 'ZOSC',
+  alternateName: ['byZOSC', 'ZERB', 'ZERB LION'],
   url: SITE,
 };
 ---
@@ -54,7 +54,7 @@ const website = {
   <head>
     <!--
       ZOSC — Motion · Visual · Code  ·  https://zosc.com
-      © 2026 ZOSC LION. All rights reserved — code and creative work.
+      © 2026 ZOSC. All rights reserved — code and creative work.
       Source-available for reference, NOT open source. Don't copy or republish.
       Designed, written & built by ZOSC — https://github.com/byzosc
     -->
@@ -79,10 +79,10 @@ const website = {
     </script>
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="author" content="ZOSC LION (ZOSC)" />
+    <meta name="author" content="ZOSC (ZOSC)" />
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="ZOSC LION" />
+    <meta property="og:site_name" content="ZOSC" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
