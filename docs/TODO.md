@@ -20,7 +20,7 @@ zerb.net/*               301 → zosc.com/*  逐页保留路径
 sitemap-index.xml        200  application/xml  15 个 URL 全新域名
 favicon svg/ico/png      200  已换成 Z 标
 hi@zosc.com + catch-all  → zcbgood@gmail.com
-blog.zosc.com            HTTP 200；HTTPS 证书 authorization_pending（已重新触发）
+blog.zosc.com            HTTPS 200，证书 approved，Enforce HTTPS 已开
 GitHub                   byzosc；profile README 仓库已改名为 byzosc
 ```
 
@@ -28,14 +28,20 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 
 ## 待办
 
+### sameAs 五条（2026-10-06 全部实测 200）
+```
+github.com/byzosc · x.com/byzosc · behance.net/zosc
+steamcommunity.com/id/byzosc · blog.zosc.com
+```
+**改任何一个平台的 handle，必须同步改 `app/src/layouts/Layout.astro` 的 sameAs 和
+`app/src/components/Footer.astro`——死的 sameAs 比没有更糟，会破坏 Google 的实体聚合。**
+
 ### 需要用户操作（无 API 通道）
 - [ ] **GSC 地址更改**：在 `zerb.net` 资源上做 设置 → 地址更改 → 选 `zosc.com`。
       301 已就位，Google 的校验应直接通过。（sitemap 已于 2026-10-06 提交成功）
-- [ ] Steam `id/zerblion` 尚未改名——站上 schema 的 sameAs 和页脚仍指向旧 handle
 - [ ] 发一封测试信到 `hi@zosc.com` 确认转发（本机无 MTA / 无 SMTP 凭据，发不了）
 
 ### 可做
-- [ ] `blog.zosc.com` 证书签发后确认 HTTPS 可用，并在 Pages 开 Enforce HTTPS
 - [ ] `zosc.com` 改造成导航页（用户方向，尚未开工）
 - [ ] 子域名服务迁移：`clip` / `img` / `hub` / `drop` 仍挂在 `zerb.net` 下，
       若将来卖掉 zerb.net 必须先迁走（用户说今年慢慢做）
