@@ -25,10 +25,24 @@ zerb-net 仓库描述     "ZERB LION's personal portfolio" → "zosc's ..."
 **关键事实：`zerblion.github.io` 在改用户名后是 404**（实测）——GitHub 只对仓库 URL 做跳转，
 `<用户名>.github.io` 不跳。所以 profile 上那整块博客链接此前全是死链。
 
-**未处理（用户要求先不动，交给另一个 agent）**：`zero-build-blog` 仓库里
-`README.md:113` / `README.zh-CN.md:113` 的署名 `@ZerbLion`、`index.html:30` 的页脚链接、
-posts/ 下 8 篇文章正文里的 `github.com/ZerbLion/...`。这些**不是死链**（GitHub 对用户名和
-仓库改名都会跳转），只是还在显示旧名字。
+**zero-build-blog 仓库已一并处理**（用户 2026-10-07 追加指示「blog 的事情你也做了吧」）：
+```
+assets/app.js       CONFIG.repo + giscus.repo → byzosc/zero-build-blog
+                    repoId/categoryId 是不变的规范 ID，未动，评论区不受影响
+博客自身地址        zerblion.github.io（404）→ blog.zosc.com
+文章正文旧仓库链接  按实际改名修正，不是简单换用户名：
+                      AI_Chat_ChromeExtension → AiChat-Extension
+                      nas_monitoring          → nas-monitoring
+                      zrxl_blog               → zero-build-blog
+README / zh-CN      署名 @ZerbLion → @byzosc
+LICENSE             版权人 → zosc
+```
+线上已验证：`blog.zosc.com/assets/app.js` 中 `ZerbLion` 出现 0 次，首页 200。
+
+**改链接前先逐个实测可达性**，否则会把旧名字换成一堆新 404。本轮因此发现：
+`keyframe_sheet` / `motion-design` / `trading-pannel` / `AiChat-Extension` **四个仓库是 private**，
+文章里指向它们的链接**对读者一直是 404**，与改不改名无关。这是内容决策（设为 public，
+或从文章里撤掉链接），留给用户定，未擅自改动文章结构。
 
 ### 下一步对照
 - 1–3 天：GSC「网页索引状态」报表数据出来（新资源固定延迟，不是故障）
