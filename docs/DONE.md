@@ -1,3 +1,13 @@
+## 2026-10-06 收尾补记
+
+- **GSC 地址更改已提交**（`zerb.net` → `zosc.com`，用户操作）。301 已就位，Google 的校验直接通过。
+  **此后约 180 天内 `zerb.net` 的 301 绝对不能断**——断了权重迁移就中止，域名必须续费。
+- **Footer 的 GitHub 链接漏改**：`github.com/ZerbLion` → `byzosc`。X / Steam 上一轮都改了唯独它没有，
+  因为 GitHub 自己会跳转，点着没感觉。**教训：站内自述身份必须和 schema `sameAs` 逐条一致**，
+  靠平台跳转掩盖的不一致，Google 看得见。本地 git remote 同样仍指旧仓库名，一并改掉。
+- **Behance 姓名字段**：姓氏必填，定为 `zosc` + `lion`（显示 `zosc lion`）。
+  **名字栏绝不能填 `Zos`**——拆词会毁掉裸词 `zosc` 的实体信号，那是整个 SEO 主线的根。
+
 ## 2026-10-06 域名与品牌迁移：zerb.net / ZERB → zosc.com / zosc（本轮全部完成）
 
 **背景**：`zosc.com` 于 2026-10-05 过户到 Dynadot（万网过期竞价拍得，¥8,057.49 含一年续费，

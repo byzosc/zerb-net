@@ -15,6 +15,7 @@
 ## 2026-10-06 迁移已完成，验收全绿
 
 ```
+GSC 地址更改             2026-10-06 已提交（zerb.net → zosc.com），约 180 天迁移窗口
 zosc.com/                200  title "zosc — Motion · Visual · Code"  canonical=zosc.com
 zerb.net/*               301 → zosc.com/*  逐页保留路径
 sitemap-index.xml        200  application/xml  15 个 URL 全新域名
@@ -37,8 +38,6 @@ steamcommunity.com/id/byzosc · blog.zosc.com
 `app/src/components/Footer.astro`——死的 sameAs 比没有更糟，会破坏 Google 的实体聚合。**
 
 ### 需要用户操作（无 API 通道）
-- [ ] **GSC 地址更改**：在 `zerb.net` 资源上做 设置 → 地址更改 → 选 `zosc.com`。
-      301 已就位，Google 的校验应直接通过。（sitemap 已于 2026-10-06 提交成功）
 - [ ] 发一封测试信到 `hi@zosc.com` 确认转发（本机无 MTA / 无 SMTP 凭据，发不了）
 
 ### 可做
