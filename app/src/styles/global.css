@@ -18,7 +18,7 @@
   src: url("/fonts/mulish-latin.woff2") format("woff2");
 }
 
-/* ZERB design tokens — dark, cinematic, motion-ready */
+/* ZOSC design tokens — dark, cinematic, motion-ready */
 @theme {
   --color-ink: #050505;
   --color-ink-soft: #0d0d0f;

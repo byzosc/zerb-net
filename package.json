@@ -2,7 +2,7 @@
   "name": "zerb-net-tools",
   "private": true,
   "type": "module",
-  "description": "Local build/migration tooling for the ZERB site (not the Astro app — that lives in app/).",
+  "description": "Local build/migration tooling for the ZOSC site (not the Astro app — that lives in app/).",
   "scripts": {
     "media:manifest": "node tools/build-media-manifest.mjs",
     "media:apply": "node tools/apply-media-manifest.mjs",

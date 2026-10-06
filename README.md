@@ -1,12 +1,12 @@
 <div align="center">
 
-# ⚡ ZERB — Motion · Visual · Code
+# ⚡ ZOSC — Motion · Visual · Code
 
 **English** · [中文](README.zh-CN.md)
 
 **A motion designer & visual artist's portfolio — a long-scroll, cinematic site with a built-in multi-provider AI that answers questions about the work.**
 
-[![Live](https://img.shields.io/badge/live-zerb.net-e7503a)](https://zerb.net)
+[![Live](https://img.shields.io/badge/live-zosc.com-e7503a)](https://zosc.com)
 ![Stack](https://img.shields.io/badge/stack-Astro%206%20%2B%20Tailwind%20v4-ff5d01)
 ![Motion](https://img.shields.io/badge/motion-GSAP%20%2B%20Lenis-88ce02)
 ![AI](https://img.shields.io/badge/Ask%20AI-Gemini%20%2F%20OpenAI%20%2F%20Claude-7c3aed)
@@ -19,7 +19,7 @@
 
 ## 🤔 What this is
 
-The personal portfolio of **ZERB (Zerb Lion)** — motion design, visual art, and code under one roof. It began as a WordPress export and was rebuilt from scratch into a fast, motion-first **Astro** site, organized around three pillars:
+The personal portfolio of **ZOSC (Zosc Lion)** — motion design, visual art, and code under one roof. It began as a WordPress export and was rebuilt from scratch into a fast, motion-first **Astro** site, organized around three pillars:
 
 - **Motion** — systems of movement, interfaces that breathe.
 - **Visual** — worlds, surfaces and light.
@@ -43,7 +43,7 @@ Astro 6  +  Tailwind v4          →  the site            (app/)
 GSAP  +  Lenis                   →  motion & smooth scroll
 /api/chat  (serverless)          →  multi-provider AI, streamed
 Cloudflare R2                    →  video hosting
-Vercel  (root: app/)             →  deploy  ·  zerb.net
+Vercel  (root: app/)             →  deploy  ·  zosc.com
 ```
 
 The live site is the Astro rebuild in `app/`. The original WordPress static export that used to sit at the repo root was removed on 2026-07-04 (still recoverable from git history); the root now only keeps the R2 media tooling (`tools/`, `media-manifest.json`) and docs.
@@ -72,12 +72,12 @@ npm run build          # production build
 
 ## 📜 License — All Rights Reserved
 
-This repo is **public for reference, not open source.** Everything — the code **and** the creative work (images, video, text, brand) — is **© 2026 ZERB LION, all rights reserved**. You're welcome to read and learn from it; you may **not** copy, reuse, or republish any part without permission. See [LICENSE](LICENSE).
+This repo is **public for reference, not open source.** Everything — the code **and** the creative work (images, video, text, brand) — is **© 2026 ZOSC LION, all rights reserved**. You're welcome to read and learn from it; you may **not** copy, reuse, or republish any part without permission. See [LICENSE](LICENSE).
 
 ---
 
 <div align="center">
 
-Designed, written and built by [**zerbLion**](https://github.com/zerbLion) · [zerb.net](https://zerb.net)
+Designed, written and built by [**ZOSC**](https://github.com/zerbLion) · [zosc.com](https://zosc.com)
 
 </div>

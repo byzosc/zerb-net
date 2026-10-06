@@ -12,7 +12,7 @@ const bodies = import.meta.glob('../../project-bodies/*.html', {
 
 export async function getStaticPaths() {
   // External-link projects get a light case page too (public info + CTA),
-  // so their story is indexable on zerb.net instead of only on the client's site.
+  // so their story is indexable on zosc.com instead of only on the client's site.
   const all = (await getCollection('projects'))
     .filter((p) => !p.data.draft)
     .sort((a, b) => a.data.order - b.data.order);
@@ -34,7 +34,7 @@ const bodyKey = Object.keys(bodies).find((k) => k.endsWith(`/${entry.id}.html`))
 const body = bodyKey ? bodies[bodyKey] : '';
 ---
 
-<Layout title={`${title} — ZERB`} description={summary}>
+<Layout title={`${title} — ZOSC`} description={summary}>
 
   <main class="pt-36 md:pt-44">
     <!-- Hero -->

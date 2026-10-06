@@ -10,7 +10,7 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   // Canonical origin — used for the sitemap, canonical URLs and absolute OG links.
-  site: 'https://zerb.net',
+  site: 'https://zosc.com',
 
   // /blog/* only 301s to the external blog now — keep redirecting pages out of
   // the sitemap so Search Console doesn't flag "page with redirect".
@@ -50,9 +50,9 @@ export default defineConfig({
     '/project/霓虹主题天气元素生日模板/': '/project/diy-motion-elements/',
     // Old WordPress blog permalinks — straight to the standalone blog (avoids
     // a hop through /blog/<slug>).
-    '/2017/06/06/18/28/29/2831/wind/uncategorized/zerb/':
+    '/2017/06/06/18/28/29/2831/wind/uncategorized/zosc/':
       'https://zerblion.github.io/zero-build-blog/',
-    '/2017/07/01/02/28/51/6714/silence-is-a-eternal-theme/uncategorized/zerb/':
+    '/2017/07/01/02/28/51/6714/silence-is-a-eternal-theme/uncategorized/zosc/':
       'https://zerblion.github.io/zero-build-blog/',
   },
 

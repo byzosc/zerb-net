@@ -14,36 +14,37 @@ interface Props {
 }
 
 const {
-  title = 'ZERB LION — Motion · Visual · Code',
-  description = 'ZERB LION (zerbLion) — a motion designer, visual artist & developer. Motion, visual art, and living interactive interfaces; proficient in After Effects, Cinema 4D, Octane.',
+  title = 'ZOSC LION — Motion · Visual · Code',
+  description = 'ZOSC LION (ZOSC) — a motion designer, visual artist & developer. Motion, visual art, and living interactive interfaces; proficient in After Effects, Cinema 4D, Octane.',
 } = Astro.props;
 
-const SITE = 'https://zerb.net';
+const SITE = 'https://zosc.com';
 const canonical = new URL(Astro.url.pathname, SITE).href;
 const ogImage = new URL('/media/images/common/brand/cropped-logo_high2.png', SITE).href;
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'ZERB LION',
-  alternateName: ['ZERB', 'zerbLion', 'ZerbLion', 'Zerb Lion', 'ZOSC', 'ZOSC LION'],
+  name: 'ZOSC LION',
+  alternateName: ['ZOSC', 'ZOSC LION', 'byZOSC', 'ZERB', 'ZERB LION', 'zerbLion'],
   url: SITE,
   jobTitle: 'Motion Designer, Visual Artist & Developer',
   sameAs: [
     'https://github.com/zerbLion',
-    'https://x.com/zerbLion',
+    'https://x.com/byzosc',
     'https://www.behance.net/zosc',
     'https://steamcommunity.com/id/zerblion',
     'https://zerblion.github.io/zero-build-blog/',
   ],
 };
 // WebSite schema — tells Google the site name to show in search results.
-// Long-game target: own the query "ZERB" itself (currently held by a musician),
-// so ZERB leads the alternate names alongside zerblion / ZERB LION.
+// Long-game target: own the query "ZOSC" itself. No competing entity holds it —
+// only unrelated Open Sound Control docs — so ZOSC leads the alternate names.
+// ZERB / ZERB LION stay listed so Google links the old identity to this one.
 const website = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'ZERB LION',
-  alternateName: ['ZERB', 'zerbLion', 'zerblion', 'Zerb Lion'],
+  name: 'ZOSC LION',
+  alternateName: ['ZOSC', 'ZOSC LION', 'ZERB', 'ZERB LION'],
   url: SITE,
 };
 ---
@@ -52,10 +53,10 @@ const website = {
 <html lang="en">
   <head>
     <!--
-      ZERB — Motion · Visual · Code  ·  https://zerb.net
-      © 2026 ZERB LION. All rights reserved — code and creative work.
+      ZOSC — Motion · Visual · Code  ·  https://zosc.com
+      © 2026 ZOSC LION. All rights reserved — code and creative work.
       Source-available for reference, NOT open source. Don't copy or republish.
-      Designed, written & built by zerbLion — https://github.com/zerbLion
+      Designed, written & built by ZOSC — https://github.com/zerbLion
     -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -78,10 +79,10 @@ const website = {
     </script>
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="author" content="ZERB LION (zerbLion)" />
+    <meta name="author" content="ZOSC LION (ZOSC)" />
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="ZERB LION" />
+    <meta property="og:site_name" content="ZOSC LION" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -92,9 +93,9 @@ const website = {
     <meta name="twitter:image" content={ogImage} />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
     <script type="application/ld+json" set:html={JSON.stringify(website)} />
-    <link rel="icon" href="/media/images/common/brand/zerb-favicon-32.png" sizes="32x32" />
-    <link rel="icon" href="/media/images/common/brand/zerb-favicon-192.png" sizes="192x192" />
-    <link rel="apple-touch-icon" href="/media/images/common/brand/zerb-favicon-180.png" />
+    <link rel="icon" href="/media/images/common/brand/zosc-favicon-32.png" sizes="32x32" />
+    <link rel="icon" href="/media/images/common/brand/zosc-favicon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/media/images/common/brand/zosc-favicon-180.png" />
     <link rel="preload" href="/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/mulish-latin.woff2" as="font" type="font/woff2" crossorigin />
     <noscript>
