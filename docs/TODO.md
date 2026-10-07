@@ -37,6 +37,22 @@ steamcommunity.com/id/byzosc · blog.zosc.com
 **改任何一个平台的 handle，必须同步改 `app/src/layouts/Layout.astro` 的 sameAs 和
 `app/src/components/Footer.astro`——死的 sameAs 比没有更糟，会破坏 Google 的实体聚合。**
 
+### 判据：只改爬虫抓得到的（2026-10-07 用户定）
+
+用户原话：「所有的东西都要遵循对 SEO 有帮助这个原则。如果对 SEO 没有帮助，牵扯又大，
+可以先不改。只有对 ZOSC 这个字符的 SEO 有帮助，才让这边改。」
+
+```
+会被抓 → 含旧身份就改    线上 HTML、GitHub README、title / meta / schema
+抓不到 → 牵扯大就不改    内部文档、agent 规则文件、代码注释、产物水印、插件界面文案
+```
+
+据此降级为**不改**的：CEP 面板 "by ZERB LION"（要重新上架，爬虫看不到）、
+provenance 水印 `MotionSheet::ZERB-LION::zerb.net`（改了新旧产物无法同规则校验）、
+`keyframe_sheet/CLAUDE.md`、`AGENTS.md`、代码注释。
+
+**非 SEO 但有影响的问题照旧要知会用户**，不自行纳入范围。
+
 ### 旧身份清扫（2026-10-07 全量扫描结果）
 
 **已清干净**（本会话改完并推送）：zerb-net · zero-build-blog · byzosc(profile) ·
