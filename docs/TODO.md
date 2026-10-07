@@ -37,6 +37,28 @@ steamcommunity.com/id/byzosc · blog.zosc.com
 **改任何一个平台的 handle，必须同步改 `app/src/layouts/Layout.astro` 的 sameAs 和
 `app/src/components/Footer.astro`——死的 sameAs 比没有更糟，会破坏 Google 的实体聚合。**
 
+### 旧身份清扫（2026-10-07 全量扫描结果）
+
+**已清干净**（本会话改完并推送）：zerb-net · zero-build-blog · byzosc(profile) ·
+nas-monitoring · s25edge-usa · windows-never-sleep · openwebui-cliproxy-gateway。
+扫描口径：各仓库全文 `zerblion|zerb lion|zerb.net`，含 README/LICENSE/徽章 URL/克隆命令/源码常量。
+
+- [ ] **motionrules.com / MotionPilot（最大一块，简历上写出去的两个链接）**
+      线上实测仍有 `zerbLion`×9 `zerb.net`×6 `ZERB LION`×4。源头：
+      ```
+      motion_design/legal/{privacy,terms}.html   zerblion@gmail.com — ZERB LION   ← 低风险，建议先改
+      motion_design/cep/.../index.html           面板标题/关于页 "by ZERB LION"    ← 要重新打包上架
+      keyframe_sheet/README.md                   "MotionSheet by ZERB LION"、© 、AGPL 署名条款
+      keyframe_sheet 多处                        旧规划域名 motion.zerb.net / zerb.net/motion-sheet
+      ```
+      **`com.zerblion.motionpilot.cep` 绝对不能动**（Adobe CEP 标识符，与上面文件同目录）。
+      这两个工程有自己的会话/AGENTS.md，改动需用户指派，避免撞车。
+- [ ] `makerlion` README：`github.com/zerbLion/makerlion` 旧仓库 URL（其余 zerb.net 为描述性引用）。归 makerlion 会话。
+- [x] ~~`findly-site` 隐私政策里的 zerblion@gmail.com~~ **刻意不改**：Findly 是独立品牌，
+      且应用商店备案邮箱须与隐私政策一致；该邮箱仍正常收信。
+- [ ] **只能用户改**：X 简介 / Behance「大标题」/ Steam 个人资料正文
+- [ ] `windows-never-sleep` 已发布的 exe 内仍含 zerbLion（源码已改，待下次发版自然带上，不必专门发版）
+
 ### 需要用户操作（无 API 通道）
 - [ ] ~~改 Mac DNS~~ 已撤销：zosc.com 打不开只是 NS 切换的正常传播，
       最晚 2026-10-08 16:26 SGT 自愈，无需任何操作。详见 DONE.md 2026-10-07
