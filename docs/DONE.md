@@ -1,3 +1,35 @@
+## 2026-10-07 motionrules.com 旧身份清扫完成（keyframe-sheet-38 执行，本会话复核）
+
+```
+六页跟随跳转后逐页实测，可见文本 / meta / schema 中旧身份 = 0
+补上的实体信号  author=zosc · Person.url=github.com/byzosc · sameAs=[github.com/byzosc] · zosc.com
+```
+
+**最有价值的一处不是改名字**：`index.html` 的 JSON-LD `Person.url` + `sameAs` 原本指向
+`github.com/zerbLion`，**而该 URL 是 404**（GitHub 改用户名后连用户主页都不跳转，只有仓库 URL 跳）。
+**sameAs 指向 404 等于给自己的实体投废票**，比显示旧名字更伤。六页页脚 `rel=author` 同一个 404。
+
+**仍保留**：`data-origin="zerblion"`（三页各一处）、provenance 水印、`--motion-signature`。
+HTML 自定义属性值不是可见文本、不被当内容索引，零 SEO 影响，且属产物溯源标记。
+
+### 我被现查推翻的一条
+我判断「GitHub README 被 Google 索引且权重高，README:264 的 AGPL 署名要改」。
+对方去 `gh repo view` 查了可见性：`byzosc/keyframe_sheet` 是 **PRIVATE**，匿名访问 404，
+README 根本不进索引 → 按用户判据属「爬虫抓不到」，不改。我已复核属实。
+**我是按常识推的，它是现查的** —— 正是「说之前先把自己问明白」那条规矩的反例。
+**判据：涉及「某页面会不会被索引」的结论，先查该仓库/页面的可见性，不要默认公开。**
+
+### 另一条通用教训
+对方同时改了生成器 `motionos/tools/add_seo_head.py` 的四个常量——**不改生成器，下次一跑全还原**。
+与本会话在 `zero-build-blog` 改 `update-blog.mjs`、在 profile 仓库改 `scripts/update-blog.mjs` 同理。
+**凡是被模板/脚本生成的内容，根在生成器里，改产物只是擦痕迹。**
+
+### 未并入本轮（已知会用户，等其决定）
+`keyframe_sheet/web/main.js:13` 的 `TOKENS_URL = https://motion.zerb.net/motion-tokens.json`
+**是死链**（DNS 无记录，curl http=000）；正确落点 `https://motionrules.com/motion-tokens.json`（200/2852B）。
+网页端静默降级所以长期无人发现；注释写明 AE 插件拉同一地址，MotionPilot 侧可能同样断着。
+**这是功能故障不是 SEO 问题**，按用户「只改爬虫抓得到的」判据不并入本轮。
+
 ## 2026-10-07 01:39 SGT GSC 首页已索引，已请求重抓
 
 ```
