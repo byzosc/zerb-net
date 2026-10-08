@@ -54,6 +54,32 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 - 改 `app/` 前必读 `AGENTS.md`「Astro 重建版工作规则」（View Transitions / 遮罩 / Lenis / 无 Google Fonts）
 - 无头 chromium 是 snap：读不到 `/tmp` 与隐藏目录，渲染/截图一律从 `~/render-tmp/` 起，用完即删
 
+### v2 当前状态（2026-10-08 12:xx SGT，额度耗尽前落盘）
+```
+分支 origin/v2 = 5a8afd9   A（内容与隐私）+ B（产品库 8 页）+ C（首页 Code 优先/标题/logo/about 分段）已全部合并
+预览            Vercel 对 v2 自动部署，x-robots-tag: noindex 已实测；但受 Deployment Protection 保护，打开需登录 Vercel
+博客            blog.zosc.com 标题已改 zosc blog（D 子任务，zero-build-blog@cb8c754，线上实测 zerb 命中 0）
+main            未动。合并 v2 → main 由用户看过预览后决定
+报告            docs/v2/A-REPORT.md · B-REPORT.md · C-REPORT.md（校验输出都在里面）；截图 .render-tmp/v2-c/
+```
+**合并前必须做**：MotionPilot 首页大卡封面裁切——横幅自带字标，手机 3:2 下被切成「nPilot.」，桌面标题压在「Adobe Exchange ↗」上。
+修法：给 motionpilot 条目加 `coverLarge`（schema 已有字段），构图中间与左下不放字。
+
+**等用户拍板（回编号即可）**
+1. 预览访问：A 登录 Vercel 看（建议）/ B 用 API 关预览保护
+2. App Store 按钮：商店页卖家栏显示真名，A 保留（倾向）/ B 去掉只留 Google Play+官网
+3. s25edge-usa 正文提到 China Mobile 一次：A 保留（倾向）/ B 去掉
+4. motionrules 是否免费 → 是则 schema 加 offers
+5. MotionSheet（zerb-cc-cd）外链改 motionrules.com/app + 封面重做：A 改（建议）/ B 不动
+6. Hero 三行大字仍是 Motion/Visual/Code，第一板块却是 Code；换顺序要改 motion.ts 的按行动效：改 / 不改
+7. Code 板块 4 张（第二行只剩 gateway 一张，右半空）/ 3 张（对称，去掉 gateway 的 featured 一行字）
+8. QuantMind / quant-buddy-skills 不上架（两者为 fork、0 提交）——建议不上，默认不上
+9. 「Zerb Hub」那篇博客正文 15 处历史叙述 + README 首图旧品牌截图：保留（建议）/ 改
+10. about 介绍段已按「拆三段、首段大字」做，看预览后可一键改回整段
+
+**C 顺手改的（不要可一行回退）**：/works 筛选顺序 All·Code·Motion·Visual；.gitignore 加 .render-tmp/；og:image 位图封面产品页各用自己的。
+**小尾巴**：「← Back to work」所有项目都跳 /#visual，可改成按板块跳（一行）；Layout 里 favicon 改名的 HTML 注释会输出到页面，含旧文件名，可挪进 frontmatter。
+
 ### 子任务拆分
 - **A 内容与隐私**：备份快照 → 压缩 about → 确认 knowledge.ts 仍读短版且输出正常 → 邮箱统一
 - **B 产品库**：素材采集（商店页/站点截图/GitHub og 图）→ 10 个产品条目 → 详情页模板 + SoftwareApplication → /works 可筛
