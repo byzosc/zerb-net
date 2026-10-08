@@ -3,6 +3,7 @@
 
     python3 tools/product-covers.py                    # every product below
     python3 tools/product-covers.py cubby motionrules  # just these
+    python3 tools/product-covers.py motionpilot-large  # MotionPilot's coverLarge only (v2-E)
     python3 tools/product-covers.py --keep             # keep ~/render-tmp/product-covers
 
 Writes into app/public/media/images/projects/<slug>/ and prints size + bytes per file.
@@ -10,6 +11,8 @@ windows-never-sleep and s25edge-usa have hand-written cover.svg files instead (n
 
 Decisions and pitfalls (read before "simplifying" this):
 - Covers are banners at ~2.96:1 like the existing 950x320 cards, <= 1600 px wide, <= 400 KB.
+  A coverLarge (homepage large card, 3:2 on phones / 1600:430 on desktop) must survive both
+  centre crops — see MP_LARGE.
 - GitHub's *auto-generated* og:image (opengraph.githubassets.com) bakes live contributor /
   issue / STAR / fork counts into the picture: stale numbers on the portfolio (the brief bans
   star counts) and a white GitHub card on a dark grid. Only a *custom* social preview
@@ -163,6 +166,64 @@ def motionpilot() -> None:
     save(im, "motionpilot", "cover.jpg", quality=90)
 
 
+# coverLarge for the homepage's large card (v2 subtask E, 2026-10-08). The large card is
+# aspect 3:2 below Tailwind `lg` and 1600:430 from `lg` up, object-fit: cover, centred
+# (ProjectCard.astro), and it overlays the title bottom-left over a dark bottom scrim. The 1600x540
+# banner above carries its wordmark on the left: phones cut it to "nPilot." and desktop stacked the
+# card title on "Adobe Exchange". So this image has NO text of its own (the card supplies the name)
+# and the screenshot frame sits inside what both crops keep: the middle 1.5*H columns (3:2) and the
+# middle 430 rows (1600:430). The frame sits high (bottom at 340/520 = 0.65 H) because on phones
+# the title takes the bottom ~25%: at 320 px wide that still leaves ~8 px above the title; at the
+# top, desktop keeps 35 px (1600 px scale) above the frame. The ease curve with keyframes and
+# bezier handles is decoration only: it fills the desktop width and is mostly outside the phone
+# crop on purpose. Rendered at 2x and downsampled by save() for clean curve and frame edges.
+MP_LARGE = dict(w=1600, h=520, fx=488, fy=80, fw=624, fh=260,
+                x0=130, y0=290, c0=640, hx0=330, x1=1470, y1=118, c1=960, hx1=1270)
+MP_LARGE_HTML = """<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{{margin:0;width:{w}px;height:{h}px;overflow:hidden;background:#050505}}
+.c{{position:relative;width:{w}px;height:{h}px;background:
+  radial-gradient(ellipse 34% 62% at 50% 38%,rgba(231,80,58,.20),rgba(231,80,58,0) 72%),
+  radial-gradient(ellipse 60% 95% at 76% 18%,rgba(231,80,58,.08),rgba(231,80,58,0) 70%),
+  linear-gradient(135deg,#0e0e11,#050505)}}
+.g{{position:absolute;inset:0;background-size:57px 57px;background-position:{gx}px 0;background-image:
+  linear-gradient(to right,rgba(255,255,255,.035) 1px,transparent 1px),
+  linear-gradient(to bottom,rgba(255,255,255,.035) 1px,transparent 1px)}}
+.f{{position:absolute;left:{fx}px;top:{fy}px;width:{fw}px;height:{fh}px;border-radius:16px;overflow:hidden;
+  border:1px solid #26262b;box-shadow:0 30px 90px rgba(0,0,0,.65)}}
+.f img{{display:block;width:100%;height:100%;object-fit:cover}}
+.k{{position:absolute;inset:0}}
+</style></head><body><div class="c"><div class="g"></div>
+<svg class="k" width="{w}" height="{h}" viewBox="0 0 {w} {h}" fill="none">
+  <defs><filter id="b" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="6"/></filter></defs>
+  <path d="M{x0} {y0} C {c0} {y0}, {c1} {y1}, {x1} {y1}" stroke="#e7503a" stroke-opacity=".45" stroke-width="10" filter="url(#b)"/>
+  <path d="M{x0} {y0} C {c0} {y0}, {c1} {y1}, {x1} {y1}" stroke="#ff6f59" stroke-opacity=".75" stroke-width="2.5"/>
+  <g stroke="#a1a1aa" stroke-opacity=".45" stroke-width="1.5">
+    <line x1="{x0}" y1="{y0}" x2="{hx0}" y2="{y0}"/><line x1="{x1}" y1="{y1}" x2="{hx1}" y2="{y1}"/>
+  </g>
+  <g fill="#0e0e11" stroke="#a1a1aa" stroke-opacity=".7" stroke-width="1.5">
+    <circle cx="{hx0}" cy="{y0}" r="5"/><circle cx="{hx1}" cy="{y1}" r="5"/>
+  </g>
+  <g fill="#e7503a">
+    <rect x="{x0}" y="{y0}" width="14" height="14" transform="rotate(45 {x0} {y0}) translate(-7 -7)"/>
+    <rect x="{x1}" y="{y1}" width="14" height="14" transform="rotate(45 {x1} {y1}) translate(-7 -7)"/>
+  </g>
+</svg>
+<div class="f"><img src="mp-frame-large.png" alt=""></div>
+</div></body></html>"""
+
+
+def motionpilot_large() -> None:
+    spec = fetch(MP_SHOT_SPEC)
+    TMP.mkdir(parents=True, exist_ok=True)
+    # 990x412 (2.4:1): "Apply to selected keyframes" + gentle / Apply, and the keyframes on the timeline
+    spec.convert("RGB").crop((370, 338, 1360, 750)).save(TMP / "mp-frame-large.png")
+    g = MP_LARGE
+    html = MP_LARGE_HTML.format(**g, gx=(g["w"] // 2) % 57)  # grid symmetric about the centre line
+    (TMP / "mp-cover-large.html").write_text(html, encoding="utf-8")
+    im = shot((TMP / "mp-cover-large.html").as_uri(), "mp-cover-large.png", g["w"], g["h"], scale=2)
+    save(im, "motionpilot", "cover-large.jpg", quality=90)
+
+
 def motionrules() -> None:
     im = shot("https://motionrules.com/", "motionrules.png", 1600, 900, tz=night_tz())
     # right 16 px = unpainted scrollbar gutter in headless mode
@@ -192,8 +253,8 @@ def blog() -> None:
     save(crop_ratio(im, top=290), "zero-build-blog", "cover.jpg")  # below the "Zerb's Blog" header
 
 
-JOBS = {"motionpilot": motionpilot, "motionrules": motionrules, "cubby": cubby,
-        "openwebui-cliproxy-gateway": gateway, "nas-monitoring": nas, "zero-build-blog": blog}
+JOBS = {"motionpilot": motionpilot, "motionpilot-large": motionpilot_large, "motionrules": motionrules,
+        "cubby": cubby, "openwebui-cliproxy-gateway": gateway, "nas-monitoring": nas, "zero-build-blog": blog}
 
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]

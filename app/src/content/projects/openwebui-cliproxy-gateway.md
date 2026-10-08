@@ -4,7 +4,6 @@ summary: "A one-compose, self-hosted kit that turns your own Claude, Codex and G
 pillars: ["code"]
 cover: "/media/images/projects/openwebui-cliproxy-gateway/cover.png"
 order: 53
-featured: true
 kind: "product"
 links:
   - { label: "GitHub", url: "https://github.com/byzosc/openwebui-cliproxy-gateway", type: "source" }

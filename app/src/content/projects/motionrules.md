@@ -9,9 +9,10 @@ kind: "product"
 links:
   - { label: "motionrules.com", url: "https://motionrules.com/", type: "site" }
   - { label: "Guide", url: "https://motionrules.com/guide", type: "site" }
-# No `free: true`: motionrules.com doesn't state a price anywhere, so no offers claim (yet).
+# free: true on the owner's word (user, 2026-10-08) — motionrules.com itself states no price.
 app:
   category: "DesignApplication"
+  free: true
 ---
 
 _Page body lives in `src/project-bodies/motionrules.html`._

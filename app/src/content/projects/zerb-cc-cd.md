@@ -4,7 +4,7 @@ summary: "A tool I built: turn an After Effects / Bodymovin export into a clean 
 pillars: ["code"]
 cover: "/media/images/projects/zerb-cc-cd/cover.svg"
 order: 70
-externalUrl: "https://zerb.cc.cd"
+externalUrl: "https://motionrules.com/app"
 externalLabel: "Open the tool"
 ---
 

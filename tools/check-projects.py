@@ -13,7 +13,7 @@ did not exist and nobody noticed the 404s. Any change that touches covers, media
 project slugs must pass this before commit.
 
 Checks (exit code 1 on any failure):
-  1. every entry's cover / coverLarge exists under app/public
+  1. every entry's cover / coverLarge exists under app/public and is <= 400 KB
   2. every /media/... src, srcset, poster and href in app/src/project-bodies exists (paths are
      percent-decoded: several WordPress-era files have CJK names)
   3. every internal /project/<slug>/ link in a body points to an existing entry
@@ -21,7 +21,8 @@ Checks (exit code 1 on any failure):
      entries answer 200 after redirects (older entries' Behance/Vimeo links are not checked:
      those sites answer bots inconsistently and are not this tool's business)
   5. --dist: each kind: product page has exactly one SoftwareApplication block whose `url` equals
-     the page's canonical, and no other page has one
+     the page's canonical, and no other page has one; `offers` (price "0") present exactly when
+     the entry says `app.free: true`
   6. --schema (with --dist): every property in those blocks (and nested Person / Offer) exists in
      the schema.org vocabulary and its domain includes the type or a supertype — the same
      vocabulary validator.schema.org uses, so a misspelt field name fails here, not in Search Console
@@ -138,6 +139,8 @@ def main() -> int:
         for key in ("cover", "coverLarge"):
             if d.get(key) and not public_file(d[key]).is_file():
                 fail(f"{slug}: {key} {d[key]} missing")
+            elif d.get(key) and public_file(d[key]).stat().st_size > 400 * 1024:
+                fail(f"{slug}: {key} {d[key]} is over 400 KB")
     print("2./3. body media + internal links")
     n_media = 0
     for body in sorted(BODIES.glob("*.html")):
@@ -178,12 +181,17 @@ def main() -> int:
             apps = [b for b in blocks if b.get("@type") == "SoftwareApplication"]
             canonical = re.search(r'<link rel="canonical" href="([^"]+)"', html)
             if slug in products:
+                free = bool((entries[slug].get("app") or {}).get("free"))
+                offer = apps[0].get("offers") if len(apps) == 1 else None
                 if len(apps) != 1:
                     fail(f"{slug}: {len(apps)} SoftwareApplication blocks (want 1)")
                 elif not canonical or apps[0].get("url") != canonical.group(1):
                     fail(f"{slug}: JSON-LD url {apps[0].get('url')} != canonical")
+                elif free != bool(offer and offer.get("price") == "0"):  # offers only when app.free
+                    fail(f"{slug}: app.free={free} but JSON-LD offers = {offer}")
                 else:
-                    print(f"   ok  {slug}: {apps[0].get('applicationCategory')}, url == canonical")
+                    print(f"   ok  {slug}: {apps[0].get('applicationCategory')}, url == canonical"
+                          + (", offers price 0" if offer else ", no offers"))
                 if schema and apps:
                     for problem in schema_problems(apps[0], vocab, slug):
                         fail(problem)

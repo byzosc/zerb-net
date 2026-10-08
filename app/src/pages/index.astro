@@ -32,6 +32,13 @@ const cardsFor = (pillar: (typeof pillars)[number]) => {
   const inPillar = byPillar(pillar.id);
   return (pillar.featuredOnly ? inPillar.filter((p) => p.data.featured) : inPillar).slice(0, MAX_CARDS);
 };
+
+// Hero headline (v2, 2026-10-08: Code · Motion · Visual; only the words moved). motion.ts animates
+// the three .hl lines by POSITION: line 1 mask wipe ([data-mask] also carries the CSS mask), line 2
+// blur, line 3 typewriter. Its names and comments (mText / vText / cText, "Code is the only
+// typewriter") still describe the old Motion · Visual · Code order. Each dot's personality follows
+// its word via data-dot (global.css; motion.ts repels the "motion" dot), so data-dot moves with the
+// word while data-mask / data-blur / data-type stay on their lines.
 ---
 
 <Layout>
@@ -41,9 +48,9 @@ const cardsFor = (pillar: (typeof pillars)[number]) => {
     <section class="relative flex min-h-screen flex-col justify-center px-6 md:px-10">
       <div class="mx-auto w-full max-w-[1400px]" data-hero>
         <h1 class="font-display text-[14vw] font-black leading-[0.85] md:text-[10vw]">
-          <span class="hl"><span class="hl-t" data-mask>Motion</span><span class="hero-dot" data-dot="motion" aria-hidden="true"><span class="hero-dot-m"><i class="hero-dot-i"></i></span></span></span><br />
-          <span class="hl"><span class="hl-t" data-blur>Visual</span><span class="hero-dot" data-dot="visual" aria-hidden="true"><span class="hero-dot-m"><i class="hero-dot-i"></i></span></span></span><br />
-          <span class="hl"><span class="hl-t" data-type>Code</span><span class="hero-dot" data-dot="code" aria-hidden="true"><span class="hero-dot-m"><i class="hero-dot-i"></i></span></span></span>
+          <span class="hl"><span class="hl-t" data-mask>Code</span><span class="hero-dot" data-dot="code" aria-hidden="true"><span class="hero-dot-m"><i class="hero-dot-i"></i></span></span></span><br />
+          <span class="hl"><span class="hl-t" data-blur>Motion</span><span class="hero-dot" data-dot="motion" aria-hidden="true"><span class="hero-dot-m"><i class="hero-dot-i"></i></span></span></span><br />
+          <span class="hl"><span class="hl-t" data-type>Visual</span><span class="hero-dot" data-dot="visual" aria-hidden="true"><span class="hero-dot-m"><i class="hero-dot-i"></i></span></span></span>
         </h1>
         <p class="mt-8 max-w-xl text-lg text-mist">
           zosc is a motion designer, visual artist & creative developer. Ask the AI anything.
