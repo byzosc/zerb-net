@@ -12,7 +12,7 @@
 - 内容：12 个项目详情页正文已补齐；`zosc.com` 后续计划改造成**导航页**，索引到各个作品
   （motionrules、MotionPilot、makerlion 等），不再只是个人简介页。
 
-## 2026-10-06 迁移已完成，验收全绿
+## 2026-10-06 迁移已完成；邮件投递复核见 2026-10-07 待办
 
 ```
 GSC 地址更改             2026-10-06 已提交（zerb.net → zosc.com），约 180 天迁移窗口
@@ -20,7 +20,7 @@ zosc.com/                200  title "zosc — Motion · Visual · Code"  canonic
 zerb.net/*               301 → zosc.com/*  逐页保留路径
 sitemap-index.xml        200  application/xml  15 个 URL 全新域名
 favicon svg/ico/png      200  已换成 Z 标
-hi@zosc.com + catch-all  → zcbgood@gmail.com
+hi@zosc.com + catch-all  → zcbgood@gmail.com（10-07 实际投递成功，但测试信进入垃圾邮件；DKIM 待补）
 blog.zosc.com            HTTPS 200，证书 approved，Enforce HTTPS 已开
 GitHub                   byzosc；profile README 仓库已改名为 byzosc
 ```
@@ -78,7 +78,22 @@ nas-monitoring · s25edge-usa · windows-never-sleep · openwebui-cliproxy-gatew
 ### 需要用户操作（无 API 通道）
 - [ ] ~~改 Mac DNS~~ 已撤销：zosc.com 打不开只是 NS 切换的正常传播，
       最晚 2026-10-08 16:26 SGT 自愈，无需任何操作。详见 DONE.md 2026-10-07
-- [ ] 发一封测试信到 `hi@zosc.com` 确认转发（本机无 MTA / 无 SMTP 凭据，发不了）
+- [x] `hi@zosc.com` 实际转发已确认（2026-10-07）：已连接 Gmail 中找到主题「666」的测试信，
+      `Delivered-To` 与 `X-Forwarded-For` 确认经 Cloudflare 投递到目标邮箱；当前标签为 `SPAM`。
+- [ ] 在 Gmail 将这封测试信标记为「非垃圾邮件」，再观察后续正常邮件的归类。
+- [ ] 补齐 `cf2024-1._domainkey.zosc.com` 的 Cloudflare DKIM TXT 公钥：DNS API 无此记录，
+      Google / Cloudflare 公共 DNS 均返回 NXDOMAIN，测试信邮件头为 `dkim=permerror (no key for signature)`。
+      其余 Gmail / Cloudflare 公共域 DKIM、SPF、DMARC、ARC 均通过；本次进垃圾邮件的具体原因待确认。
+      当前 token 读取 `/email/routing/dns` 返回 403；需增加 Zone Settings Read 权限读取官方公钥，
+      或从 Cloudflare Email Routing 设置页补齐。不要借用其他域名的公钥。
+      用户已授权补齐公钥；本轮复查本机 token 存在且 `/user/tokens/verify` 返回 active，
+      公钥端点仍 403、对应 DNS 查询仍为空。无需重复提供原 token；等待用户在原 token 上
+      为 `zosc.com` 增加 `Zone → Zone Settings → Read`，保存后即可重试读取并添加 TXT。
+      当前保存 token 的非密钥 ID 为 `3ec02115a4a8ce7ea27facaf967f3964`；名称待确认，
+      `/user/tokens/{id}` 返回 403 / Unauthorized，不能凭用途猜名称。
+      补齐后用新邮件复核 DKIM 与收件箱归类；本轮未修改 DNS 或 Gmail 标签。
+- 用户本轮写的是 `hi@vosc.com`；找到的测试信实际 `To: hi@zosc.com`。
+  `vosc.com` 的 NS/MX 属另一套服务，且不在当前 Cloudflare 账号中，不能当成本项目地址。
 
 ### 可做
 - [ ] `zosc.com` 改造成导航页（用户方向，尚未开工）
@@ -89,8 +104,9 @@ nas-monitoring · s25edge-usa · windows-never-sleep · openwebui-cliproxy-gatew
 ### 凭据（本会话已配置，存在本机）
 ```
 ~/.config/cloudflare/token   Zone·DNS·Edit + Zone·Email Routing Rules + Account·Email Routing Addresses
-                             （「启用 Email Routing」那个端点不在任何一条里，但不影响——
-                               启用的实质是写规则 + 加 MX，都能用 API 做）
+                             （2026-10-07 复核：规则可读且启用、收件地址 verified；
+                               routing 设置及所需 DNS 端点返回 403，缺 Zone Settings 权限。
+                               不能把写规则 + 加 MX/SPF 当作配置完整，DKIM 也必须检查）
 ~/.config/vercel/token       全账号权限；team = zerbs-projects (team_uL4RMxYBszxow0z3ELSHmi4M)
 gh                           已登录 byzosc
 ```

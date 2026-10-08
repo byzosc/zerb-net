@@ -1,3 +1,35 @@
+## 2026-10-07 DKIM 补齐授权后权限复查
+
+- 用户授权补齐 Cloudflare 转发 DKIM 公钥，询问是否需要再次提供 token。
+- 本机 `~/.config/cloudflare/token` 已存在，`GET /user/tokens/verify` 返回 200 / active；
+  `GET /zones/{zosc_zone_id}/email/routing/dns` 仍返回 403 / Authentication error，
+  精确查询 `cf2024-1._domainkey.zosc.com` 的 DNS API 返回空列表。
+- 确认当前阻碍是所需端点的权限，非 token 丢失或失效。官方端点要求 Zone Settings Read 或 Write；
+  指引在原 token 上为 `zosc.com` 增加 Zone Settings Read。尚未获取官方公钥，未写入 DNS。
+
+## 2026-10-07 邮件转发复核：已投递，测试信在 Gmail 垃圾邮件；DKIM 遗漏待补
+
+- 通过 Cloudflare API 确认 `hi@zosc.com` 与 catch-all 均 `enabled=true`，转发目标一致，
+  `zcbgood@gmail.com` 状态为 `verified`；公共 DNS 的三条 MX 和单条 SPF 正确。
+- 在已连接的目标 Gmail 全邮箱搜索（含垃圾邮件）找到 2026-10-07 21:57 SGT 的测试信，主题「666」。
+  邮件头 `To: hi@zosc.com`、`X-Forwarded-For: hi@zosc.com zcbgood@gmail.com`、
+  `Delivered-To: zcbgood@gmail.com` 与 Cloudflare Received 路径证明端到端转发成功，
+  当前标签为 `SPAM`。未发送新测试信，未修改 Gmail 标签或过滤器。
+- 用户消息中的 `hi@vosc.com` 与找到的实际邮件地址不同。公开 DNS 显示 `vosc.com`
+  使用 worldnic NS / netsol MX，且不在当前 Cloudflare 账号 zone 列表中。
+- 发现 DNS 缺少 `cf2024-1._domainkey.zosc.com` 的 DKIM TXT 公钥：DNS API 列表不存在该记录，
+  Google 和 Cloudflare 公共 DNS 均返回 NXDOMAIN；邮件头对应签名出现
+  `dkim=permerror (no key for signature)`。原发件方 Gmail DKIM、Cloudflare 公共域 DKIM、
+  SPF、DMARC、ARC 均通过，不能据此断言缺失公钥是本次垃圾邮件分类的唯一原因。
+- Cloudflare 官方说明 Email Routing 需要 MX、SPF **和 DKIM**：
+  https://developers.cloudflare.com/email-service/configuration/domains/#routing-records 。
+  当前 token 读 routing 设置及 `/email/routing/dns` 均返回 403；后者官方要求
+  Zone Settings Read 或 Write：
+  https://developers.cloudflare.com/api/resources/email_routing/subresources/dns/methods/get/ 。
+  本轮未补公钥、未修改 DNS；剩余工作写入 TODO。
+- 更正 2026-10-06 的过强结论：规则 + MX/SPF 足以让本次邮件成功转发，
+  **不代表配置完整或收件箱归类已验收**；此前「验收全绿」未覆盖实际邮件投递和 DKIM。
+
 ## 2026-10-07 motionrules.com 旧身份清扫完成（keyframe-sheet-38 执行，本会话复核）
 
 ```

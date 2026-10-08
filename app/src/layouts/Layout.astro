@@ -93,8 +93,17 @@ const website = {
     <meta name="twitter:image" content={ogImage} />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
     <script type="application/ld+json" set:html={JSON.stringify(website)} />
-    <link rel="icon" href="/media/images/common/brand/zosc-favicon-32.png" sizes="32x32" />
+    <!--
+      顺序有意：大图标在前。Google 文档要求图标为正方形、至少 8x8，并建议 >48px；
+      原来第一条是 32x32，低于建议值。Google 支持 BMP/GIF/ICO/PNG/JPEG/PPM/TIFF，
+      不含 SVG，且明确说明「不会自动回退去取 /favicon.ico」——必须在首页显式声明，
+      所以 ico 这条不能省。svg 只给浏览器用，对 Google 无效。
+      https://developers.google.com/search/docs/appearance/favicon-in-search
+    -->
     <link rel="icon" href="/media/images/common/brand/zosc-favicon-192.png" sizes="192x192" />
+    <link rel="icon" href="/media/images/common/brand/zosc-favicon-32.png" sizes="32x32" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/media/images/common/brand/zosc-favicon-180.png" />
     <link rel="preload" href="/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/mulish-latin.woff2" as="font" type="font/woff2" crossorigin />
