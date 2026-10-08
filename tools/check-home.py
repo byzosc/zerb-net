@@ -7,7 +7,8 @@
 --code            the exact Code-section slugs expected on the homepage, in order. Default:
                   EXPECT_CODE below (the user's decision); the content entries (featured: true,
                   pillar code, by order) must produce the same list.
---online          + every external link on the homepage answers 200
+--online          + every external link on the homepage answers 200 (and, v3-G, the Code cards'
+                  direct links answer 200 to a plain `curl -sL`)
 
 Written for v2 subtask C (2026-10-08): Code leads the homepage (Code · Motion · Visual), the
 Code section shows only `featured` products, and the title follows the same order. Any change
@@ -39,16 +40,23 @@ Checks (exit code 1 on any failure):
      data-dot (its personality in global.css and motion.ts) follows its word
   9. every project page's "← Back to work" points at its first pillar's homepage section
 
-v3 subtask F (2026-10-08) — brand first, portfolio second. Check 1 now looks at the pillar sections
-only (the homepage has other sections too), and:
- 10. layout: hero → #products → "Work" label → #code #motion #visual → AI Ask, and nothing else
-     (a "latest from the blog" block was planned and dropped by the user the same day)
+v3 subtask F (2026-10-08) — brand first, portfolio second. Check 1 looks at the pillar sections
+only, and:
+ 10. layout: hero → "Products" label → #code → "Work" label → #motion → #visual → AI Ask; the pillar
+     sections are the only <section id> in <main> (v3-G removed F's product strip; a "latest from
+     the blog" block was planned and dropped by the user the same day)
  11. hero line = HERO_TAGLINE in index.astro (one constant, still open for the user to change) and
      the old job-title line is gone; the two hero buttons; their fade is opacity only
- 12. product strip: MotionPilot · MotionRules · Cubby — icon (file present, <= 64 KB), name = the
-     entry's title, a one-liner, the direct actions (each also one of the entry's `links`) and a
-     "Details" link to the product page; no digits in hero / strip copy (no counts, ever)
- 13. a "Work" label sits right before #code; the pillar sections themselves are untouched
+ 12. v3-G (same day; user: the strip and the Code cards were the same three products in two visual
+     languages). Nothing of the strip is left: no #products section, strip icon, "Details →",
+     strip one-liner, strip button label or boxed-card class. Instead each Code card has its direct
+     links in one row right after the card's <a> — outside it; no <a> inside an <a> anywhere on the
+     page: MotionPilot → Adobe Exchange, MotionRules → motionrules.com, Cubby → App Store · Google
+     Play. Each is one of the entry's `links`, opens a new tab (target=_blank, rel=noopener
+     noreferrer), has the footer row's type (text-sm uppercase tracking-wide; mist, paper on hover),
+     no pill border or accent fill; the row's fade is opacity only. Motion / Visual cards: no row.
+     No digits in the hero copy or the rows (no counts, ever)
+ 13. labels in F's markup: "Products" right before #code, "Work" right before #motion
  14. footer on every page: ONE row of small links — X · GitHub · Steam · Blog · MotionRules · Cubby ·
      MakerLion · Email, all with the same classes (user: the sites are plain links, no emphasis;
      an earlier bold row of site names was rejected); Blog exactly once; no other footer links
@@ -64,6 +72,7 @@ from html import unescape
 import json
 import re
 import struct
+import subprocess
 import sys
 import time
 import urllib.error
@@ -100,15 +109,29 @@ EXPECT_HERO_ACTIONS = [
     ("Get MotionPilot", "https://exchange.adobe.com/apps/cc/205857"),
     ("Open MotionRules", "https://motionrules.com/"),
 ]
-EXPECT_PRODUCTS = {  # in strip order: slug -> its direct actions (label, url)
-    "motionpilot": [("Get on Adobe Exchange", "https://exchange.adobe.com/apps/cc/205857")],
-    "motionrules": [("Open motionrules.com", "https://motionrules.com/")],
+# v3-G (2026-10-08): the product strip is gone; each Code card carries its direct links instead.
+# In card order: slug -> (label, url). The labels and urls are the entries' own `links`.
+EXPECT_DIRECT = {
+    "motionpilot": [("Adobe Exchange", "https://exchange.adobe.com/apps/cc/205857")],
+    "motionrules": [("motionrules.com", "https://motionrules.com/")],
     "cubby": [
         ("App Store", "https://apps.apple.com/app/id6804703410"),
         ("Google Play", "https://play.google.com/store/apps/details?id=com.zerblion.findly"),
     ],
 }
-ICON_MAX = 64 * 1024
+# What F's strip put on the page (5ea1709) — none of it may come back.
+STRIP_LEFTOVERS = {
+    "#products section": r'<section id="products"',
+    "strip icons": r"/media/images/products/",
+    '"Details →" links': r"Details\s*→",
+    "strip buttons": r"Get on Adobe Exchange|Open motionrules\.com",
+    "boxed-card classes": r"rounded-2xl border border-line bg-ink-soft",
+    "strip one-liners": r"applies your motion spec to keyframes|from definition to Lottie handoff|note it in one line, find it later",
+}
+ROW_TYPE = {"text-sm", "uppercase", "tracking-wide"}  # the footer link row's type classes
+LABEL_CLASS = "mx-auto max-w-[1400px] text-xs uppercase tracking-widest text-mist"  # F's "Work" label
+# a card's direct links follow the card's <a> immediately, outside it (CardLinks.astro)
+CARD_RE = re.compile(r'<a href="/project/([^/"]+)/"[^>]*>.*?</a>(\s*<p class="([^"]*\bcard-links\b[^"]*)"[^>]*>(.*?)</p>)?', re.S)
 BLOG = "https://blog.zosc.com"
 # The footer's single row, in order (v3 take 2: MotionRules / Cubby / MakerLion added after Blog).
 EXPECT_FOOTER = [
@@ -157,14 +180,14 @@ A_RE = re.compile(r"<a\s([^>]*)>(.*?)</a>", re.S)
 
 
 def anchors(html: str) -> list[dict]:
-    """Every <a> in html: href, visible text (arrow glyphs dropped), raw attributes, class."""
+    """Every <a> in html: href, visible text (the arrow glyphs → and ↗ dropped), raw attributes, class, inner HTML."""
     out = []
     for attrs, inner in A_RE.findall(html):
         href = re.search(r'href="([^"]*)"', attrs)
         cls = re.search(r'class="([^"]*)"', attrs)
-        text = unescape(re.sub(r"<[^>]+>", "", inner)).replace("→", "")
+        text = unescape(re.sub(r"<[^>]+>", "", inner)).replace("→", "").replace("↗", "")
         out.append({"href": unescape(href.group(1)) if href else None, "text": " ".join(text.split()),
-                    "attrs": attrs, "cls": cls.group(1) if cls else ""})
+                    "attrs": attrs, "cls": cls.group(1) if cls else "", "inner": inner})
     return out
 
 
@@ -237,7 +260,7 @@ def main() -> int:
     main_html = home[home.find("<main"): home.find("</main>")]
     sections = [(m.group(1), m.end()) for m in re.finditer(r'<section id="([a-z]+)"', main_html)]
     ids = [s for s, _ in sections]
-    pillar_ids = [s for s in ids if s in ORDER]  # v3: #products is a section too (check 10)
+    pillar_ids = [s for s in ids if s in ORDER]  # check 10: and nothing else
     check(pillar_ids == ORDER, f"pillar sections: {' → '.join('#' + i for i in pillar_ids)}",
           f"pillar sections {pillar_ids} != {ORDER}")
     for sid, start in sections:
@@ -404,17 +427,17 @@ def main() -> int:
           f"Back to work: {wrong}")
 
     # ── v3-F (2026-10-08): brand first, portfolio second ────────────────────────────────────────
-    entry_titles = {s: d.get("title") for s, d in entries.items()}
     moving: list[str] = []  # clickable elements in the new blocks that carry a motion class
 
     print("10. v3 homepage layout")
-    want_ids = ["products", *ORDER]
-    check(ids == want_ids, f"sections: {' → '.join('#' + i for i in ids)}", f"sections {ids}, expected {want_ids}")
+    want_ids = list(ORDER)  # v3-G: no #products section any more
+    check(ids == want_ids, f"sections: {' → '.join('#' + i for i in ids)} (nothing else)", f"sections {ids}, expected {want_ids}")
     marks = {
         "hero": main_html.find("data-hero"),
-        "#products": main_html.find('<section id="products"'),
-        "Work": main_html.find('<div id="work"'),
+        "Products label": main_html.find('<div id="products"'),
         "#code": main_html.find('<section id="code"'),
+        "Work label": main_html.find('<div id="work"'),
+        "#motion": main_html.find('<section id="motion"'),
         "#visual": main_html.find('<section id="visual"'),
         "AI Ask": main_html.find("data-ask-ai"),
     }
@@ -445,49 +468,95 @@ def main() -> int:
           f"buttons fade in, opacity only: {{{rule.group(1) if rule else ''}}} / heroFade{{{fade.group(1) if fade else ''}}}}}",
           f"hero button fade: rule {rule.group(1) if rule else None}, keyframes {fade.group(1) if fade else None}")
 
-    print("12. product strip")
-    strip = block(main_html, '<section id="products"')
-    items = re.findall(r"<li\b[^>]*>(.*?)</li>", strip, re.S)
-    seen = []
-    for item in items:
-        det = re.search(r'href="/project/([^/"]+)/"[^>]*>\s*Details\s*→\s*</a>', item)
-        slug = det.group(1) if det else "?"
-        seen.append(slug)
-        problems = []
-        img = re.search(r'<img src="([^"]+)"', item)
-        icon = PUBLIC / img.group(1).lstrip("/") if img else None
-        if not icon or not icon.is_file():
-            problems.append(f"icon {img.group(1) if img else None} missing")
-        elif icon.stat().st_size > ICON_MAX:
-            problems.append(f"icon {icon.stat().st_size} bytes > {ICON_MAX}")
-        name = re.search(r"<h2[^>]*>([^<]*)</h2>", item)
-        if not name or name.group(1).strip() != entry_titles.get(slug):
-            problems.append(f"name {name.group(1) if name else None} != title {entry_titles.get(slug)!r}")
-        one = re.search(r'<p class="[^"]*text-mist[^"]*">([^<]+)</p>', item)
-        if not one or not one.group(1).strip():
-            problems.append("no one-liner")
-        acts = [a for a in anchors(item) if a["href"] and a["href"].startswith("http")]
-        got = [(a["text"], a["href"]) for a in acts]
-        if got != EXPECT_PRODUCTS.get(slug):
-            problems.append(f"actions {got}, expected {EXPECT_PRODUCTS.get(slug)}")
-        known = {l["url"] for l in (entries.get(slug, {}).get("links") or [])}
-        if any(h not in known for _, h in got):
-            problems.append(f"an action is not in {slug}.md links")
-        if not all(opens_safely(a) for a in acts):
-            problems.append("an action lacks target=_blank / rel=noopener")
-        moving += [f"{slug} {a['text']}" for a in anchors(item) if MOVING.search(a["cls"])]
-        if problems:
-            fail(f"{slug}: {'; '.join(problems)}")
-        else:
-            ok(f"{slug}: icon {img.group(1)} ({icon.stat().st_size} B), \"{one.group(1).strip()}\", "
-               f"{' + '.join(t for t, _ in got)}, Details → /project/{slug}/")
-    check(seen == list(EXPECT_PRODUCTS), f"strip order: {seen}", f"strip items {seen}, expected {list(EXPECT_PRODUCTS)}")
-    digits = re.findall(r"\d[\d,.]*\s*\S*", visible_text(hero + strip))
-    check(not digits, "no digits in hero / strip copy (no counts)", f"digits in hero / strip copy: {digits}")
+    print("12. no product strip; the Code cards carry the direct links (v3-G)")
+    left = [k for k, rx in STRIP_LEFTOVERS.items() if re.search(rx, home)]
+    check(not left, "nothing of the strip on the homepage: " + ", ".join(STRIP_LEFTOVERS),
+          f"strip leftovers on the homepage: {left}")
+    page = re.sub(r"<script\b.*?</script>", "", home, flags=re.S)
+    depth = deepest = 0
+    for m in re.finditer(r"<a\b|</a>", page):
+        depth += 1 if m.group(0) == "<a" else -1
+        deepest = max(deepest, depth)
+    check(deepest == 1 and depth == 0, f"no <a> inside an <a> ({page.count('</a>')} links on the page)",
+          f"nested or unbalanced <a>: deepest {deepest}, final depth {depth}")
 
-    print("13. Work label")
-    work = re.search(r'<div id="work"[^>]*>\s*<p[^>]*>\s*Work\s*</p>\s*</div>\s*(?:<!--.*?-->\s*)*<section id="code"', main_html, re.S)
-    check(bool(work), '"Work" label directly before #code', '"Work" label missing or not directly before #code')
+    def pill_or_fill(token: str) -> bool:
+        base = token.split(":")[-1]
+        return base == "border" or base.startswith(("border-", "bg-", "rounded")) or base == "text-accent"
+
+    rows_html = ""
+    for sid, start in sections:
+        if sid not in ORDER:
+            continue
+        body = main_html[start: main_html.find("</section>", start)]
+        cards = [(m.group(1), m.group(3) or "", m.group(4)) for m in CARD_RE.finditer(body)]
+        if sid != "code":
+            with_row = [slug for slug, _, row in cards if row is not None]
+            ext = [a["href"] for a in anchors(body) if (a["href"] or "").startswith("http")]
+            check(not with_row and "card-links" not in body and not ext,
+                  f"#{sid}: {len(cards)} cards, no direct-link row (their entries have no `links`)",
+                  f"#{sid}: rows on {with_row}, external links {ext}")
+            continue
+        check([c[0] for c in cards] == list(EXPECT_DIRECT), f"#code cards: {[c[0] for c in cards]}",
+              f"#code cards {[c[0] for c in cards]}, expected {list(EXPECT_DIRECT)}")
+        for slug, row_cls, row in cards:
+            if row is None:
+                fail(f"#code {slug}: no direct-link row right after the card's <a>")
+                continue
+            rows_html += row
+            problems = []
+            acts = anchors(row)
+            got = [(a["text"], a["href"]) for a in acts]
+            if got != EXPECT_DIRECT.get(slug):
+                problems.append(f"links {got}, expected {EXPECT_DIRECT.get(slug)}")
+            known = {l["url"] for l in (entries.get(slug, {}).get("links") or [])}
+            if any(h not in known for _, h in got):
+                problems.append(f"a link is not in {slug}.md links")
+            if not all(opens_safely(a) and re.search(r'rel="[^"]*\bnoreferrer\b', a["attrs"]) for a in acts):
+                problems.append("a link lacks target=_blank / rel=noopener noreferrer")
+            if not all("↗" in a["inner"] for a in acts):
+                problems.append("a link lacks its ↗")
+            row_tokens = set(row_cls.split())
+            if not ROW_TYPE | {"text-mist"} <= row_tokens:
+                problems.append(f"row classes {row_cls!r} lack {sorted(ROW_TYPE | {'text-mist'} - row_tokens)}")
+            if not all({"hover:text-paper", "transition-colors"} <= set(a["cls"].split()) for a in acts):
+                problems.append("a link lacks hover:text-paper / transition-colors")
+            pill = [t for t in row_cls.split() + [t for a in acts for t in a["cls"].split()] if pill_or_fill(t)]
+            if pill:
+                problems.append(f"pill / fill classes {pill}")
+            if "reveal" in row_tokens or MOVING.search(row_cls):
+                problems.append(f"the row itself moves: {row_cls!r}")
+            moving.extend(f"{slug} {a['text']}" for a in acts if MOVING.search(a["cls"]))
+            if problems:
+                fail(f"#code {slug}: {'; '.join(problems)}")
+            else:
+                ok(f"#code {slug}: " + " · ".join(f"{t} ↗ {h}" for t, h in got)
+                   + " (after the card's </a>, new tab, noopener noreferrer, no pill / fill)")
+    foot_row = re.search(r'<div class="([^"]*)">\s*(?:<a\s[^>]*>[^<]*</a>\s*)+</div>', block(home, "<footer", "</footer>"))
+    foot_type = set(foot_row.group(1).split()) & ROW_TYPE if foot_row else set()
+    check(foot_type == ROW_TYPE, f"row type = the footer link row's ({' '.join(sorted(ROW_TYPE))}; mist, paper on hover)",
+          f"footer row type {sorted(foot_type)} != ROW_TYPE {sorted(ROW_TYPE)}")
+    fades = re.findall(r"([^{}]*\.card-links[^{}]*)\{([^}]*)\}", css)
+    # the minifier writes "@media(prefers-reduced-motion:no-preference){"
+    gated = re.search(r"@media\s*\(prefers-reduced-motion:\s*no-preference\)\{[^@]*\.card-links", css)
+    still = all("opacity" in b and not re.search(r"transform|translate|scale|rotate|animation", b) and ".reveal" in sel
+                for sel, b in fades)
+    check(len(fades) == 2 and still and bool(gated),
+          "row fade = its card's reveal, opacity only, motion-allowed only: "
+          + " / ".join(f"{sel.strip()}{{{b}}}" for sel, b in fades),
+          f"card-links CSS {fades}, gated by no-preference: {bool(gated)}")
+    digits = re.findall(r"\d[\d,.]*\s*\S*", visible_text(hero + rows_html))
+    check(not digits, "no digits in the hero copy or the rows (no counts)", f"digits in hero / row copy: {digits}")
+
+    print("13. section labels (F's markup)")
+    label_cls = []
+    for text, eid, sid in [("Products", "products", "code"), ("Work", "work", "motion")]:
+        m = re.search(rf'<div id="{eid}"[^>]*>\s*<p class="([^"]*)">\s*{text}\s*</p>\s*</div>\s*(?:<!--.*?-->\s*)*<section id="{sid}"',
+                      main_html, re.S)
+        label_cls.append(m.group(1) if m else None)
+        check(bool(m), f'"{text}" label (#{eid}) directly before #{sid}', f'"{text}" label missing or not directly before #{sid}')
+    check(label_cls == [LABEL_CLASS, LABEL_CLASS], f'both labels: class "{LABEL_CLASS}" (uppercase on screen)',
+          f"label classes {label_cls}, want F's {LABEL_CLASS!r}")
 
     print("14. footer: one row of plain links (every page)")
     pages, bad_footer = 0, []
@@ -564,6 +633,18 @@ def main() -> int:
             print(f"   {status.split()[0]:>4}  {url}" + (f"  {status.split(' ', 1)[1]}" if " " in status else ""))
             if not status.startswith("200"):
                 fail(f"{url} -> {status}")
+        print("    v3-G: the Code cards' direct links, plain `curl -sL` (curl's own user agent)")
+        for slug, pairs in EXPECT_DIRECT.items():
+            for label, url in pairs:
+                try:
+                    r = subprocess.run(["curl", "-sL", "-o", "/dev/null", "--max-time", "30", "-w", "%{http_code} %{url_effective}", url],
+                                       capture_output=True, text=True, timeout=60)
+                    code, _, final = r.stdout.partition(" ")
+                except Exception as e:  # noqa: BLE001 - report, don't crash
+                    code, final = f"ERR {type(e).__name__}", ""
+                print(f"   {code:>4}  {slug} · {label}: {url}" + (f"  -> {final}" if final and final != url else ""))
+                if code != "200":
+                    fail(f"curl -sL {url} -> {code}")
 
     print(f"\n{'OK' if not failures else f'{len(failures)} FAILURE(S)'}")
     return 1 if failures else 0

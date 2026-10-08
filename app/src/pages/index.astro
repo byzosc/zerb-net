@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import CardLinks from '../components/CardLinks.astro';
 
 const all = (await getCollection('projects'))
   .filter((p) => !p.data.draft)
@@ -43,57 +44,48 @@ const cardsFor = (pillar: (typeof pillars)[number]) => {
 // data-dot (global.css; motion.ts repels the "motion" dot).
 
 // ── v3 (2026-10-08): brand first, portfolio second ──────────────────────────────────────────────
-// The hero line says what zosc makes and two buttons go straight to the products; a product strip
-// sits right under the hero; the three pillar sections follow under a small "Work" label. The
-// headline and its intro are untouched. (A "latest from the blog" block was planned too and dropped
-// by the user the same day — no gain for the page; the blog stays one link in the header / footer.)
+// The hero line says what zosc makes and two buttons go straight to the products. The headline and
+// its intro are untouched. (A "latest from the blog" block was planned too and dropped by the user
+// the same day — no gain for the page; the blog stays one link in the header / footer.)
+// v3-G (same day, user): no product strip. F had put one under the hero — bordered boxes with icons
+// and pill buttons for the same three products the Code cards show: two visual languages for one
+// thing. Now the Code section IS the products: a "Products" label sits over it, a "Work" label over
+// Motion, and each Code card carries its direct links in one quiet row under the card. One card
+// language on the page (borderless, image-led, one large + two small); the hero's two buttons are
+// its only buttons. The strip's icons stay in public/media/images/products/ (unreferenced, kept).
 
 // The line under the headline. One place to change it: the user approved this wording for now and
 // may still replace it.
 const HERO_TAGLINE = 'Design that runs. Code that moves. Things that ship.';
 
-// Every button below is a direct way to USE a product (its store, or the tool itself), not a case
-// study; the small "Details →" link goes to the product page. Each URL must also be one of the
-// entry's `links` (checked below), so the homepage can't drift from the product pages.
-// Icons: public/media/images/products/<slug>/ (sources in docs/v3/F-REPORT.md).
-const PRODUCTS = [
-  {
-    slug: 'motionpilot',
-    icon: '/media/images/products/motionpilot/icon.svg',
-    line: 'An After Effects panel that applies your motion spec to keyframes.',
-    actions: [{ label: 'Get on Adobe Exchange', url: 'https://exchange.adobe.com/apps/cc/205857' }],
-  },
-  {
-    slug: 'motionrules',
-    icon: '/media/images/products/motionrules/icon.svg',
-    line: 'Motion design tools that share one motion spec, from definition to Lottie handoff.',
-    actions: [{ label: 'Open motionrules.com', url: 'https://motionrules.com/' }],
-  },
-  {
-    slug: 'cubby',
-    icon: '/media/images/products/cubby/icon.png',
-    line: 'Remember where you put things: note it in one line, find it later.',
-    actions: [
-      { label: 'App Store', url: 'https://apps.apple.com/app/id6804703410' },
-      { label: 'Google Play', url: 'https://play.google.com/store/apps/details?id=com.zerblion.findly' },
-    ],
-  },
-];
+// A card's direct links = where you get the product: its store / download links, or — for a web
+// tool with neither — its first link (the tool itself). Read from the entry's `links`, the list its
+// product page renders, so the two can't drift: MotionPilot → Adobe Exchange, MotionRules →
+// motionrules.com, Cubby → App Store + Google Play. No links (all Motion / Visual work) → no row.
+// components/CardLinks.astro renders the row OUTSIDE the card's <a> (a link can't hold a link).
+const directLinks = (p: (typeof all)[number]) => {
+  const links = p.data.links ?? [];
+  const get = links.filter((l) => l.type === 'store' || l.type === 'download');
+  return get.length ? get : links.slice(0, 1);
+};
+
+// Section labels — F's "Work" label, same markup: "Products" over Code, "Work" over Motion (Visual
+// is work too). Their ids only serve /#products and /#work; the nav still targets #code / #motion /
+// #visual. The first label keeps the 40 px F left between it and the hero.
+const EYEBROWS: Partial<Record<(typeof pillars)[number]['id'], { id: string; text: string }>> = {
+  code: { id: 'products', text: 'Products' },
+  motion: { id: 'work', text: 'Work' },
+};
+
+// Each hero button is a shortcut to one of the cards' direct links (a build error otherwise), so
+// the hero can't drift from the cards, nor the cards from the product pages.
 const HERO_ACTIONS = [
   { label: 'Get MotionPilot', url: 'https://exchange.adobe.com/apps/cc/205857' },
   { label: 'Open MotionRules', url: 'https://motionrules.com/' },
 ];
-const products = PRODUCTS.map((p) => {
-  const entry = all.find((e) => e.id === p.slug);
-  if (!entry) throw new Error(`index.astro product strip: no live project entry "${p.slug}"`);
-  const known = new Set((entry.data.links ?? []).map((l) => l.url));
-  const stray = p.actions.filter((a) => !known.has(a.url));
-  if (stray.length) throw new Error(`index.astro: ${stray.map((a) => a.url).join(', ')} not in ${p.slug}.md links`);
-  return { ...p, name: entry.data.title };
-});
-// The hero buttons are shortcuts to product actions above, which are checked against the entries.
-const orphan = HERO_ACTIONS.filter((a) => !PRODUCTS.some((p) => p.actions.some((b) => b.url === a.url)));
-if (orphan.length) throw new Error(`index.astro: hero action ${orphan.map((a) => a.url).join(', ')} is not a product action`);
+const cardUrls = new Set(pillars.flatMap((pl) => cardsFor(pl)).flatMap((p) => directLinks(p).map((l) => l.url)));
+const orphan = HERO_ACTIONS.filter((a) => !cardUrls.has(a.url));
+if (orphan.length) throw new Error(`index.astro: hero action ${orphan.map((a) => a.url).join(', ')} is not a card's direct link`);
 
 // Same pill buttons as the product pages (project/[slug].astro); the first one is the accent one.
 // Colour transitions only — nothing clickable moves (AGENTS.md: a moving target can swallow the
@@ -134,51 +126,18 @@ const BTN_SECONDARY =
       </div>
     </section>
 
-    <!-- PRODUCTS -->
-    <section id="products" class="pt-10">
-      {/* label over a full-width rule — the same shape as "Work" over the #code border below */}
-      <div class="px-6 pb-6 md:px-10">
-        <p class="mx-auto max-w-[1400px] text-xs uppercase tracking-widest text-mist">Products</p>
-      </div>
-      <div class="border-t border-line px-6 pb-24 pt-10 md:px-10 md:pb-32">
-        <ul class="mx-auto grid max-w-[1400px] grid-cols-1 gap-6 lg:grid-cols-3">
-          {
-            products.map((p) => (
-              <li class="flex flex-col rounded-2xl border border-line bg-ink-soft p-6 md:p-8">
-                <div class="flex items-center justify-between gap-4">
-                  <div class="flex items-center gap-4">
-                    <img src={p.icon} alt="" width="48" height="48" loading="lazy" decoding="async" class="h-12 w-12 shrink-0" />
-                    <h2 class="font-display text-2xl font-black md:text-3xl">{p.name}</h2>
-                  </div>
-                  <a href={`/project/${p.slug}/`} data-cursor="View" class="shrink-0 py-2 text-sm text-mist transition-colors hover:text-paper">
-                    Details →
-                  </a>
-                </div>
-                <p class="mt-5 text-mist">{p.line}</p>
-                <div class="mt-auto flex flex-wrap gap-3 pt-8">
-                  {p.actions.map((a, i) => (
-                    <a href={a.url} target="_blank" rel="noopener noreferrer" data-cursor="Open" class={i === 0 ? BTN_PRIMARY : BTN_SECONDARY}>
-                      {a.label} <span aria-hidden="true">→</span>
-                    </a>
-                  ))}
-                </div>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </section>
-
-    <!-- WORK -->
-    <div id="work" class="px-6 pb-6 md:px-10">
-      <p class="mx-auto max-w-[1400px] text-xs uppercase tracking-widest text-mist">Work</p>
-    </div>
-
     <!-- PILLAR SECTIONS -->
     {
-      pillars.map((pillar) => {
+      pillars.map((pillar, i) => {
         const [featured, ...rest] = cardsFor(pillar); // large card + up to 2
+        const eyebrow = EYEBROWS[pillar.id];
         return (
+          <Fragment>
+          {eyebrow && (
+            <div id={eyebrow.id} class:list={['px-6 pb-6 md:px-10', i === 0 && 'pt-10']}>
+              <p class="mx-auto max-w-[1400px] text-xs uppercase tracking-widest text-mist">{eyebrow.text}</p>
+            </div>
+          )}
           <section id={pillar.id} class="border-t border-line px-6 py-28 md:px-10 md:py-40">
             <div class="mx-auto max-w-[1400px]">
               <div class="reveal mb-16 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
@@ -188,22 +147,28 @@ const BTN_SECONDARY =
               {
                 featured ? (
                   <div class="space-y-16">
-                    <ProjectCard
-                      featured
-                      href={hrefFor(featured)}
-                      title={featured.data.title}
-                      cover={featured.data.coverLarge ?? featured.data.cover}
-                      year={featured.data.year}
-                    />
+                    <div>
+                      <ProjectCard
+                        featured
+                        href={hrefFor(featured)}
+                        title={featured.data.title}
+                        cover={featured.data.coverLarge ?? featured.data.cover}
+                        year={featured.data.year}
+                      />
+                      <CardLinks links={directLinks(featured)} class="px-5" />
+                    </div>
                     {rest.length > 0 && (
                       <div class="grid grid-cols-1 gap-x-10 gap-y-16 lg:grid-cols-2">
                         {rest.map((p) => (
-                          <ProjectCard
-                            href={hrefFor(p)}
-                            title={p.data.title}
-                            cover={p.data.cover}
-                            year={p.data.year}
-                          />
+                          <div>
+                            <ProjectCard
+                              href={hrefFor(p)}
+                              title={p.data.title}
+                              cover={p.data.cover}
+                              year={p.data.year}
+                            />
+                            <CardLinks links={directLinks(p)} />
+                          </div>
                         ))}
                       </div>
                     )}
@@ -224,6 +189,7 @@ const BTN_SECONDARY =
               )}
             </div>
           </section>
+          </Fragment>
         );
       })
     }

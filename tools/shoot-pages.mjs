@@ -11,7 +11,7 @@
 //            dpr2     device scale factor 2                         jpeg      JPEG q82 instead of PNG
 //            nosave   measure only, no image
 //   e.g.  home-1440:/:1440:full+jpeg   home-390-code:/:390:mobile+dpr2+clip=#code   about-390:/about/:390:mobile+dpr2+full
-//         hero-strip:/:1440:clip=main..#products   (selectors must not contain ':' or '+', the spec separators)
+//         code-1440:/:1440:clip=#products..#code   (selectors must not contain ':' or '+', the spec separators)
 //
 // Prints one JSON line per shot: document.title, scrollWidth vs clientWidth (documentElement and
 // body), full scrollHeight, unclipped elements that stick out past the right edge, and every
