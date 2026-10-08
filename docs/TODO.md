@@ -60,6 +60,24 @@ Schema 加 Organization 与 Person 配对。边界：zosc 不是公司/lab，是
 **待用户看 GIF 定：白/橙；落字是否放慢。** 落位（页头 hover / 页面切换）等定稿后做。
 教训：子任务用固定端口 4391 并 pkill 关闭，误杀了另一会话的预览服务——**临时服务一律随机端口、按 PID 关闭**。
 
+### 2026-10-08 傍晚状态（额度耗尽前落盘）
+
+**logo 动效原型被用户否决**：原话「这个特效奇丑无比 太拉跨了」。概念（Z + oscillator）没被否，否的是执行。
+用户指示：**和隔壁 Codex 会话互相出方案、互相给意见，再浓缩给他**；参考 clip 上他放的四张「方案」图（ChatGPT 出的，
+他认为至少是"完整一体的"）：id `2etwe06e75`、`sg83cyprr5`、`8eewpshdr8`（第四张在 clip 列表更早处，需 `clip_list` 往前翻）。
+下一步第一个动作：先看这四张图，提炼它们"完整一体"的共性（整体构图 / 一个动作 / 不拼零件），再去找 Codex 会话交换意见，
+不要再让子任务凭 brief 直接出动效。
+
+**v3-F（品牌带作品集首页）已完成，在分支未合并**：`worktree-agent-a8999b851739cec3d` @ `fcda4bb`。
+内容：Hero 副标常量 + 两个直达按钮；产品条（MotionPilot / MotionRules 直尺图标 / Cubby）；博客块已按用户决定删除；
+Work 眉题；页脚生态链接并入小字行；Organization + Person schema `@id` 互引；about 与 README 加解码句。
+校验全过。clip：`66z591wx0z`（hero+产品条）`1748xjje5z`（页脚）`jgtnc9hwpe` / `0bxed734g9`（整页）。
+**用户尚未对 r2 截图表态**，不要擅自合并。F 的待拍板：Hero 副标措辞；MotionPilot 图标与 motionrules favicon 同源要不要另画；
+跨页锚点竞态（原有问题，产品条让偏差变大，`tools/probe-anchor-landing.mjs` 可测）建议随 v3 一起修；
+Organization/Person 同名同 sameAs 可能被 Google 合并，worksFor/affiliation 二留一。
+
+**还在等用户的**：MotionPilot 线上大卡 banner 的实际截图（他说不好看，要发图）。
+
 ## 待办
 
 ### sameAs 五条（2026-10-06 全部实测 200）
