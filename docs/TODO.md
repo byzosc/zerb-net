@@ -42,7 +42,7 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 | 暂不上 | 第二个 app（游戏，未发布） | 用户定 |
 | about 页 | **压缩不删**：约 120–180 词一段话 + 技能一行 + 认证一行 + 联系方式。拿掉逐条职责 bullet 与起止年份（2015/2019/2023） | 雇主名是实体锚点，短语级上下文保留；年份是暴露感主因且对 SEO 无用 |
 | 备份 | **改 about 之前**先快照到私有仓库 `zosc-career/docs/ABOUT_PUBLIC_SNAPSHOT_2026-10-08.html` + Markdown 并入 RESUME 素材 | 详细履历的正确归宿是 PDF 简历，不是公开站 |
-| AI 问答 | 长版履历走 Vercel 环境变量 `ZOSC_ABOUT_LONG`（`knowledge.ts` 优先读它，无则回退读页面短版） | 页面只露短版、Google 抓不到；有人问 AI 仍能答。仓库是公开的，长版不能进 Git |
+| AI 问答 | **不保留长版**：`knowledge.ts` 继续读页面短版，不加环境变量 | 压缩的动机是暴露感，AI 一问就背等于只防 Google 没防人；AI 职责是引到作品与联系方式，细节走邮件要 PDF；一份事实源零额外管线（用户 2026-10-08 定） |
 | 对外邮箱 | **统一 `hi@zosc.com`**（Footer / about / knowledge.ts CONTACT / chat.ts 文案 / AskAI） | 品牌域名、实体一致、Gmail 不露；zcbgood 只是转发目的地 |
 | 现任雇主 | **继续不出现在任何公开文本**（现状 0 次，v2 必须保持） | 隐私 + 求职中 |
 | Findly | 可公开关联，素材向 Findly 会话索取 | 用户 2026-10-08 确认；注意这是不可逆的公开关联 |
@@ -55,7 +55,7 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 - 无头 chromium 是 snap：读不到 `/tmp` 与隐藏目录，渲染/截图一律从 `~/render-tmp/` 起，用完即删
 
 ### 子任务拆分
-- **A 内容与隐私**：备份快照 → 压缩 about → 长版进 Vercel env → knowledge.ts 回退逻辑 → 邮箱统一
+- **A 内容与隐私**：备份快照 → 压缩 about → 确认 knowledge.ts 仍读短版且输出正常 → 邮箱统一
 - **B 产品库**：素材采集（商店页/站点截图/GitHub og 图）→ 10 个产品条目 → 详情页模板 + SoftwareApplication → /works 可筛
 - **C 首页与标题**：顺序 Code 优先 → Code 板块 featured 卡 → 标题 → 预览验收（A/B 合并后做）
 
