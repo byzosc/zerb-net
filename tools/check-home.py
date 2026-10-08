@@ -33,7 +33,7 @@ Checks (exit code 1 on any failure):
   6. og:image: product pages with a raster cover use that cover (absolute URL); SVG-cover
      products and all other pages keep the default logo
   7. about page: the intro (before the first <hr>) is three paragraphs, .lead on the first only
-  8. hero headline words follow ORDER (Code · Motion · Visual); motion.ts animates the lines by
+  8. hero headline words follow HERO_ORDER (Motion · Visual · Code — kept on purpose); motion.ts animates the lines by
      POSITION, so data-mask / data-blur / data-type stay on lines 1 / 2 / 3, while each dot's
      data-dot (its personality in global.css and motion.ts) follows its word
   9. every project page's "← Back to work" points at its first pillar's homepage section
@@ -56,6 +56,7 @@ SERVER_OUT = APP / ".vercel" / "output"
 ENTRIES = APP / "src" / "content" / "projects"
 SITE = "https://zosc.com"
 ORDER = ["code", "motion", "visual"]
+HERO_ORDER = ["motion", "visual", "code"]  # hero keeps the original cadence on purpose (user, 2026-10-08)
 FEATURED_ONLY = {"code"}
 MAX_CARDS = 5
 # User, 2026-10-08: Code shows 3 cards (symmetric grid); openwebui-cliproxy-gateway only on /works.
@@ -252,7 +253,7 @@ def main() -> int:
     lines = re.findall(r'<span class="hl"><span class="hl-t" (data-[a-z]+)>([^<]*)</span>'
                        r'<span class="hero-dot" data-dot="([a-z]+)"', hero)
     words, effects, dots = [w for _, w, _ in lines], [e for e, _, _ in lines], [d for _, _, d in lines]
-    check([w.lower() for w in words] == ORDER, f"words: {' / '.join(words)}", f"hero words {words}, expected {ORDER}")
+    check([w.lower() for w in words] == HERO_ORDER, f"words: {' / '.join(words)}", f"hero words {words}, expected {HERO_ORDER}")
     check(effects == HERO_EFFECTS, f"effects by line position: {effects} (mask wipe / blur / typewriter)",
           f"hero effect markers {effects}, expected {HERO_EFFECTS} — motion.ts binds them by line position")
     check(dots == [w.lower() for w in words], f"data-dot follows the word: {dots}", f"hero data-dot {dots} != words {words}")
