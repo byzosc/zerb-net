@@ -1,3 +1,13 @@
+## 2026-10-08 移除共享页尾 MakerLion
+
+- 对照线上现状，最底部实际为 MakerLion 文字链接；按用户要求删除整项，所有使用共享 Footer 的页面一致生效。
+  未删除媒体资源，其他页尾链接和品牌/动效保留。
+- `npm run build` 与 `tools/check-home.py` 通过，23 页页尾只剩 X/GitHub/Steam/Blog/MotionRules/Cubby/Email。
+- Chromium 桌面/手机页尾截图坏图 0、横向溢出 0；Hero 与真实点击导航/跨页锚点检查通过。
+- 移动菜单 toggle/Esc/背景/导航后关闭、Ask AI 跨页后打开与关闭、works 四种筛选通过；
+  headless 未提供 fine pointer，光标 hover/标签/复位以模拟 fine-pointer 条件检查。
+- clip 桌面 `5fbdt7pyxk`、手机 `7x3aqtysz0`，上传读回哈希一致。
+
 ## 2026-10-08 oscillator 工作暂停与原型归档
 
 - 用户明确要求「先不做这个动效了」。停止继续制作和接入；第二/第三稿及原 Claude 原型保留为归档。

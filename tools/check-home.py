@@ -50,7 +50,7 @@ only (the homepage has other sections too), and:
      "Details" link to the product page; no digits in hero / strip copy (no counts, ever)
  13. a "Work" label sits right before #code; the pillar sections themselves are untouched
  14. footer on every page: ONE row of small links — X · GitHub · Steam · Blog · MotionRules · Cubby ·
-     MakerLion · Email, all with the same classes (user: the sites are plain links, no emphasis;
+     Email, all with the same classes (user: the sites are plain links, no emphasis;
      an earlier bold row of site names was rejected); Blog exactly once; no other footer links
  15. JSON-LD: the homepage carries exactly Organization + Person + WebSite, tied by @id
      (founder / worksFor / affiliation / publisher); the logo is a real square file; on every
@@ -110,7 +110,7 @@ EXPECT_PRODUCTS = {  # in strip order: slug -> its direct actions (label, url)
 }
 ICON_MAX = 64 * 1024
 BLOG = "https://blog.zosc.com"
-# The footer's single row, in order (v3 take 2: MotionRules / Cubby / MakerLion added after Blog).
+# The footer's single row, in order (MakerLion removed at the user's request, 2026-10-08).
 EXPECT_FOOTER = [
     ("X", "https://x.com/byzosc"),
     ("GitHub", "https://github.com/byzosc"),
@@ -118,7 +118,6 @@ EXPECT_FOOTER = [
     ("Blog", f"{BLOG}/"),
     ("MotionRules", "https://motionrules.com/"),
     ("Cubby", "https://byzosc.github.io/findly-site/"),
-    ("MakerLion", "https://www.makerlion.com/"),
     ("Email", "mailto:hi@zosc.com"),
 ]
 ORG_ID, PERSON_ID, WEBSITE_ID = f"{SITE}/#organization", f"{SITE}/#person", f"{SITE}/#website"

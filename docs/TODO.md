@@ -35,7 +35,14 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 
 **当前指示优先于下方历史方案**：用户要求「先不做这个动效了」，停止继续制作/接入 oscillator 动效，
 保留三份独立原型作为归档，不再主动改稿。品牌首页已由另一会话合并上线（`5ea1709`，当前 main `faacce6`）；
-下方「F 未合并」是此前时点的记录。当前网站任务仅移除共享页尾的 MakerLion 条目。
+下方「F 未合并」是此前时点的记录。当前网站任务为移除共享页尾的 MakerLion 条目。
+
+### 2026-10-08 页尾 MakerLion 下架
+
+- 按用户要求移除 `Footer.astro` 中的 MakerLion 链接，其他页尾链接及原有资源保留。
+- 构建通过；现有 `tools/check-home.py` 的页尾期望同步更新，23 页共享页尾校验通过。
+- 桌面/手机页尾截图均无 MakerLion、坏图 0、横向溢出 0；clip `5fbdt7pyxk` / `7x3aqtysz0`。
+- oscillator 动效工作保持暂停，不为此改 logo、favicon 或动效。
 
 用户原话：「zosc 这种顶级域名…z 作为 logo，然后 osc 作为调音里面的时钟心脏做个特殊效果？…否则 zosc 确实没什么记忆点，就像是缩写拼凑一样」。
 
