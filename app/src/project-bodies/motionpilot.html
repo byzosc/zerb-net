@@ -1,0 +1,12 @@
+<p class="wp-block-paragraph">MotionPilot is an After Effects panel that puts a motion spec where the animation is actually made. A spec is a versioned JSON file holding a studio's easing curves and duration tiers, and MotionPilot treats a curve and a duration as one token — in a motion system, a curve without a duration is only half a rule. Select keyframes, pick a token, and it writes the easing and retimes the segment in one step.</p>
+<p class="wp-block-paragraph">It's built for design leads who keep a house motion spec, and the artists who follow it.</p>
+<h3 class="wp-block-heading">What it does</h3>
+<ul>
+<li><strong>Apply Spec</strong> — set easing and retime selected keyframes from one token. Works offline, with no account and no API key.</li>
+<li><strong>One spec, many artists</strong> — the spec loads from a URL, so publishing it once updates every artist's panel. One file can carry several targets, such as phone UI and head-mounted display profiles with different timing budgets.</li>
+<li><strong>Build from a prompt (optional)</strong> — describe what you want and MotionPilot creates native, editable layers and animation. The model never writes easing values: it names a curve from your spec, and the panel compiles that name into real bezier handles.</li>
+<li><strong>Bring your own AI</strong> — sign in with the OpenAI Codex CLI, use your own OpenAI or Google Gemini API key, or point it at a local endpoint such as Ollama. There is no hosted AI service.</li>
+<li><strong>Everything stays editable</strong> — native layers and keyframes; undo works, and nothing is baked frame by frame.</li>
+</ul>
+<figure class="wp-block-image size-large"><img loading="lazy" decoding="async" width="1360" height="800" src="/media/images/projects/motionpilot/spec-tab.jpg" alt="MotionPilot's Spec tab in After Effects, applying a curve token and a duration token to the selected keyframes"><figcaption class="wp-element-caption">The Spec tab: pick a curve and a duration, then apply both to the selected keyframes.</figcaption></figure>
+<p class="wp-block-paragraph">MotionPilot is the "build" step of <a href="/project/motionrules/">MotionRules</a>: MotionSpec defines the tokens, MotionPilot builds with them, and <a href="/project/zerb-cc-cd/">MotionSheet</a> hands off and audits the result. It's free on Adobe Exchange, developed and tested on Windows; macOS is not verified yet.</p>

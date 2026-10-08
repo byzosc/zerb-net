@@ -1,0 +1,11 @@
+<p class="wp-block-paragraph">Getting temperatures off an AMD-based Synology NAS is a maze of half-working paths. Glances in Docker reads the CPU but can't see the board temperature, the bundled <code>smartctl</code> is too old for JSON output and needs the <code>-d sat</code> trick, and AMD CPUs report as <code>Tctl</code> / <code>k10temp</code> rather than the labels most tutorials copy.</p>
+<p class="wp-block-paragraph">nas-monitoring picks the right source for each value, merges them into one tidy JSON endpoint and cross-checks every reading — built for an ESP32 / M5Dial desk display, and readable by anything that speaks HTTP.</p>
+<h3 class="wp-block-heading">What you get</h3>
+<ul>
+<li><strong>CPU</strong> from Glances (AMD <code>Tctl</code>), the <strong>system board</strong> from Synology's own <code>synowebapi</code> — the value DSM shows — and <strong>every disk</strong> from <code>smartctl</code> (SMART attribute 194).</li>
+<li><strong>Verified, not vibes</strong> — <code>verify.py</code> re-reads each value through a different path (raw sysfs, synowebapi, DSM Storage Manager) and compares.</li>
+<li><strong>Set and forget</strong> — a small collector daemon keeps the JSON fresh, and the web layer comes back on its own after a reboot.</li>
+<li><strong>A live dashboard</strong> served from the same nginx root, colouring each reading by zone and flagging a stale feed.</li>
+<li><strong>Light</strong> — shell, Python 3 and two small containers; no database, no agent.</li>
+</ul>
+<p class="wp-block-paragraph">The endpoints are unauthenticated and LAN-only by design, so they should stay inside your network. The same one-JSON contract is meant to grow into a physical desk dial for the whole NAS. MIT-licensed.</p>
