@@ -26,6 +26,11 @@ Checks (exit code 1 on any failure):
   6. --schema (with --dist): every property in those blocks (and nested Person / Offer) exists in
      the schema.org vocabulary and its domain includes the type or a supertype — the same
      vocabulary validator.schema.org uses, so a misspelt field name fails here, not in Search Console
+
+v3 subtask F (2026-10-08): with --dist, a product's SoftwareApplication names the Person as author
+and the zosc Organization as publisher, both by the @id of a node that Layout.astro defines on the
+same page (Organization / Person blocks present with those @ids); --schema also validates those
+Organization / Person / WebSite blocks.
 """
 from __future__ import annotations
 
@@ -45,6 +50,7 @@ ENTRIES = APP / "src" / "content" / "projects"
 BODIES = APP / "src" / "project-bodies"
 DIST = APP / "dist" / "client" / "project"
 UA = "Mozilla/5.0 (X11; Linux) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36"
+PERSON_ID, ORG_ID = "https://zosc.com/#person", "https://zosc.com/#organization"  # app/src/lib/entity.ts
 
 failures: list[str] = []
 
@@ -124,6 +130,14 @@ def schema_problems(obj: dict, vocab: dict, path: str) -> list[str]:
     return bad
 
 
+def entity_refs_ok(app: dict, blocks: list[dict]) -> bool:
+    """author = the Person, publisher = the Organization, each by an @id defined on the same page."""
+    defined = {b.get("@type"): b.get("@id") for b in blocks}
+    author, publisher = app.get("author") or {}, app.get("publisher") or {}
+    return (author.get("@type") == "Person" and author.get("@id") == PERSON_ID == defined.get("Person")
+            and publisher.get("@type") == "Organization" and publisher.get("@id") == ORG_ID == defined.get("Organization"))
+
+
 def main() -> int:
     online, dist, schema = "--online" in sys.argv, "--dist" in sys.argv, "--schema" in sys.argv
     vocab = {}
@@ -189,12 +203,17 @@ def main() -> int:
                     fail(f"{slug}: JSON-LD url {apps[0].get('url')} != canonical")
                 elif free != bool(offer and offer.get("price") == "0"):  # offers only when app.free
                     fail(f"{slug}: app.free={free} but JSON-LD offers = {offer}")
+                elif not entity_refs_ok(apps[0], blocks):
+                    fail(f"{slug}: author / publisher {apps[0].get('author')} / {apps[0].get('publisher')} "
+                         f"do not point at the page's Person {PERSON_ID} / Organization {ORG_ID}")
                 else:
                     print(f"   ok  {slug}: {apps[0].get('applicationCategory')}, url == canonical"
-                          + (", offers price 0" if offer else ", no offers"))
+                          + (", offers price 0" if offer else ", no offers")
+                          + ", author → #person, publisher → #organization")
                 if schema and apps:
-                    for problem in schema_problems(apps[0], vocab, slug):
-                        fail(problem)
+                    for b in blocks:  # the SoftwareApplication and Layout's Organization / Person / WebSite
+                        for problem in schema_problems(b, vocab, f"{slug}:{b.get('@type')}"):
+                            fail(problem)
             elif apps:
                 fail(f"{slug}: is not a product but has SoftwareApplication JSON-LD")
         if schema:

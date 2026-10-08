@@ -2,6 +2,8 @@
 import Layout from '../../layouts/Layout.astro';
 import Footer from '../../components/Footer.astro';
 import aboutHtml from '../../migrated/about.html?raw';
+// v3 (2026-10-08): the line under the title decodes the name. It sits outside the article on
+// purpose: the about text — and the AI prompt built from it — stay word for word as they were.
 ---
 
 <Layout
@@ -13,6 +15,7 @@ import aboutHtml from '../../migrated/about.html?raw';
     <section class="px-6 md:px-10">
       <div class="mx-auto max-w-3xl">
         <h1 class="font-display text-6xl font-black md:text-7xl">About</h1>
+        <p class="mt-6 text-sm text-mist">zosc — z · oscillator. The clock behind the motion.</p>
         <article class="entry-content mt-12 pb-24" set:html={aboutHtml} />
       </div>
     </section>

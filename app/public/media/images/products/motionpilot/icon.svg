@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="MotionPilot">
+  <defs>
+    <linearGradient id="g" x1="10" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f97316"/>
+      <stop offset="1" stop-color="#c2410c"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#g)"/>
+  <g fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 46 25 18M49 18 39 46" stroke="#ffd9c2"/>
+    <path d="M15 46C25 18 39 46 49 18" stroke="#fff"/>
+    <circle cx="15" cy="46" r="4.5" fill="#fff" stroke="none"/>
+    <circle cx="49" cy="18" r="4.5" fill="#fff" stroke="none"/>
+    <circle cx="25" cy="18" r="3.25" fill="#ffd9c2" stroke="none"/>
+    <circle cx="39" cy="46" r="3.25" fill="#ffd9c2" stroke="none"/>
+  </g>
+</svg>
