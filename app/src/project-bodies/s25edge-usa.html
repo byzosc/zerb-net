@@ -1,0 +1,9 @@
+<p class="wp-block-paragraph">A recovery kit for the US Galaxy S25 Edge (SM-S937U / SM-S937U1). It re-applies the Samsung Service Mode settings this phone needs for China Mobile 5G — settings that a system update including the CSC can reset, which would otherwise mean walking through hidden engineering menus by hand after every such update. Here it's a double-click: <code>check-device.cmd</code>, <code>run-recovery.cmd</code>, then <code>verify-5g.cmd</code>.</p>
+<p class="wp-block-paragraph">It doesn't root the phone, unlock the bootloader, flash firmware, change the CSC or factory-reset anything. Instead it drives Samsung's own Service Mode over ADB: it opens the menu through the Samsung dialer, clicks through by matching on-screen menu text with UI Automator — never fixed coordinates — and stops the moment it can't confirm the page it's on. Verified on a real device, where the radio state went from <code>LTE,LTE</code> to <code>NR_SA,LTE</code>.</p>
+<h3 class="wp-block-heading">Safety boundaries</h3>
+<ul>
+<li>Runs only on SM-S937U/U1; any other model is refused.</li>
+<li>Never stores the IMEI, phone number, IMSI, ICCID or cell location; device logs are redacted.</li>
+<li>Leaves optional settings such as mmWave, CA combos, DSS and NRDC alone — and software can't add bands the hardware doesn't support.</li>
+</ul>
+<p class="wp-block-paragraph">Why not a single <code>adb settings</code> command? Those switches live in the modem's engineering configuration, not in Android's public Settings database, so there is no reliable public key to write — the actual change is still made by Samsung's Service Mode. MIT-licensed.</p>

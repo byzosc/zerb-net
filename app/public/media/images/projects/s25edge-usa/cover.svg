@@ -1,0 +1,60 @@
+<svg width="950" height="320" viewBox="0 0 950 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="s25edge-usa — re-applies the Service Mode 5G settings on a US Galaxy S25 Edge over ADB after updates">
+  <!-- Same visual language as zerb-cc-cd/cover.svg (MotionSheet). Facts from the repo README only:
+       three .cmd entry points, model check SM-S937U/U1, verified LTE,LTE -> NR_SA,LTE, no root / no flashing. -->
+  <defs>
+    <linearGradient id="s25-bg" x1="0" y1="0" x2="950" y2="320" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0e0e11"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <radialGradient id="s25-glow" cx="0.74" cy="0.2" r="0.7">
+      <stop stop-color="#e7503a" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#e7503a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="s25-grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0V34" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="950" height="320" fill="url(#s25-bg)"/>
+  <rect width="950" height="320" fill="url(#s25-grid)"/>
+  <rect width="950" height="320" fill="url(#s25-glow)"/>
+
+  <!-- Left: wordmark + what it is -->
+  <text x="56" y="92" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" letter-spacing="5" fill="#e7503a">CODE · ANDROID · ADB</text>
+
+  <text x="54" y="172" font-family="Montserrat, 'Helvetica Neue', sans-serif" font-size="54" font-weight="800" letter-spacing="-1.5" fill="#f4f3ef">s25edge-usa<tspan fill="#e7503a">.</tspan></text>
+
+  <text x="57" y="210" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#a1a1aa">Galaxy S25 Edge · SM-S937U/U1</text>
+  <text x="57" y="231" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#a1a1aa">restore 5G after system / CSC updates</text>
+
+  <text x="56" y="276" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" letter-spacing="1" fill="#ff6f59">github.com/byzosc/s25edge-usa ↗</text>
+
+  <!-- Right: the three double-click entry points -->
+  <g>
+    <rect x="486" y="48" width="408" height="224" rx="14" fill="#141417" stroke="#26262b" stroke-width="1"/>
+
+    <circle cx="508" cy="72" r="4" fill="#e7503a"/>
+    <circle cx="524" cy="72" r="4" fill="#3a3a42"/>
+    <circle cx="540" cy="72" r="4" fill="#3a3a42"/>
+    <text x="562" y="76" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1.5" fill="#71717a">RECOVERY · ADB</text>
+    <line x1="486" y1="90" x2="894" y2="90" stroke="#26262b" stroke-width="1"/>
+
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">
+      <text x="510" y="124" fill="#d4d4d8"><tspan fill="#e7503a">›</tspan> check-device.cmd</text>
+      <text x="870" y="124" text-anchor="end" fill="#ff6f59">model ✓</text>
+      <text x="510" y="156" fill="#d4d4d8"><tspan fill="#e7503a">›</tspan> run-recovery.cmd</text>
+      <text x="870" y="156" text-anchor="end" fill="#a1a1aa">service mode</text>
+      <text x="510" y="188" fill="#d4d4d8"><tspan fill="#e7503a">›</tspan> verify-5g.cmd</text>
+      <text x="870" y="188" text-anchor="end" fill="#a1a1aa">NR status</text>
+    </g>
+    <line x1="510" y1="206" x2="870" y2="206" stroke="#26262b" stroke-width="1"/>
+
+    <!-- verified result from the README -->
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+      <text x="510" y="237" font-size="18" fill="#71717a">LTE,LTE</text>
+      <text x="600" y="237" font-size="18" fill="#e7503a">→</text>
+      <text x="628" y="237" font-size="18" font-weight="700" fill="#ff6f59">NR_SA,LTE</text>
+      <text x="510" y="259" font-size="11" letter-spacing="1" fill="#71717a">no root · no flashing · no factory reset</text>
+    </g>
+  </g>
+</svg>

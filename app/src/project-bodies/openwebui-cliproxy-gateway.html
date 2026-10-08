@@ -1,0 +1,10 @@
+<p class="wp-block-paragraph">A self-hosted kit that turns the AI subscriptions you already pay for — Claude, Codex (GPT) and Gemini — into one private, OpenAI-compatible gateway with a multi-model chat UI. A single <code>docker compose</code> starts the whole stack, on your own machine and with your own credentials.</p>
+<p class="wp-block-paragraph">It's for people with an always-on box — a NAS, a VPS or a side router — who want every model side by side in one place, from a browser, a phone, or any OpenAI-compatible client.</p>
+<h3 class="wp-block-heading">How it fits together</h3>
+<ul>
+<li><strong>CLIProxyAPI</strong> exposes your subscription logins as a single OpenAI-compatible <code>/v1</code> endpoint.</li>
+<li><strong>Open WebUI</strong> is the front end: models side by side, one merged answer (MoA), chat history kept on your machine, and a phone-friendly PWA.</li>
+<li><strong>mihomo</strong> sends only the upstream AI calls that need it through an outbound proxy; the rest go direct.</li>
+<li>An optional <strong>Cloudflare tunnel</strong> adds a public entry point behind an email allowlist.</li>
+</ul>
+<p class="wp-block-paragraph">What it is not: it ships no credentials and isn't a reseller of anyone else's quota — you connect your own subscriptions. The README is upfront that proxying subscription credentials may break a provider's terms, so it's meant for personal, self-hosted use. Start, stop and status scripts, a deployment and troubleshooting guide and a credentials guide are included; the kit's own code is MIT-licensed.</p>

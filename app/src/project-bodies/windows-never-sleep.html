@@ -1,0 +1,10 @@
+<p class="wp-block-paragraph">A tiny open-source Windows utility that keeps a PC awake and stops it from locking itself when idle — with exactly two buttons. <strong>Install.exe</strong> installs it, starts it right away and turns on auto-start at sign-in; <strong>Uninstall.exe</strong> stops it, removes the auto-start, restores the previous sleep timeout and uninstalls it. Pressing <kbd>Win</kbd> + <kbd>L</kbd> still locks the screen, and manual sleep, shutdown and the power button keep working.</p>
+<h3 class="wp-block-heading">How it works</h3>
+<ul>
+<li>Uses native Windows power requests to prevent idle sleep.</li>
+<li>Sets the active power plan's AC/DC idle sleep timeout to <em>Never</em>, and remembers the previous values so uninstalling restores them.</li>
+<li>Sends a non-text <code>F15</code> key pulse after a stretch of inactivity, so an idle-lock policy doesn't trigger.</li>
+<li>Installs per user under <code>%LOCALAPPDATA%</code>; administrator rights aren't required in the normal case.</li>
+</ul>
+<p class="wp-block-paragraph">One side effect worth knowing: the F15 pulse also resets Windows' display-off timer, so if you need a dark screen while unattended GUI automation keeps running, switch the monitor off with its own power button.</p>
+<p class="wp-block-paragraph">Download the ZIP from GitHub Releases, extract it and double-click <code>Install.exe</code>; it can also be removed from Windows Settings → Apps → Installed apps. Written in C# and MIT-licensed.</p>
