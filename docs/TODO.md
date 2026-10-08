@@ -45,7 +45,7 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 | AI 问答 | **不保留长版**：`knowledge.ts` 继续读页面短版，不加环境变量 | 压缩的动机是暴露感，AI 一问就背等于只防 Google 没防人；AI 职责是引到作品与联系方式，细节走邮件要 PDF；一份事实源零额外管线（用户 2026-10-08 定） |
 | 对外邮箱 | **统一 `hi@zosc.com`**（Footer / about / knowledge.ts CONTACT / chat.ts 文案 / AskAI） | 品牌域名、实体一致、Gmail 不露；zcbgood 只是转发目的地 |
 | 现任雇主 | **继续不出现在任何公开文本**（现状 0 次，v2 必须保持） | 隐私 + 求职中 |
-| Findly | 可公开关联，素材向 Findly 会话索取 | 用户 2026-10-08 确认；注意这是不可逆的公开关联 |
+| Findly → **Cubby** | 可公开关联，素材向 Findly 会话索取。**公开名 Cubby（英）/ 知物（中），Findly 只是内部代号**；App Store 线上为 1.0「Cubby — where did I put it」，改名版未放出，**页面不写死商店标题/版本** | 用户 2026-10-08 确认；Findly 会话 10-08 补充；注意这是不可逆的公开关联 |
 | 测试方式 | 分支 `v2` + Vercel 预览部署（预览默认 `X-Robots-Tag: noindex`，第一次预览实测确认） | 不碰 main，不在生产站塞测试路由；定稿合并一次 |
 
 ### 硬约束（所有子任务）
