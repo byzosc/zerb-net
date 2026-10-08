@@ -1,3 +1,27 @@
+## 2026-10-08 公开仓库改名 zerb-net → zosc.com
+
+```
+github.com/byzosc/zerb-net   → 301 → github.com/byzosc/zosc.com   （旧链接不会死）
+本机 git remote              → git@github.com:byzosc/zosc.com.git
+Vercel 项目 net-website      按 repoId 1262948974 关联，改名不影响部署
+本机目录 /data/Projects/zerb-net   **不改**（见下）
+```
+
+**为什么改这一个**：它是唯一公开、被 Google 索引的带 `zerb` 的仓库，其标题字面是
+`GitHub - byzosc/zerb-net: zosc's personal portfolio…` —— 描述已是 zosc，但仓库名把 `zerb`
+顶在 URL 和 title 最前。GitHub 仓库页权重高，这是少数仍在给旧词投票的位置。
+改后 `zosc` 在 URL 与标题中各出现两次。
+
+**为什么其余不改**（用户判据：只改爬虫抓得到的）：
+```
+zerb-clip / zerb-hub          PRIVATE，匿名 404，爬虫看不到 → 零收益
+/data/Projects/zerb-net       零 SEO，但三处 CLAUDE.md/AGENTS.md 写死该路径，
+                              各会话工作目录、tmux 窗口全要跟着动 → 牵扯大收益零
+clip.zerb.net                 自用中转服务，不对外、本就不该被索引
+```
+
+**名字选 `zosc.com` 而非 `zosc-net`**：后者还拖着 zerb.net 时代的 `-net`；前者整串即品牌词+域名。
+
 ## 2026-10-08 搜索结果里的 Astro 图标：根因与解法
 
 **不是「缓存还没更新」，是 Google 第一次就抓到了错的，然后按 URL 一直存着。**
