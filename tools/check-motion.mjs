@@ -1,7 +1,8 @@
 // Motion-ON checks of the built site through headless chromium (CDP). v2 subtask E, 2026-10-08.
 //
 //   python3 -m http.server 4329 --bind 127.0.0.1 --directory app/dist/client &   # after `npm run build`
-//   node tools/check-motion.mjs [--base http://127.0.0.1:4329] [--out ~/render-tmp/motion]
+//   node tools/check-motion.mjs [--base http://127.0.0.1:4329] [--out ~/render-tmp/motion] \
+//        [--profile ~/render-tmp/chrome-profile-motion]
 //
 // tools/shoot-pages.mjs emulates prefers-reduced-motion, so its images show layout only. This one
 // does NOT: motion.ts runs for real (hero intro, Lenis, the cross-page #hash landing). Exit 1 on
@@ -12,6 +13,8 @@
 //      appear one by one), starting in that order; <html> gets .intro-ready before the 3.5 s
 //      .hero-fallback timer; every line ends opaque, unblurred, unmasked, with its word. Three
 //      frames mid-intro + the final state are saved as hero-1..3.png / hero-final.png.
+//      v3-F (2026-10-08): the hero buttons ([data-hero-cta]) fade in after the headline, opacity
+//      only — while visible they never move (AGENTS.md: a link that moves can lose the click).
 //   2. Anchors (real mouse clicks): the desktop header nav Code / Motion / Visual on the homepage
 //      (same page: the section must sit at 96 +- 24 px, html's scroll-padding-top) and "← Back to
 //      work" from one project page per pillar (cross-page: URL hash + that section at the top of
@@ -20,6 +23,8 @@
 //
 // Same constraints as shoot-pages.mjs: chromium is a snap (no /tmp, no dot-directories), so its
 // profile lives in ~/render-tmp/chrome-profile-motion (deleted at exit); node writes the images.
+// --profile (v3-F, 2026-10-08): the profile is deleted at exit, so a run that shares the default
+// path with another session would delete that session's live profile — give each run its own.
 
 import { spawn } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -35,7 +40,7 @@ const base = opt('--base', 'http://127.0.0.1:4329');
 const out = opt('--out', join(homedir(), 'render-tmp', 'motion'));
 mkdirSync(out, { recursive: true });
 
-const profile = join(homedir(), 'render-tmp', 'chrome-profile-motion');
+const profile = opt('--profile', join(homedir(), 'render-tmp', 'chrome-profile-motion'));
 const chrome = spawn('chromium', [
   '--headless=new', '--no-sandbox', '--disable-gpu', '--hide-scrollbars', '--no-first-run',
   '--no-default-browser-check', `--user-data-dir=${profile}`, '--remote-debugging-port=0', 'about:blank',
@@ -78,6 +83,7 @@ const once = (method, sessionId, ms = 30000) => new Promise((res, rej) => {
   setTimeout(() => rej(new Error(`timeout waiting for ${method}`)), ms);
 });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const HERO_WORDS = ['Motion', 'Visual', 'Code']; // line 1, 2, 3 (user decision 2026-10-08, see below)
 
 const { targetId } = await send('Target.createTarget', { url: 'about:blank' });
 const { sessionId: s } = await send('Target.attachToTarget', { targetId, flatten: true });
@@ -126,6 +132,12 @@ const SAMPLER = `(() => {
           dotOp: d ? +getComputedStyle(d).opacity : null,
         };
       }),
+      cta: (() => {
+        const c = document.querySelector('[data-hero-cta]'), a = c && c.querySelector('a');
+        if (!a) return null;
+        const r = a.getBoundingClientRect();
+        return { op: +getComputedStyle(c).opacity, x: Math.round(r.left * 10) / 10, y: Math.round((r.top + scrollY) * 10) / 10 };
+      })(),
     });
     if (performance.now() < 4500) requestAnimationFrame(sample);
   };
@@ -166,12 +178,15 @@ try {
   const last = trace[trace.length - 1].lines;
   const during = trace.filter((x) => x.t >= start && !x.ready);
   const rel = (x) => (x ? x.t - start : null);
-  check(last.map((l) => l.text).join(' / ') === 'Code / Motion / Visual', `words: ${last.map((l) => l.text).join(' / ')}`,
-    `hero words ${last.map((l) => l.text).join(' / ')}`);
+  // Hero words = Motion / Visual / Code: the user reverted the hero to its original cadence the same
+  // day (a3d7400, 2026-10-08) while the sections stay Code-first; this line still expected the v2-E
+  // order and failed on an unchanged tree. Same order as HERO_ORDER in tools/check-home.py.
+  check(last.map((l) => l.text).join(' / ') === HERO_WORDS.join(' / '), `words: ${last.map((l) => l.text).join(' / ')}`,
+    `hero words ${last.map((l) => l.text).join(' / ')}, expected ${HERO_WORDS.join(' / ')}`);
   check(last.map((l) => l.fx).join() === 'mask,blur,type', 'effect markers by line: mask, blur, type',
     `effect markers ${last.map((l) => l.fx)}`);
-  check(last.map((l) => l.dot).join() === 'code,motion,visual', 'dots follow the words: code, motion, visual',
-    `dots ${last.map((l) => l.dot)}`);
+  check(last.map((l) => l.dot).join() === HERO_WORDS.map((w) => w.toLowerCase()).join(),
+    `dots follow the words: ${last.map((l) => l.dot).join(', ')}`, `dots ${last.map((l) => l.dot)}`);
   const maskMid = during.find((x) => /^([1-9]\d?(\.\d+)?)%$/.test(x.lines[0].mx) && x.lines[0].mask !== 'none');
   const blurMid = during.find((x) => { const b = +(x.lines[1].filter.match(/blur\(([\d.]+)px\)/) || [])[1]; return b > 0.5 && b < 17.5; });
   const shownSeq = during.map((x) => x.lines[2].shown);
@@ -197,6 +212,14 @@ try {
     && last[2].shown === last[2].chars;
   check(settled, 'final: all three lines opaque, unblurred, unmasked; all chars and dots visible',
     `final state ${JSON.stringify(last)}`);
+  const ctaSeen = trace.filter((x) => x.cta && x.cta.op > 0.01);
+  const ctaPos = new Set(ctaSeen.map((x) => `${x.cta.x},${x.cta.y}`));
+  const ctaMid = ctaSeen.find((x) => x.cta.op < 0.99);
+  const ctaLast = trace[trace.length - 1].cta;
+  check(ctaSeen.length > 0 && !!ctaMid && ctaLast?.op === 1 && ctaPos.size === 1 && rel(ctaSeen[0]) > (tType ?? 0),
+    `hero buttons: fade in from ${rel(ctaSeen[0])} ms (after line 3), opacity ${ctaMid?.cta.op.toFixed(2)} mid-way, end 1; `
+      + `position fixed at ${[...ctaPos][0]} across ${ctaSeen.length} visible frames`,
+    `hero buttons: ${ctaSeen.length} visible frames, mid ${!!ctaMid}, end ${ctaLast?.op}, positions ${[...ctaPos].join(' | ')}`);
 
   console.log('2. anchors (real clicks, motion on)');
   const landed = (id) => evaluate(`(() => {

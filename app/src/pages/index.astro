@@ -41,6 +41,67 @@ const cardsFor = (pillar: (typeof pillars)[number]) => {
 // motion.ts animates the three .hl lines by POSITION: line 1 mask wipe ([data-mask] also carries
 // the CSS mask), line 2 blur, line 3 typewriter. Each dot's personality follows its word via
 // data-dot (global.css; motion.ts repels the "motion" dot).
+
+// ── v3 (2026-10-08): brand first, portfolio second ──────────────────────────────────────────────
+// The hero line says what zosc makes and two buttons go straight to the products; a product strip
+// sits right under the hero; the three pillar sections follow under a small "Work" label. The
+// headline and its intro are untouched. (A "latest from the blog" block was planned too and dropped
+// by the user the same day — no gain for the page; the blog stays one link in the header / footer.)
+
+// The line under the headline. One place to change it: the user approved this wording for now and
+// may still replace it.
+const HERO_TAGLINE = 'Design that runs. Code that moves. Things that ship.';
+
+// Every button below is a direct way to USE a product (its store, or the tool itself), not a case
+// study; the small "Details →" link goes to the product page. Each URL must also be one of the
+// entry's `links` (checked below), so the homepage can't drift from the product pages.
+// Icons: public/media/images/products/<slug>/ (sources in docs/v3/F-REPORT.md).
+const PRODUCTS = [
+  {
+    slug: 'motionpilot',
+    icon: '/media/images/products/motionpilot/icon.svg',
+    line: 'An After Effects panel that applies your motion spec to keyframes.',
+    actions: [{ label: 'Get on Adobe Exchange', url: 'https://exchange.adobe.com/apps/cc/205857' }],
+  },
+  {
+    slug: 'motionrules',
+    icon: '/media/images/products/motionrules/icon.svg',
+    line: 'Motion design tools that share one motion spec, from definition to Lottie handoff.',
+    actions: [{ label: 'Open motionrules.com', url: 'https://motionrules.com/' }],
+  },
+  {
+    slug: 'cubby',
+    icon: '/media/images/products/cubby/icon.png',
+    line: 'Remember where you put things: note it in one line, find it later.',
+    actions: [
+      { label: 'App Store', url: 'https://apps.apple.com/app/id6804703410' },
+      { label: 'Google Play', url: 'https://play.google.com/store/apps/details?id=com.zerblion.findly' },
+    ],
+  },
+];
+const HERO_ACTIONS = [
+  { label: 'Get MotionPilot', url: 'https://exchange.adobe.com/apps/cc/205857' },
+  { label: 'Open MotionRules', url: 'https://motionrules.com/' },
+];
+const products = PRODUCTS.map((p) => {
+  const entry = all.find((e) => e.id === p.slug);
+  if (!entry) throw new Error(`index.astro product strip: no live project entry "${p.slug}"`);
+  const known = new Set((entry.data.links ?? []).map((l) => l.url));
+  const stray = p.actions.filter((a) => !known.has(a.url));
+  if (stray.length) throw new Error(`index.astro: ${stray.map((a) => a.url).join(', ')} not in ${p.slug}.md links`);
+  return { ...p, name: entry.data.title };
+});
+// The hero buttons are shortcuts to product actions above, which are checked against the entries.
+const orphan = HERO_ACTIONS.filter((a) => !PRODUCTS.some((p) => p.actions.some((b) => b.url === a.url)));
+if (orphan.length) throw new Error(`index.astro: hero action ${orphan.map((a) => a.url).join(', ')} is not a product action`);
+
+// Same pill buttons as the product pages (project/[slug].astro); the first one is the accent one.
+// Colour transitions only — nothing clickable moves (AGENTS.md: a moving target can swallow the
+// click).
+const BTN_PRIMARY =
+  'inline-flex items-center gap-2 rounded-full border border-accent px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-accent transition-colors hover:bg-accent hover:text-ink';
+const BTN_SECONDARY =
+  'inline-flex items-center gap-2 rounded-full border border-line px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:text-accent';
 ---
 
 <Layout>
@@ -54,9 +115,16 @@ const cardsFor = (pillar: (typeof pillars)[number]) => {
           <span class="hl"><span class="hl-t" data-blur>Visual</span><span class="hero-dot" data-dot="visual" aria-hidden="true"><span class="hero-dot-m"><i class="hero-dot-i"></i></span></span></span><br />
           <span class="hl"><span class="hl-t" data-type>Code</span><span class="hero-dot" data-dot="code" aria-hidden="true"><span class="hero-dot-m"><i class="hero-dot-i"></i></span></span></span>
         </h1>
-        <p class="mt-8 max-w-xl text-lg text-mist">
-          zosc is a motion designer, visual artist & creative developer. Ask the AI anything.
-        </p>
+        <p class="mt-8 max-w-xl text-lg text-mist">{HERO_TAGLINE}</p>
+        <div data-hero-cta class="mt-8 flex flex-wrap gap-3">
+          {
+            HERO_ACTIONS.map((a, i) => (
+              <a href={a.url} target="_blank" rel="noopener noreferrer" data-cursor="Open" class={i === 0 ? BTN_PRIMARY : BTN_SECONDARY}>
+                {a.label} <span aria-hidden="true">→</span>
+              </a>
+            ))
+          }
+        </div>
       </div>
       <div class="absolute bottom-8 left-6 flex items-center gap-3 text-xs uppercase tracking-[0.25em] text-mist md:left-10">
         <span class="relative block h-10 w-px overflow-hidden bg-line">
@@ -65,6 +133,46 @@ const cardsFor = (pillar: (typeof pillars)[number]) => {
         Scroll
       </div>
     </section>
+
+    <!-- PRODUCTS -->
+    <section id="products" class="pt-10">
+      {/* label over a full-width rule — the same shape as "Work" over the #code border below */}
+      <div class="px-6 pb-6 md:px-10">
+        <p class="mx-auto max-w-[1400px] text-xs uppercase tracking-widest text-mist">Products</p>
+      </div>
+      <div class="border-t border-line px-6 pb-24 pt-10 md:px-10 md:pb-32">
+        <ul class="mx-auto grid max-w-[1400px] grid-cols-1 gap-6 lg:grid-cols-3">
+          {
+            products.map((p) => (
+              <li class="flex flex-col rounded-2xl border border-line bg-ink-soft p-6 md:p-8">
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-4">
+                    <img src={p.icon} alt="" width="48" height="48" loading="lazy" decoding="async" class="h-12 w-12 shrink-0" />
+                    <h2 class="font-display text-2xl font-black md:text-3xl">{p.name}</h2>
+                  </div>
+                  <a href={`/project/${p.slug}/`} data-cursor="View" class="shrink-0 py-2 text-sm text-mist transition-colors hover:text-paper">
+                    Details →
+                  </a>
+                </div>
+                <p class="mt-5 text-mist">{p.line}</p>
+                <div class="mt-auto flex flex-wrap gap-3 pt-8">
+                  {p.actions.map((a, i) => (
+                    <a href={a.url} target="_blank" rel="noopener noreferrer" data-cursor="Open" class={i === 0 ? BTN_PRIMARY : BTN_SECONDARY}>
+                      {a.label} <span aria-hidden="true">→</span>
+                    </a>
+                  ))}
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <div id="work" class="px-6 pb-6 md:px-10">
+      <p class="mx-auto max-w-[1400px] text-xs uppercase tracking-widest text-mist">Work</p>
+    </div>
 
     <!-- PILLAR SECTIONS -->
     {

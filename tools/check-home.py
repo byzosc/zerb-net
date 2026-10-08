@@ -2,11 +2,12 @@
 """Check the built site for the v2 homepage order, titles, og:image and reference integrity.
 
     cd app && npm run build && cd ..
-    python3 tools/check-home.py [--code slug,slug,...]
+    python3 tools/check-home.py [--code slug,slug,...] [--online]
 
---code   the exact Code-section slugs expected on the homepage, in order. Default: EXPECT_CODE
-         below (the user's decision); the content entries (featured: true, pillar code, by
-         order) must produce the same list.
+--code            the exact Code-section slugs expected on the homepage, in order. Default:
+                  EXPECT_CODE below (the user's decision); the content entries (featured: true,
+                  pillar code, by order) must produce the same list.
+--online          + every external link on the homepage answers 200
 
 Written for v2 subtask C (2026-10-08): Code leads the homepage (Code · Motion · Visual), the
 Code section shows only `featured` products, and the title follows the same order. Any change
@@ -37,13 +38,37 @@ Checks (exit code 1 on any failure):
      POSITION, so data-mask / data-blur / data-type stay on lines 1 / 2 / 3, while each dot's
      data-dot (its personality in global.css and motion.ts) follows its word
   9. every project page's "← Back to work" points at its first pillar's homepage section
+
+v3 subtask F (2026-10-08) — brand first, portfolio second. Check 1 now looks at the pillar sections
+only (the homepage has other sections too), and:
+ 10. layout: hero → #products → "Work" label → #code #motion #visual → AI Ask, and nothing else
+     (a "latest from the blog" block was planned and dropped by the user the same day)
+ 11. hero line = HERO_TAGLINE in index.astro (one constant, still open for the user to change) and
+     the old job-title line is gone; the two hero buttons; their fade is opacity only
+ 12. product strip: MotionPilot · MotionRules · Cubby — icon (file present, <= 64 KB), name = the
+     entry's title, a one-liner, the direct actions (each also one of the entry's `links`) and a
+     "Details" link to the product page; no digits in hero / strip copy (no counts, ever)
+ 13. a "Work" label sits right before #code; the pillar sections themselves are untouched
+ 14. footer on every page: ONE row of small links — X · GitHub · Steam · Blog · MotionRules · Cubby ·
+     MakerLion · Email, all with the same classes (user: the sites are plain links, no emphasis;
+     an earlier bold row of site names was rejected); Blog exactly once; no other footer links
+ 15. JSON-LD: the homepage carries exactly Organization + Person + WebSite, tied by @id
+     (founder / worksFor / affiliation / publisher); the logo is a real square file; on every
+     built page every @id reference resolves to a node defined on that page
+ Nothing clickable in the new blocks may carry a translate / scale / rotate / animate class.
+ 16. --online, see above
 """
 from __future__ import annotations
 
 from html import unescape
+import json
 import re
+import struct
 import sys
+import time
+import urllib.error
 import urllib.parse
+import urllib.request
 from pathlib import Path
 
 import yaml
@@ -68,6 +93,38 @@ OLD_TITLE_ORDER = "Motion · Visual · Code"
 OLD_NAMES = ("zerb-logo", "zerb-favicon", "zerb.cc.cd")
 HERO_EFFECTS = ["data-mask", "data-blur", "data-type"]  # motion.ts: line 1, 2, 3 — by position
 DEFAULT_OG = f"{SITE}/media/images/common/brand/cropped-logo_high2.png"
+
+# v3-F (2026-10-08) — the brand-first homepage.
+OLD_HERO_LINE = "zosc is a motion designer, visual artist & creative developer. Ask the AI anything."
+EXPECT_HERO_ACTIONS = [
+    ("Get MotionPilot", "https://exchange.adobe.com/apps/cc/205857"),
+    ("Open MotionRules", "https://motionrules.com/"),
+]
+EXPECT_PRODUCTS = {  # in strip order: slug -> its direct actions (label, url)
+    "motionpilot": [("Get on Adobe Exchange", "https://exchange.adobe.com/apps/cc/205857")],
+    "motionrules": [("Open motionrules.com", "https://motionrules.com/")],
+    "cubby": [
+        ("App Store", "https://apps.apple.com/app/id6804703410"),
+        ("Google Play", "https://play.google.com/store/apps/details?id=com.zerblion.findly"),
+    ],
+}
+ICON_MAX = 64 * 1024
+BLOG = "https://blog.zosc.com"
+# The footer's single row, in order (v3 take 2: MotionRules / Cubby / MakerLion added after Blog).
+EXPECT_FOOTER = [
+    ("X", "https://x.com/byzosc"),
+    ("GitHub", "https://github.com/byzosc"),
+    ("Steam", "https://steamcommunity.com/id/byzosc"),
+    ("Blog", f"{BLOG}/"),
+    ("MotionRules", "https://motionrules.com/"),
+    ("Cubby", "https://byzosc.github.io/findly-site/"),
+    ("MakerLion", "https://www.makerlion.com/"),
+    ("Email", "mailto:hi@zosc.com"),
+]
+ORG_ID, PERSON_ID, WEBSITE_ID = f"{SITE}/#organization", f"{SITE}/#person", f"{SITE}/#website"
+# classes that move an element; AGENTS.md: a link that moves between mousedown and mouseup loses the click
+MOVING = re.compile(r"(?:^|[\s:])-?(?:translate|scale|rotate|skew)-|(?:^|[\s:])animate-")
+UA = "Mozilla/5.0 (X11; Linux) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36"
 TEXT_SUFFIXES = {".html", ".css", ".js", ".mjs", ".xml", ".json", ".txt", ".webmanifest", ".svg"}
 
 failures: list[str] = []
@@ -96,8 +153,79 @@ def meta(html: str, attr: str, name: str) -> str | None:
     return m.group(1) if m else None
 
 
+A_RE = re.compile(r"<a\s([^>]*)>(.*?)</a>", re.S)
+
+
+def anchors(html: str) -> list[dict]:
+    """Every <a> in html: href, visible text (arrow glyphs dropped), raw attributes, class."""
+    out = []
+    for attrs, inner in A_RE.findall(html):
+        href = re.search(r'href="([^"]*)"', attrs)
+        cls = re.search(r'class="([^"]*)"', attrs)
+        text = unescape(re.sub(r"<[^>]+>", "", inner)).replace("→", "")
+        out.append({"href": unescape(href.group(1)) if href else None, "text": " ".join(text.split()),
+                    "attrs": attrs, "cls": cls.group(1) if cls else ""})
+    return out
+
+
+def opens_safely(a: dict) -> bool:
+    return 'target="_blank"' in a["attrs"] and bool(re.search(r'rel="[^"]*\bnoopener\b', a["attrs"]))
+
+
+def block(html: str, start_marker: str, end_tag: str = "</section>") -> str:
+    i = html.find(start_marker)
+    return html[i: html.find(end_tag, i)] if i >= 0 else ""
+
+
+def visible_text(html: str) -> str:
+    return " ".join(unescape(re.sub(r"<[^>]+>", " ", re.sub(r"<!--.*?-->", " ", html, flags=re.S))).split())
+
+
+def ld_blocks(html: str) -> list[dict]:
+    return [json.loads(b) for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, flags=re.S)]
+
+
+def id_refs(node, top: bool = True) -> list[str]:
+    """Every @id used as a reference inside a JSON-LD node (its own top-level @id excluded)."""
+    found = []
+    if isinstance(node, dict):
+        if not top and "@id" in node:
+            found.append(node["@id"])
+        for k, v in node.items():
+            if k != "@id":
+                found += id_refs(v, top=False)
+    elif isinstance(node, list):
+        for v in node:
+            found += id_refs(v, top=False)
+    return found
+
+
+def png_size(path: Path) -> tuple[int, int] | None:
+    head = path.read_bytes()[:24]
+    return struct.unpack(">II", head[16:24]) if head[:8] == b"\x89PNG\r\n\x1a\n" else None
+
+
+def http_status(url: str) -> str:
+    """Final status after redirects (GET, browser UA). One retry on 429 — Steam rate-limits bots."""
+    for attempt in range(2):
+        req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "text/html,*/*"})
+        try:
+            with urllib.request.urlopen(req, timeout=30) as res:
+                res.read(2048)
+                return f"{res.status}" + (f" -> {res.url}" if res.url != url else "")
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt == 0:
+                time.sleep(8)
+                continue
+            return f"{e.code}"
+        except Exception as e:  # noqa: BLE001 - report, don't crash
+            return f"ERR {type(e).__name__}: {e}"
+    return "ERR"
+
+
 def main() -> int:
     expect_code = EXPECT_CODE
+    online = "--online" in sys.argv
     if "--code" in sys.argv:
         expect_code = sys.argv[sys.argv.index("--code") + 1].split(",")
 
@@ -109,8 +237,12 @@ def main() -> int:
     main_html = home[home.find("<main"): home.find("</main>")]
     sections = [(m.group(1), m.end()) for m in re.finditer(r'<section id="([a-z]+)"', main_html)]
     ids = [s for s, _ in sections]
-    check(ids == ORDER, f"sections: {' → '.join('#' + i for i in ids)}", f"sections {ids} != {ORDER}")
+    pillar_ids = [s for s in ids if s in ORDER]  # v3: #products is a section too (check 10)
+    check(pillar_ids == ORDER, f"pillar sections: {' → '.join('#' + i for i in pillar_ids)}",
+          f"pillar sections {pillar_ids} != {ORDER}")
     for sid, start in sections:
+        if sid not in ORDER:
+            continue
         body = main_html[start: main_html.find("</section>", start)]
         cards = re.findall(r'href="/project/([^/"]+)/"', body)
         pool = [s for s, d in live if sid in d.get("pillars", ["visual"])]
@@ -270,6 +402,168 @@ def main() -> int:
             targets[want] = targets.get(want, 0) + 1
     check(not wrong, f"{len(live)} pages: " + ", ".join(f"#{k}×{v}" for k, v in sorted(targets.items())),
           f"Back to work: {wrong}")
+
+    # ── v3-F (2026-10-08): brand first, portfolio second ────────────────────────────────────────
+    entry_titles = {s: d.get("title") for s, d in entries.items()}
+    moving: list[str] = []  # clickable elements in the new blocks that carry a motion class
+
+    print("10. v3 homepage layout")
+    want_ids = ["products", *ORDER]
+    check(ids == want_ids, f"sections: {' → '.join('#' + i for i in ids)}", f"sections {ids}, expected {want_ids}")
+    marks = {
+        "hero": main_html.find("data-hero"),
+        "#products": main_html.find('<section id="products"'),
+        "Work": main_html.find('<div id="work"'),
+        "#code": main_html.find('<section id="code"'),
+        "#visual": main_html.find('<section id="visual"'),
+        "AI Ask": main_html.find("data-ask-ai"),
+    }
+    pos = list(marks.values())
+    check(all(p >= 0 for p in pos) and pos == sorted(pos), "order: " + " → ".join(marks),
+          f"block positions {marks}")
+
+    print("11. hero line + actions")
+    src = (APP / "src" / "pages" / "index.astro").read_text(encoding="utf-8")
+    m = re.search(r"const HERO_TAGLINE = '([^']+)';", src)
+    tagline = m.group(1) if m else None
+    hero = block(main_html, "data-hero")
+    line = re.findall(r"</h1>\s*<p[^>]*>([^<]*)</p>", hero)
+    check(bool(tagline) and line == [tagline], f'line under the headline = HERO_TAGLINE "{tagline}"',
+          f"hero line {line}, HERO_TAGLINE {tagline!r}")
+    check(OLD_HERO_LINE not in home, "old job-title line gone", "old hero line still on the homepage")
+    cta = re.search(r"<div data-hero-cta[^>]*>(.*?)</div>", hero, re.S)
+    acts = anchors(cta.group(1)) if cta else []
+    got = [(a["text"], a["href"]) for a in acts]
+    check(got == EXPECT_HERO_ACTIONS, f"buttons: {got}", f"hero buttons {got}, expected {EXPECT_HERO_ACTIONS}")
+    check(bool(acts) and all(opens_safely(a) for a in acts), 'both open in a new tab (target=_blank, rel=noopener)',
+          "a hero button lacks target=_blank / rel=noopener")
+    moving += [f"hero {a['text']}" for a in acts if MOVING.search(a["cls"])]
+    css = "".join(p.read_text(encoding="utf-8") for p in DIST.rglob("*.css"))
+    fade = re.search(r"@keyframes heroFade\{(.*?)\}\}", css)
+    rule = re.search(r"\[data-hero\]>\[data-hero-cta\]\{([^}]*)\}", css)
+    check(bool(fade) and "transform" not in fade.group(1) and bool(rule) and "heroFade" in rule.group(1),
+          f"buttons fade in, opacity only: {{{rule.group(1) if rule else ''}}} / heroFade{{{fade.group(1) if fade else ''}}}}}",
+          f"hero button fade: rule {rule.group(1) if rule else None}, keyframes {fade.group(1) if fade else None}")
+
+    print("12. product strip")
+    strip = block(main_html, '<section id="products"')
+    items = re.findall(r"<li\b[^>]*>(.*?)</li>", strip, re.S)
+    seen = []
+    for item in items:
+        det = re.search(r'href="/project/([^/"]+)/"[^>]*>\s*Details\s*→\s*</a>', item)
+        slug = det.group(1) if det else "?"
+        seen.append(slug)
+        problems = []
+        img = re.search(r'<img src="([^"]+)"', item)
+        icon = PUBLIC / img.group(1).lstrip("/") if img else None
+        if not icon or not icon.is_file():
+            problems.append(f"icon {img.group(1) if img else None} missing")
+        elif icon.stat().st_size > ICON_MAX:
+            problems.append(f"icon {icon.stat().st_size} bytes > {ICON_MAX}")
+        name = re.search(r"<h2[^>]*>([^<]*)</h2>", item)
+        if not name or name.group(1).strip() != entry_titles.get(slug):
+            problems.append(f"name {name.group(1) if name else None} != title {entry_titles.get(slug)!r}")
+        one = re.search(r'<p class="[^"]*text-mist[^"]*">([^<]+)</p>', item)
+        if not one or not one.group(1).strip():
+            problems.append("no one-liner")
+        acts = [a for a in anchors(item) if a["href"] and a["href"].startswith("http")]
+        got = [(a["text"], a["href"]) for a in acts]
+        if got != EXPECT_PRODUCTS.get(slug):
+            problems.append(f"actions {got}, expected {EXPECT_PRODUCTS.get(slug)}")
+        known = {l["url"] for l in (entries.get(slug, {}).get("links") or [])}
+        if any(h not in known for _, h in got):
+            problems.append(f"an action is not in {slug}.md links")
+        if not all(opens_safely(a) for a in acts):
+            problems.append("an action lacks target=_blank / rel=noopener")
+        moving += [f"{slug} {a['text']}" for a in anchors(item) if MOVING.search(a["cls"])]
+        if problems:
+            fail(f"{slug}: {'; '.join(problems)}")
+        else:
+            ok(f"{slug}: icon {img.group(1)} ({icon.stat().st_size} B), \"{one.group(1).strip()}\", "
+               f"{' + '.join(t for t, _ in got)}, Details → /project/{slug}/")
+    check(seen == list(EXPECT_PRODUCTS), f"strip order: {seen}", f"strip items {seen}, expected {list(EXPECT_PRODUCTS)}")
+    digits = re.findall(r"\d[\d,.]*\s*\S*", visible_text(hero + strip))
+    check(not digits, "no digits in hero / strip copy (no counts)", f"digits in hero / strip copy: {digits}")
+
+    print("13. Work label")
+    work = re.search(r'<div id="work"[^>]*>\s*<p[^>]*>\s*Work\s*</p>\s*</div>\s*(?:<!--.*?-->\s*)*<section id="code"', main_html, re.S)
+    check(bool(work), '"Work" label directly before #code', '"Work" label missing or not directly before #code')
+
+    print("14. footer: one row of plain links (every page)")
+    pages, bad_footer = 0, []
+    for p in html_files:
+        html = p.read_text(encoding="utf-8")
+        foot = block(html, "<footer", "</footer>")
+        if not foot:
+            continue
+        pages += 1
+        links = anchors(foot)
+        rows = re.findall(r'<div class="([^"]*)">\s*((?:<a\s[^>]*>[^<]*</a>\s*)+)</div>', foot)
+        why = []
+        if [(a["text"], a["href"]) for a in links] != EXPECT_FOOTER:
+            why.append(f"links {[(a['text'], a['href']) for a in links]}")
+        if len(rows) != 1 or len(anchors(rows[0][1])) != len(EXPECT_FOOTER):
+            why.append(f"{len(rows)} link rows (want one row holding all {len(EXPECT_FOOTER)})")
+        if len({a["cls"] for a in links}) != 1:
+            why.append(f"links styled differently: {sorted({a['cls'] for a in links})}")
+        if not all(opens_safely(a) for a in links if (a["href"] or "").startswith("http")):
+            why.append("an external link lacks target=_blank / rel=noopener")
+        moving += [f"footer {a['text']}" for a in links if MOVING.search(a["cls"])]
+        if why:
+            bad_footer.append(f"{p.relative_to(DIST)}: {'; '.join(why)}")
+    check(pages > 0 and not bad_footer,
+          f"{pages} pages: one row, same style: {' · '.join(t for t, _ in EXPECT_FOOTER)} (Blog once)",
+          f"footer: {bad_footer[:3]}")
+    check(not moving, "no translate / scale / rotate / animate class on any new link or button",
+          f"moving clickable elements: {moving}")
+
+    print("15. JSON-LD entities")
+    blocks = ld_blocks(home)
+    by_type = {b.get("@type"): b for b in blocks}
+    types = sorted(str(b.get("@type")) for b in blocks)
+    check(types == ["Organization", "Person", "WebSite"], f"homepage blocks: {types}", f"homepage JSON-LD blocks {types}")
+    org, person, site = by_type.get("Organization", {}), by_type.get("Person", {}), by_type.get("WebSite", {})
+    check((org.get("@id"), person.get("@id"), site.get("@id")) == (ORG_ID, PERSON_ID, WEBSITE_ID),
+          f"@id {ORG_ID} / {PERSON_ID} / {WEBSITE_ID}",
+          f"@ids {org.get('@id')} / {person.get('@id')} / {site.get('@id')}")
+    links = {
+        "Organization.founder": (org.get("founder"), PERSON_ID),
+        "Person.worksFor": (person.get("worksFor"), ORG_ID),
+        "Person.affiliation": (person.get("affiliation"), ORG_ID),
+        "WebSite.publisher": (site.get("publisher"), ORG_ID),
+    }
+    wrong = [k for k, (v, want) in links.items() if v != {"@id": want}]
+    check(not wrong, "references by @id only: " + ", ".join(f"{k} → {want.split('/')[-1]}" for k, (_, want) in links.items()),
+          f"wrong or missing references: {wrong}")
+    logo = str(org.get("logo", ""))
+    logo_file = PUBLIC / logo.replace(SITE, "", 1).lstrip("/") if logo.startswith(SITE + "/") else None
+    size = png_size(logo_file) if logo_file and logo_file.is_file() else None
+    check(bool(size) and size[0] == size[1] >= 112, f"Organization.logo {logo.replace(SITE, '')} {size} (square, >= 112 px)",
+          f"Organization.logo {logo!r}: {size}")
+    check(org.get("name") == person.get("name") == "zosc" and org.get("sameAs") == person.get("sameAs")
+          and len(person.get("sameAs") or []) == 5,
+          "Organization and Person: name zosc, the same 5 sameAs", "Organization / Person name or sameAs differ")
+    dangling, entity_pages = [], 0
+    for p in html_files:
+        bl = ld_blocks(p.read_text(encoding="utf-8"))
+        if not bl:
+            continue
+        entity_pages += 1
+        defined = {b.get("@id") for b in bl if "@id" in b}
+        missing = sorted({r for b in bl for r in id_refs(b)} - defined)
+        if missing or not {ORG_ID, PERSON_ID, WEBSITE_ID} <= defined:
+            dangling.append(f"{p.relative_to(DIST)}: missing {missing or sorted({ORG_ID, PERSON_ID, WEBSITE_ID} - defined)}")
+    check(not dangling, f"{entity_pages} pages define the three entities and every @id reference resolves on its page",
+          f"dangling @id references: {dangling[:3]}")
+
+    if online:
+        print("16. online: every external link on the homepage (GET, redirects followed)")
+        urls = list(dict.fromkeys(a["href"] for a in anchors(home) if a["href"] and a["href"].startswith("http")))
+        for url in urls:
+            status = http_status(url)
+            print(f"   {status.split()[0]:>4}  {url}" + (f"  {status.split(' ', 1)[1]}" if " " in status else ""))
+            if not status.startswith("200"):
+                fail(f"{url} -> {status}")
 
     print(f"\n{'OK' if not failures else f'{len(failures)} FAILURE(S)'}")
     return 1 if failures else 0

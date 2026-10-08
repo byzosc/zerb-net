@@ -126,6 +126,17 @@
   opacity: 0;
   animation: heroIn 0.9s var(--ease-out-expo) 1.7s forwards;
 }
+/* v3 hero buttons (index.astro [data-hero-cta]) arrive just after the line above — opacity only.
+   They are links: anything clickable must not move (AGENTS.md: a target that shifts between
+   mousedown and mouseup swallows the click), so no translate like the line's heroIn. */
+@keyframes heroFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+[data-hero] > [data-hero-cta] {
+  opacity: 0;
+  animation: heroFade 0.9s var(--ease-out-expo) 1.9s forwards;
+}
 
 /* Per-line headline intro (GSAP in motion.ts). Hide the line text + dots only
    while JS is present and the intro hasn't finished; .hero-fallback (a timeout
@@ -161,6 +172,7 @@ html.hero-fallback [data-hero] .hero-dot-m {
 .hl-t .ch { display: inline-block; }
 @media (prefers-reduced-motion: reduce) {
   [data-hero] > p { animation: none; opacity: 1; }
+  [data-hero] > [data-hero-cta] { animation: none; opacity: 1; }
   [data-hero] .hl-t, [data-hero] .hero-dot { opacity: 1 !important; }
 }
 

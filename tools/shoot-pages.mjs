@@ -2,14 +2,16 @@
 //
 //   python3 -m http.server 4329 --bind 127.0.0.1 --directory app/dist/client &   # after `npm run build`
 //   node tools/shoot-pages.mjs [--base http://127.0.0.1:4329] [--out ~/render-tmp/shots] \
-//        [--resolve zosc.com=172.67.141.94] <shot> [<shot> ...]
+//        [--resolve zosc.com=172.67.141.94] [--profile ~/render-tmp/chrome-profile-shoot] <shot> [<shot> ...]
 //
 //   <shot> = name:path:width[:flags]   flags joined with '+':
 //            full     whole page (default: first viewport only)     clip=#id  just that element
+//                                                                   clip=A..B from the top of A to the bottom of B
 //            mobile   phone emulation (touch, coarse pointer, 844 tall; desktop is 900 tall)
 //            dpr2     device scale factor 2                         jpeg      JPEG q82 instead of PNG
 //            nosave   measure only, no image
 //   e.g.  home-1440:/:1440:full+jpeg   home-390-code:/:390:mobile+dpr2+clip=#code   about-390:/about/:390:mobile+dpr2+full
+//         hero-strip:/:1440:clip=main..#products   (selectors must not contain ':' or '+', the spec separators)
 //
 // Prints one JSON line per shot: document.title, scrollWidth vs clientWidth (documentElement and
 // body), full scrollHeight, unclipped elements that stick out past the right edge, and every
@@ -32,6 +34,9 @@
 //   Animations are therefore NOT what these images show — they show layout only.
 // - Production can be probed too: --resolve maps a host to an IP inside chromium (the local
 //   resolver here sometimes fails on zosc.com).
+// - --profile (v3-F, 2026-10-08): two runs sharing one chromium profile directory collide (profile
+//   lock), so parallel sessions each pass their own. A clip taller than the viewport is captured
+//   beyond it, which also grows the viewport, so vh boxes are pinned for clips as for full pages.
 
 import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -46,6 +51,7 @@ const opt = (flag, fallback) => {
 const base = opt('--base', 'http://127.0.0.1:4329');
 const out = opt('--out', join(homedir(), 'render-tmp', 'shots'));
 const resolve = opt('--resolve', null);
+const profile = opt('--profile', join(homedir(), 'render-tmp', 'chrome-profile-shoot'));
 const shots = args.map((spec) => {
   const [name, path, width, flags = ''] = spec.split(':');
   const set = new Set(flags.split('+').filter(Boolean));
@@ -60,7 +66,6 @@ const shots = args.map((spec) => {
 if (!shots.length) throw new Error('no shots given — see the usage at the top of this file');
 mkdirSync(out, { recursive: true });
 
-const profile = join(homedir(), 'render-tmp', 'chrome-profile-shoot');
 const flags = [
   '--headless=new', '--no-sandbox', '--disable-gpu', '--hide-scrollbars', '--no-first-run',
   '--no-default-browser-check', `--user-data-dir=${profile}`, '--remote-debugging-port=0',
@@ -191,7 +196,9 @@ try {
     if (shot.save) {
       let clip;
       if (shot.clip) {
-        const r = await evaluate(`(() => { const e = document.querySelector(${JSON.stringify(shot.clip)}); if (!e) return null; const r = e.getBoundingClientRect(); return { x: 0, y: r.top + scrollY, width: document.documentElement.clientWidth, height: r.height }; })()`);
+        await evaluate(PIN_VH);
+        const [from, to = from] = shot.clip.split('..');
+        const r = await evaluate(`(() => { const a = document.querySelector(${JSON.stringify(from)}), b = document.querySelector(${JSON.stringify(to)}); if (!a || !b) return null; const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return { x: 0, y: ra.top + scrollY, width: document.documentElement.clientWidth, height: rb.bottom - ra.top }; })()`);
         if (!r) throw new Error(`${shot.name}: ${shot.clip} not found`);
         clip = { ...r, scale: 1 };
       } else if (shot.full) {

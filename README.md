@@ -2,6 +2,8 @@
 
 # ⚡ zosc — Code · Motion · Visual
 
+*zosc — z · oscillator. The clock behind the motion.*
+
 **English** · [中文](README.zh-CN.md)
 
 **A motion designer & visual artist's portfolio — a long-scroll, cinematic site with a built-in multi-provider AI that answers questions about the work.**

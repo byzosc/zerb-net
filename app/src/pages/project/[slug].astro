@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Footer from '../../components/Footer.astro';
+import { SITE, PERSON_ID, ORG_ID } from '../../lib/entity';
 
 // Migrated project bodies (raw HTML from the WordPress export).
 const bodies = import.meta.glob('../../project-bodies/*.html', {
@@ -55,7 +56,10 @@ const appSchema =
         ...(app?.requirements ? { softwareRequirements: app.requirements } : {}),
         ...(installUrl ? { installUrl } : {}),
         ...(downloadUrl ? { downloadUrl } : {}),
-        author: { '@type': 'Person', name: 'zosc', url: 'https://zosc.com' },
+        // v3: made by the Person, published under the zosc label. Both carry the @id of the node
+        // Layout.astro defines on this same page, so they resolve to those entities, not new ones.
+        author: { '@type': 'Person', '@id': PERSON_ID, name: 'zosc', url: SITE },
+        publisher: { '@type': 'Organization', '@id': ORG_ID, name: 'zosc', url: SITE },
         ...(app?.free ? { offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } } : {}),
       }
     : null;

@@ -7,6 +7,7 @@ import { ClientRouter } from 'astro:transitions';
 import Analytics from '@vercel/analytics/astro';
 import Header from '../components/Header.astro';
 import AskAI from '../components/AskAI.astro';
+import { SITE, PERSON_ID, ORG_ID, WEBSITE_ID } from '../lib/entity';
 
 interface Props {
   title?: string;
@@ -23,23 +24,42 @@ const {
   image,
 } = Astro.props;
 
-const SITE = 'https://zosc.com';
 const canonical = new URL(Astro.url.pathname, SITE).href;
 const ogImage = image ?? new URL('/media/images/common/brand/cropped-logo_high2.png', SITE).href;
+// The five profiles. Both the Person and the Organization claim them (v3 decision): the handles
+// are the zosc brand's accounts.
+const sameAs = [
+  'https://github.com/byzosc',
+  'https://x.com/byzosc',
+  'https://www.behance.net/zosc',
+  'https://steamcommunity.com/id/byzosc',
+  'https://blog.zosc.com/',
+];
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': PERSON_ID,
   name: 'zosc',
   alternateName: ['byzosc', 'zosc lion', 'ZERB', 'ZERB LION', 'zerbLion'],  // 'zosc lion' = Behance 显示名（姓氏必填），列在这里 Google 才认得出那个档案
   url: SITE,
   jobTitle: 'Motion Designer, Visual Artist & Developer',
-  sameAs: [
-    'https://github.com/byzosc',
-    'https://x.com/byzosc',
-    'https://www.behance.net/zosc',
-    'https://steamcommunity.com/id/byzosc',
-    'https://blog.zosc.com/',
-  ],
+  // Back to the Organization below by @id — one entity, referenced, never a second copy.
+  worksFor: { '@id': ORG_ID },
+  affiliation: { '@id': ORG_ID },
+  sameAs,
+};
+// v3 (2026-10-08): zosc is also the label the products ship under (出品人 — not a company, not a
+// lab). founder ties it to the Person; product pages name it as SoftwareApplication publisher.
+// logo: the 192 px Z mark (square, above Google's 112 px minimum for an organization logo).
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': ORG_ID,
+  name: 'zosc',
+  url: SITE,
+  logo: `${SITE}/media/images/common/brand/zosc-mark-192.png`,
+  founder: { '@id': PERSON_ID },
+  sameAs,
 };
 // WebSite schema — tells Google the site name to show in search results.
 // Long-game target: own the query "zosc" itself. No competing entity holds it —
@@ -48,9 +68,11 @@ const person = {
 const website = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': WEBSITE_ID,
   name: 'zosc',
   alternateName: ['byzosc', 'ZERB', 'ZERB LION'],
   url: SITE,
+  publisher: { '@id': ORG_ID },
 };
 
 // Favicon <link>s in <head>. This note lives here, not in the markup: HTML comments ship in
@@ -111,6 +133,7 @@ const website = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
     <script type="application/ld+json" set:html={JSON.stringify(website)} />
     <link rel="icon" href="/media/images/common/brand/zosc-mark-192.png" sizes="192x192" />
