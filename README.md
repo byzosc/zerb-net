@@ -48,7 +48,9 @@ Cloudflare R2                    →  video hosting
 Vercel  (root: app/)             →  deploy  ·  zosc.com
 ```
 
-The live site is the Astro rebuild in `app/`. The original WordPress static export that used to sit at the repo root was removed on 2026-07-04 (still recoverable from git history); the root now only keeps the R2 media tooling (`tools/`, `media-manifest.json`) and docs.
+The live site is the Astro rebuild in `app/`. The original WordPress static export that used to sit at the repo root was removed on 2026-07-04 (still recoverable from git history); supporting tooling, docs, and standalone design studies live outside `app/`.
+
+Oscillator logo studies are paused at the owner's request (2026-10-08). The review prototypes in `lab/zosc-signal/` and `lab/zosc-wordmark/` are archived and are not used by the live site. To inspect the archive, serve the repository root with `python3 -m http.server 8792 --bind 127.0.0.1`, then open `/lab/zosc-signal/`. `node lab/zosc-signal/record.mjs all` exports PNG/GIF/MP4 previews to the ignored `.render-tmp/zosc-signal/` directory (requires Chromium, ImageMagick, and FFmpeg).
 
 ## 🚀 Run it locally
 

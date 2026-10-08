@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>zosc — Wordmark study 02</title>
+<style>
+@font-face{font-family:Montserrat;src:url('../osc-logo/montserrat-latin.woff2') format('woff2');font-weight:100 900;font-display:block}
+@font-face{font-family:Mulish;src:url('../../app/public/fonts/mulish-latin.woff2') format('woff2');font-weight:100 900;font-display:block}
+:root{--paper:#f4f3ef;--ink:#0a0a0a;--muted:#777570;--orange:#e7503a}
+*{box-sizing:border-box}body{margin:0;background:var(--ink);color:var(--paper);font-family:Mulish,sans-serif}svg{display:block;width:100%;height:auto;overflow:visible}button{font:inherit}a{color:inherit}
+.meta{font:500 11px/1.5 Montserrat,sans-serif;letter-spacing:.16em;text-transform:uppercase}
+.panel{height:675px;position:relative;padding:42px 52px;display:flex;flex-direction:column;justify-content:space-between}
+.topline{display:flex;align-items:center;justify-content:space-between;color:#888782}.topline b{color:var(--paper);font-weight:600;letter-spacing:.08em}
+.mainmark{width:min(76%,930px);position:absolute;left:50%;top:48%;transform:translate(-50%,-50%)}
+.bottomline{display:flex;justify-content:space-between;align-items:flex-end}.tagline{font-size:16px;font-weight:400;letter-spacing:.025em}.detail{font-size:12px;color:#888782}
+.controls{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;padding:8px 10px;border:1px solid #ffffff22;border-radius:30px;background:#191919;z-index:10}.controls button{border:0;color:var(--paper);background:transparent;padding:7px 14px;border-radius:20px;cursor:pointer;font-size:12px}.controls button:hover{background:#ffffff15}.controls button:focus-visible{outline:2px solid var(--orange)}
+.light{background:var(--paper);color:var(--ink)}.light .topline b{color:var(--ink)}
+.light .mainmark{width:76%}.light .detail{color:#777570}
+.board .panel{height:620px}.board .panel:nth-child(2){height:500px}.board .mainmark{top:47%;width:70%}.board .secondary .mainmark{width:59%}.board .secondary .tagline{font-size:15px}
+.scale-strip{display:flex;gap:60px;align-items:center;justify-content:space-between;padding:40px 52px 48px;background:var(--paper);color:var(--ink);border-top:1px solid #d9d7d0}.scale-strip svg{width:190px}.scale-strip .small svg{width:100px}.scale-strip .tiny svg{width:65px}.scale-strip span{display:block;font-size:11px;color:#777570;margin-top:10px}.scale-strip .note{font-size:12px;line-height:1.8;max-width:420px;color:#67655f}
+.hero{min-height:900px;padding:0 58px;background:#050505}.header{height:86px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff10}.header .mark{width:116px}.nav{display:flex;gap:32px;font:500 12px Montserrat;letter-spacing:.02em;color:#9a9a97}.nav .ask{color:#eee;border:1px solid #ffffff25;border-radius:28px;padding:9px 17px;margin-top:-9px}
+.hero-content{padding-top:98px}.hero h1{font:900 145px/.87 Montserrat,sans-serif;letter-spacing:-.015em;margin:0}.hero h1 i{display:inline-block;width:22px;height:22px;background:var(--orange);border-radius:50%;margin-left:11px}.hero .sub{margin-top:37px;font-size:17px;color:#a6a6a2}.hero .decode{margin-top:68px;border-top:1px solid #ffffff14;padding-top:27px;display:flex;justify-content:space-between;font-size:12px;color:#858581}.hero .decode strong{font-weight:400;color:#bcbcb5}.mock-caption{padding:24px 58px;color:#858581;font-size:12px;border-top:1px solid #ffffff14;line-height:1.6}
+[data-mode]{display:none}body[data-view=motion] [data-mode=motion],body[data-view=board] [data-mode=board],body[data-view=header] [data-mode=header]{display:block}
+@media(max-width:700px){.panel{padding:30px 24px;height:70vh;min-height:420px}.mainmark{width:85%}.board .panel{height:440px}.board .panel:nth-child(2){height:380px}.meta{font-size:9px}.tagline{font-size:12px}.detail{font-size:10px;max-width:110px;text-align:right}.scale-strip{padding:28px 24px;gap:20px;flex-wrap:wrap}.scale-strip .note{flex-basis:100%;max-width:none}.scale-strip svg{width:130px}.hero{padding:0 24px;min-height:780px}.header .mark{width:95px}.nav{font-size:10px;gap:18px}.nav .desktop{display:none}.hero-content{padding-top:135px}.hero h1{font-size:22vw}.hero h1 i{height:13px;width:13px;margin-left:5px}.hero .sub{font-size:14px;line-height:1.6}.hero .decode{margin-top:90px;gap:20px;line-height:1.7}.mock-caption{padding:24px}}
+body.capture .controls{display:none}
+</style>
+<body data-view="motion">
+<main data-mode="motion">
+  <section class="panel">
+    <div class="topline meta"><b>zosc / wordmark study 02</b><span>signal → settle</span></div>
+    <div class="mainmark" data-mark data-animated></div>
+    <div class="bottomline"><div class="tagline">The clock behind the motion.</div><div class="detail">One impulse. A clear signature.</div></div>
+  </section>
+</main>
+<main data-mode="board" class="board">
+  <section class="panel light">
+    <div class="topline meta"><b>zosc / wordmark study 02</b><span>static identity / 08.10.26</span></div>
+    <div class="mainmark" data-mark></div>
+    <div class="bottomline"><div class="tagline">The clock behind the motion.</div><div class="detail">统一笔画 · 共同圆弧 · 完整字标</div></div>
+  </section>
+  <section class="panel secondary">
+    <div class="topline meta"><b>02 / reverse</b><span>the same geometry</span></div>
+    <div class="mainmark" data-mark></div>
+    <div class="bottomline"><div class="tagline">z · oscillator</div><div class="detail">静态终态不依赖颜色或光效</div></div>
+  </section>
+  <section class="scale-strip">
+    <div><div data-mark></div><span>页头 / 190 px</span></div>
+    <div class="small"><div data-mark></div><span>小尺寸 / 100 px</span></div>
+    <div class="tiny"><div data-mark></div><span>65 px</span></div>
+    <div class="note">四个字共享笔画与曲率，Z 的折线融入同一套轮廓。<br>动态只经过一次短促振荡，约一秒后回到这个终态。</div>
+  </section>
+</main>
+<main data-mode="header">
+  <section class="hero">
+    <div class="header"><div class="mark" data-mark></div><div class="nav"><span class="desktop">CODE</span><span class="desktop">MOTION</span><span class="desktop">VISUAL</span><span>ABOUT</span><span class="desktop">BLOG</span><span class="ask">AI ASK</span></div></div>
+    <div class="hero-content"><h1>Motion<i></i><br>Visual<i></i><br>Code<i></i></h1><p class="sub">Design that runs. Code that moves. Things that ship.</p></div>
+    <div class="decode"><strong>zosc — z · oscillator. The clock behind the motion.</strong><span>WORDMARK / HEADER STUDY</span></div>
+  </section>
+  <div class="mock-caption">页头落位示意 · 使用新字标，Hero 三行编排保留 · 此图为独立设计稿，尚未改线上站点</div>
+</main>
+<div class="controls"><button id="replay">Replay</button><button data-view="motion">Motion</button><button data-view="board">Static</button><button data-view="header">Header</button></div>
+<script type="module">
+import {svgMarkup,render} from './wordmark.js';
+const params=new URLSearchParams(location.search);
+document.body.dataset.view=params.get('view')||'motion';
+if(params.has('capture')) document.body.classList.add('capture');
+for(const el of document.querySelectorAll('[data-mark]')) el.innerHTML=svgMarkup();
+const svg=document.querySelector('[data-animated] svg');
+const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+let raf=0,start=0;
+function seek(t){cancelAnimationFrame(raf);render(svg,t);return t}
+function replay(){cancelAnimationFrame(raf);if(reduced.matches){render(svg,1040);return}start=performance.now();function frame(now){render(svg,now-start);if(now-start<1040)raf=requestAnimationFrame(frame)}raf=requestAnimationFrame(frame)}
+document.getElementById('replay').addEventListener('click',()=>{document.body.dataset.view='motion';replay()});
+document.addEventListener('click',e=>{const button=e.target.closest('button[data-view]');if(button){document.body.dataset.view=button.dataset.view;if(button.dataset.view==='motion')replay()}});
+reduced.addEventListener('change',()=>{if(reduced.matches)seek(1040)});
+window.wordmark={seek,replay,render:t=>render(svg,t),duration:1040};
+if(params.has('capture')||reduced.matches)seek(1040);else replay();
+</script>
+</body>
+</html>
