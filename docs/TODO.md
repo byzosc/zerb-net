@@ -65,17 +65,16 @@ main            未动。合并 v2 → main 由用户看过预览后决定
 **合并前必须做**：MotionPilot 首页大卡封面裁切——横幅自带字标，手机 3:2 下被切成「nPilot.」，桌面标题压在「Adobe Exchange ↗」上。
 修法：给 motionpilot 条目加 `coverLarge`（schema 已有字段），构图中间与左下不放字。
 
-**等用户拍板（回编号即可）**
-1. 预览访问：A 登录 Vercel 看（建议）/ B 用 API 关预览保护
-2. App Store 按钮：商店页卖家栏显示真名，A 保留（倾向）/ B 去掉只留 Google Play+官网
-3. s25edge-usa 正文提到 China Mobile 一次：A 保留（倾向）/ B 去掉
-4. motionrules 是否免费 → 是则 schema 加 offers
-5. MotionSheet（zerb-cc-cd）外链改 motionrules.com/app + 封面重做：A 改（建议）/ B 不动
-6. Hero 三行大字仍是 Motion/Visual/Code，第一板块却是 Code；换顺序要改 motion.ts 的按行动效：改 / 不改
-7. Code 板块 4 张（第二行只剩 gateway 一张，右半空）/ 3 张（对称，去掉 gateway 的 featured 一行字）
-8. QuantMind / quant-buddy-skills 不上架（两者为 fork、0 提交）——建议不上，默认不上
-9. 「Zerb Hub」那篇博客正文 15 处历史叙述 + README 首图旧品牌截图：保留（建议）/ 改
-10. about 介绍段已按「拆三段、首段大字」做，看预览后可一键改回整段
+**十项已按主会话建议拍板（用户 2026-10-08「按你的建议来」），子任务 E 执行中：**
+```
+1 预览：用户登录 Vercel 看        2 App Store 按钮保留       3 s25edge 的 China Mobile 保留
+4 motionrules 标免费              5 MotionSheet 外链改 motionrules.com/app + 封面重做
+6 Hero 三行改 Code/Motion/Visual（只换文字，动效按行位绑定不动）
+7 Code 板块 3 张（gateway 不 featured，仍在 /works）
+8 QuantMind / quant-buddy-skills 不上（fork、0 提交）
+9 博客「Zerb Hub」历史叙述与 README 旧截图保留      10 about 三段保留
++ MotionPilot 大卡 coverLarge（合并前必修）· Back to work 按板块跳 · favicon 注释挪 frontmatter · README 顺序
+```
 
 **C 顺手改的（不要可一行回退）**：/works 筛选顺序 All·Code·Motion·Visual；.gitignore 加 .render-tmp/；og:image 位图封面产品页各用自己的。
 **小尾巴**：「← Back to work」所有项目都跳 /#visual，可改成按板块跳（一行）；Layout 里 favicon 改名的 HTML 注释会输出到页面，含旧文件名，可挪进 frontmatter。
@@ -154,6 +153,21 @@ nas-monitoring · s25edge-usa · windows-never-sleep · openwebui-cliproxy-gatew
   `vosc.com` 的 NS/MX 属另一套服务，且不在当前 Cloudflare 账号中，不能当成本项目地址。
 
 ### 可做
+- [ ] X `@zosc` 句柄申请可行性（2026-10-08）：官方现有 Handle Marketplace，个人需 Premium+、
+      账号超过 3 个月且持续原创活动；是否可申请须登录 `https://handles.x.com` 搜索 `zosc`。
+      当前未登录，`@zosc` 页面读取返回 403，是否列入市场及价格待确认；对方约 100 粉丝为用户提供信息，
+      不代表可回收或可转移。不可申请时可登记兴趣；不因粉丝少、公开发帖少就推断闲置。
+      商标投诉只适用于真实侵权/混淆，不是域名所有者自动取回句柄的通道。
+      未提交申请、未联系对方、未购买订阅；现有 `@byzosc` 和站内 sameAs 暂不变。
+      用户追问实际成功案例：找到 Suganthan Mohanadasan 的本人博客（2026-03-14），
+      记录 `@Suganthanmn → @suganthan`，嵌入 2026-01-30 的宣布帖并提供
+      `Transfer complete` 截图；另有 Beast Industries 获得 `@Beast` 的帖子镜像，
+      含 `@XHandles` 祝贺回复。证据支持确有完成转移案例，不能推算 `@zosc` 的成功率。
+      https://suganthan.com/blog/get-your-dream-handle-on-x/ 、
+      https://twstalker.com/chucky/status/1983238001577566652 。
+      依据：https://help.x.com/en/using-x/x-handle-marketplace 、
+      https://help.x.com/en/rules-and-policies/inactive-twitter-accounts 、
+      https://help.x.com/en/rules-and-policies/x-trademark-policy 。
 - [ ] `zosc.com` 改造成导航页（用户方向，尚未开工）
 - [ ] 子域名服务迁移：`clip` / `img` / `hub` / `drop` 仍挂在 `zerb.net` 下，
       若将来卖掉 zerb.net 必须先迁走（用户说今年慢慢做）
