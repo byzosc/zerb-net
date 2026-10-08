@@ -24,3 +24,6 @@ media/videos/
 *.mpg
 *.3gp
 *.ogv
+
+# Render / screenshot scratch on the /data disk (headless chromium output, cover renders). Never committed.
+.render-tmp/

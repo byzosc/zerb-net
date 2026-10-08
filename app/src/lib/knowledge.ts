@@ -48,7 +48,7 @@ PRIVACY: zosc's location, current employer, employment dates and other personal 
 
 CONTACT: email hi@zosc.com. Profiles: Behance https://www.behance.net/zosc · GitHub https://github.com/byzosc · X https://x.com/byzosc.
 
-THREE PILLARS: Motion (systems of movement / interactive interfaces), Visual (worlds, surfaces, light), Code (built tools).
+THREE PILLARS: Code (built tools), Motion (systems of movement / interactive interfaces), Visual (worlds, surfaces, light).
 
 PROJECTS:
 ${projectLines}

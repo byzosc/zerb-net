@@ -11,16 +11,21 @@ import AskAI from '../components/AskAI.astro';
 interface Props {
   title?: string;
   description?: string;
+  // Absolute URL for og:image / twitter:image (product pages pass their cover). Optional:
+  // without it every page keeps the site logo, exactly as before.
+  image?: string;
 }
 
+// Title order = homepage section order (v2, 2026-10-08: Code · Motion · Visual).
 const {
-  title = 'zosc — Motion · Visual · Code',
-  description = 'zosc — a motion designer, visual artist & developer. Motion, visual art, and living interactive interfaces; proficient in After Effects, Cinema 4D, Octane.',
+  title = 'zosc — Code · Motion · Visual',
+  description = 'zosc — a motion designer, visual artist & developer. Living interactive interfaces, motion, and visual art; proficient in After Effects, Cinema 4D, Octane.',
+  image,
 } = Astro.props;
 
 const SITE = 'https://zosc.com';
 const canonical = new URL(Astro.url.pathname, SITE).href;
-const ogImage = new URL('/media/images/common/brand/cropped-logo_high2.png', SITE).href;
+const ogImage = image ?? new URL('/media/images/common/brand/cropped-logo_high2.png', SITE).href;
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -53,7 +58,7 @@ const website = {
 <html lang="en">
   <head>
     <!--
-      zosc — Motion · Visual · Code  ·  https://zosc.com
+      zosc — Code · Motion · Visual  ·  https://zosc.com
       © 2026 zosc. All rights reserved — code and creative work.
       Source-available for reference, NOT open source. Don't copy or republish.
       Designed, written & built by zosc — https://github.com/byzosc

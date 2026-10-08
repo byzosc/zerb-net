@@ -59,9 +59,16 @@ const appSchema =
         ...(app?.free ? { offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } } : {}),
       }
     : null;
+
+// og:image / twitter:image of a product page = its own cover (absolute URL, same formula as the
+// JSON-LD image above). Raster covers only: X, Facebook and LinkedIn cards don't render SVG, so
+// an SVG cover (windows-never-sleep, s25edge-usa) keeps the site default. Older project pages are
+// unchanged (no image prop → default).
+const ogImage =
+  kind === 'product' && /\.(jpe?g|png|webp|gif)$/i.test(cover) ? new URL(cover, Astro.site).href : undefined;
 ---
 
-<Layout title={`${title} — zosc`} description={summary}>
+<Layout title={`${title} — zosc`} description={summary} image={ogImage}>
   {appSchema && (
     <script type="application/ld+json" set:html={JSON.stringify(appSchema).replace(/</g, '\\u003c')} />
   )}

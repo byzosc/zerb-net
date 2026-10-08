@@ -12,13 +12,26 @@ const all = (await getCollection('projects'))
 // there as a CTA button.
 const hrefFor = (p: (typeof all)[number]) => `/project/${p.id}/`;
 
+// v2 (2026-10-08): Code leads — the differentiator is motion systems turned into shipped tools.
+// Section names and anchor ids (#code / #motion / #visual) are unchanged; only the order moved.
+// Which cards a section shows:
+//   featuredOnly: true  → only entries with `featured: true` (Code: the 3–4 flagship products;
+//                         every other product lives on /works and its own page)
+//   featuredOnly: false → the first 5 by `order` (Motion, Visual — same rule as before v2)
+// Either way the first card is the large one and at most 5 are shown, so the section rhythm
+// (one large card + a two-column grid) stays the same.
 const pillars = [
-  { id: 'motion', label: 'Motion', tagline: 'Systems of movement — interfaces that breathe.' },
-  { id: 'visual', label: 'Visual', tagline: 'Worlds, surfaces and light.' },
-  { id: 'code', label: 'Code', tagline: 'Things built, not just designed.' },
+  { id: 'code', label: 'Code', tagline: 'Things built, not just designed.', featuredOnly: true },
+  { id: 'motion', label: 'Motion', tagline: 'Systems of movement — interfaces that breathe.', featuredOnly: false },
+  { id: 'visual', label: 'Visual', tagline: 'Worlds, surfaces and light.', featuredOnly: false },
 ] as const;
+const MAX_CARDS = 5;
 
 const byPillar = (id: string) => all.filter((p) => p.data.pillars.includes(id as any));
+const cardsFor = (pillar: (typeof pillars)[number]) => {
+  const inPillar = byPillar(pillar.id);
+  return (pillar.featuredOnly ? inPillar.filter((p) => p.data.featured) : inPillar).slice(0, MAX_CARDS);
+};
 ---
 
 <Layout>
@@ -47,8 +60,7 @@ const byPillar = (id: string) => all.filter((p) => p.data.pillars.includes(id as
     <!-- PILLAR SECTIONS -->
     {
       pillars.map((pillar) => {
-        const all = byPillar(pillar.id);
-        const [featured, ...rest] = all.slice(0, 5); // featured + up to 4
+        const [featured, ...rest] = cardsFor(pillar); // large card + up to 4
         return (
           <section id={pillar.id} class="border-t border-line px-6 py-28 md:px-10 md:py-40">
             <div class="mx-auto max-w-[1400px]">

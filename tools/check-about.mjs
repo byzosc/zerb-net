@@ -20,7 +20,10 @@
 //             about page (→ app/dist/client) is a real file. Lesson from 2026-10-06, when a
 //             rename left three favicon references pointing at files that did not exist.
 //  4. words   word count of the built about article (<article class="entry-content">);
-//             target 120–260 (one ~120–180-word paragraph + skills + certifications + contact).
+//             target 120–260 (a ~120–180-word intro + skills + certifications + contact). Since
+//             v2-C (2026-10-08) the intro is three short paragraphs (identity & method / employer
+//             anchors / skills & this site), only the first in the large .lead size — one 150-word
+//             .lead block was a 30-line wall on phones. Same words, re-split only.
 //             A "word" is a whitespace token with at least one letter or digit, so "—" and "·"
 //             separators don't count but "hi@zosc.com", "C#" and "10+" do.
 //  5. prompt  imports the BUILT /api/chat handler with a stubbed fetch and a fake key (no
@@ -122,9 +125,14 @@ if (!existsSync(ABOUT_BUILT)) {
   else {
     const w = words(htmlToText(m[1])).length;
     const wSrc = words(htmlToText(src)).length;
-    const lead = src.match(/<p class="lead">([\s\S]*?)<\/p>/);
+    const intro = [...src.split('<hr>')[0].matchAll(/<p([^>]*)>([\s\S]*?)<\/p>/g)];
+    const introCounts = intro.map((p) => words(htmlToText(p[2])).length);
+    const leadAt = intro.map((p, i) => (/class="lead"/.test(p[1]) ? `#${i + 1}` : null)).filter(Boolean);
     console.log(`  built article: ${w} words  (source fragment: ${wSrc}; must match since set:html injects it verbatim)`);
-    if (lead) console.log(`  intro paragraph (.lead): ${words(htmlToText(lead[1])).length} words  (target ~120–180)`);
+    if (intro.length) {
+      console.log(`  intro (before the first <hr>): ${introCounts.reduce((a, b) => a + b, 0)} words in ${intro.length} paragraph(s) [${introCounts.join(' / ')}]  (target ~120–180 in total)`);
+      console.log(`  .lead size on paragraph: ${leadAt.join(', ') || 'none'}`);
+    }
     w >= 120 && w <= 260 ? pass('article word count within 120–260') : fail(`article word count ${w} outside 120–260`);
     if (w !== wSrc) fail('built article and source fragment counts differ');
     if (beforePath) {

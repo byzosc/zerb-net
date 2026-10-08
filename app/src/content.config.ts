@@ -35,7 +35,8 @@ const projects = defineCollection({
     // Label for the external CTA button.
     externalLabel: z.string().default('View the product'),
     draft: z.boolean().default(false),
-    // v2: the homepage pillar section shows its featured entries (Code: 3-4 products).
+    // v2: the homepage Code section shows only featured entries (3-4 products). Motion and
+    // Visual ignore this flag and show their first 5 by `order` (rule lives in pages/index.astro).
     featured: z.boolean().default(false),
     // 'product' = something people can install or use. Product pages get a row of link
     // buttons and SoftwareApplication JSON-LD; plain projects render exactly as before.
