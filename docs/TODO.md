@@ -53,7 +53,12 @@ Hero 副标不用三个职业名词，候选："Design that runs. Code that move
 Hero 下加产品条（三产品各一个直接动作按钮）；首页接 blog 最新 3 篇（posts.json 构建时抓）；页脚生态图；三板块下沉为 Work；
 Schema 加 Organization 与 Person 配对。边界：zosc 不是公司/lab，是「出品人」；MakerLion 面中文、zosc 面英文，两者不替对方说话。
 
-原型：`lab/osc-logo/index.html`（零构建、不进站点），GIF/分镜推 clip。
+原型：`lab/osc-logo/index.html`（零构建、不进站点，commit 71eae83），clip：GIF n6jqqhfbbx · 分镜 425vz3vf0t · 终态橙 6ej6bpawef / 白 9p2gywnc7p。
+实现要点：波长/振幅**按字形算出**（波峰 = o 上半圈、波谷 = c 下半圈，s 决定波形方向），fontTools 取 Montserrat 800 真轮廓，
+逐"横档"路径插值，全程无透明度切换。诚实评价：o、c 读得清楚，**s 最弱**（周期 812 > s 高 470，立起时要缩，1750–1800ms 像斜钩）；
+落字 0.6s 偏快，想突出记忆点改 `T.morph` 到 0.85s。制作方与主会话都**推荐白色终态**（橙只属于活的信号，心跳光点是唯一的橙）。
+**待用户看 GIF 定：白/橙；落字是否放慢。** 落位（页头 hover / 页面切换）等定稿后做。
+教训：子任务用固定端口 4391 并 pkill 关闭，误杀了另一会话的预览服务——**临时服务一律随机端口、按 PID 关闭**。
 
 ## 待办
 
