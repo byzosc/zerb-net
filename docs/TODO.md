@@ -27,6 +27,38 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 
 详细做法、七个踩过的坑、受保护不可替换的字符串清单，见 `docs/DONE.md` 2026-10-06 条目。
 
+## v2 改版（2026-10-08 用户拍板，本节是各子任务的唯一事实源）
+
+**定位：首页偏产品，节奏不变。** 骨架保持 Hero → 三板块（featured 优先网格）→ AI Ask，
+只改顺序与内容；长度不变，页面数量变多（内容量加在详情页，不加在首页）。
+
+### 已定决策（含理由）
+| 决策 | 内容 | 理由 |
+|---|---|---|
+| 板块顺序 | **Code · Motion · Visual**，板块名不改 | 差异化在 Code（把动效体系落成工具链、上架 Adobe 商店）；改名=再一次抓取周期，只改顺序 |
+| 标题 | `zosc — Code · Motion · Visual`，随 v2 一起推 | 与顺序一致，一次抓取 |
+| Code 首页卡 | 固定 3–4 张 featured：MotionPilot · motionrules · Findly · +1 | 首页不变长；其余产品只在 /works 与详情页 |
+| 产品上架 | MotionPilot / motionrules / Findly / QuantMind / quant-buddy-skills / openwebui-cliproxy-gateway / windows-never-sleep / nas-monitoring / zero-build-blog / s25edge-usa | 每页独立 title/description + `SoftwareApplication` schema，是裸词 zosc 的燃料 |
+| 暂不上 | 第二个 app（游戏，未发布） | 用户定 |
+| about 页 | **压缩不删**：约 120–180 词一段话 + 技能一行 + 认证一行 + 联系方式。拿掉逐条职责 bullet 与起止年份（2015/2019/2023） | 雇主名是实体锚点，短语级上下文保留；年份是暴露感主因且对 SEO 无用 |
+| 备份 | **改 about 之前**先快照到私有仓库 `zosc-career/docs/ABOUT_PUBLIC_SNAPSHOT_2026-10-08.html` + Markdown 并入 RESUME 素材 | 详细履历的正确归宿是 PDF 简历，不是公开站 |
+| AI 问答 | 长版履历走 Vercel 环境变量 `ZOSC_ABOUT_LONG`（`knowledge.ts` 优先读它，无则回退读页面短版） | 页面只露短版、Google 抓不到；有人问 AI 仍能答。仓库是公开的，长版不能进 Git |
+| 对外邮箱 | **统一 `hi@zosc.com`**（Footer / about / knowledge.ts CONTACT / chat.ts 文案 / AskAI） | 品牌域名、实体一致、Gmail 不露；zcbgood 只是转发目的地 |
+| 现任雇主 | **继续不出现在任何公开文本**（现状 0 次，v2 必须保持） | 隐私 + 求职中 |
+| Findly | 可公开关联，素材向 Findly 会话索取 | 用户 2026-10-08 确认；注意这是不可逆的公开关联 |
+| 测试方式 | 分支 `v2` + Vercel 预览部署（预览默认 `X-Robots-Tag: noindex`，第一次预览实测确认） | 不碰 main，不在生产站塞测试路由；定稿合并一次 |
+
+### 硬约束（所有子任务）
+- 不碰 `main`；不删任何媒体；改引用后必须跑「引用的文件是否真实存在」校验（10-06 favicon 全 404 的坑）
+- 受保护字符串：`com.zerblion.motionpilot.cep`、`zerbnet-media`、`zerb-cc-cd`（slug，另议）
+- 改 `app/` 前必读 `AGENTS.md`「Astro 重建版工作规则」（View Transitions / 遮罩 / Lenis / 无 Google Fonts）
+- 无头 chromium 是 snap：读不到 `/tmp` 与隐藏目录，渲染/截图一律从 `~/render-tmp/` 起，用完即删
+
+### 子任务拆分
+- **A 内容与隐私**：备份快照 → 压缩 about → 长版进 Vercel env → knowledge.ts 回退逻辑 → 邮箱统一
+- **B 产品库**：素材采集（商店页/站点截图/GitHub og 图）→ 10 个产品条目 → 详情页模板 + SoftwareApplication → /works 可筛
+- **C 首页与标题**：顺序 Code 优先 → Code 板块 featured 卡 → 标题 → 预览验收（A/B 合并后做）
+
 ## 待办
 
 ### sameAs 五条（2026-10-06 全部实测 200）
