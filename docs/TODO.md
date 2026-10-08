@@ -31,6 +31,26 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 决策、备份、遗留项全部记在 `docs/DONE.md` 当日条目；四份子任务报告在 `docs/v2/`。
 下一步候选（用户未排期）：旧项目页补 og:image 大图；跨页锚点落点浮动排查；Hero 动效按词绑定；gateway 小卡封面裁切。
 
+## v3 方向：zosc = Z + oscillator（2026-10-08 用户提出，原型制作中）
+
+用户原话：「zosc 这种顶级域名…z 作为 logo，然后 osc 作为调音里面的时钟心脏做个特殊效果？…否则 zosc 确实没什么记忆点，就像是缩写拼凑一样」。
+
+**概念**：`osc` = oscillator——合成器的声源 / 芯片的晶振时钟，也是动效的原语（缓动、弹簧、正弦）。
+MotionRules 定义时序曲线、MotionPilot 把它敲进 AE，所以「Z 是出品人，osc 是驱动一切动效的那颗时钟」——名字第一次有解释，且解释和产品是一回事。
+形式巧合：o/s/c 全是曲线字母，可从一条连续波形长出来；Z 是三笔直线、锐角，像放电。直线 vs 曲线、放电 vs 振荡，一个标志自带对比。
+**记忆点 = 波形变成字。**
+
+**签名动效五步**：Z 放电 → 波形起振（高频乱抖）→ 锁相（收敛成正弦）→ 落字（三个弧段停成 o·s·c，必须是路径插值不是淡入）→ 心跳（o 的圆心周期性亮点）。
+**落位**：页头小 logo hover 走一周期波；页面切换用示波器扫描线脉冲；**Hero 不动**（三词节奏已定，别打架）；**favicon 不动**（16px 无动效）。
+波形是全站唯一的橙 #e7503a（示波器美学），不碰 favicon 黑白决定。与 MakerLion 共用 Z 标、不共用动效（造物的冲劲 vs 振荡的精准）。
+**一句话解码**（about / README）："zosc — z · oscillator. The clock behind the motion."
+
+**v3 结构方向（同日建议，待用户看稿后定）**：从「作品集带产品」翻成「品牌带作品集」——Hero 副标换品牌主张 + 两个直达动作；
+Hero 下加产品条（三产品各一个直接动作按钮）；首页接 blog 最新 3 篇（posts.json 构建时抓）；页脚生态图；三板块下沉为 Work；
+Schema 加 Organization 与 Person 配对。边界：zosc 不是公司/lab，是「出品人」；MakerLion 面中文、zosc 面英文，两者不替对方说话。
+
+原型：`lab/osc-logo/index.html`（零构建、不进站点），GIF/分镜推 clip。
+
 ## 待办
 
 ### sameAs 五条（2026-10-06 全部实测 200）
