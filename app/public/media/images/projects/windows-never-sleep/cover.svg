@@ -1,0 +1,60 @@
+<svg width="950" height="320" viewBox="0 0 950 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Windows Never Sleep — keeps Windows awake: no idle sleep, no idle lock, two-click install and uninstall">
+  <!-- Same visual language as zerb-cc-cd/cover.svg (MotionSheet). Facts from the repo README only. -->
+  <defs>
+    <linearGradient id="wns-bg" x1="0" y1="0" x2="950" y2="320" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0e0e11"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <radialGradient id="wns-glow" cx="0.74" cy="0.2" r="0.7">
+      <stop stop-color="#e7503a" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#e7503a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="wns-grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0V34" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="950" height="320" fill="url(#wns-bg)"/>
+  <rect width="950" height="320" fill="url(#wns-grid)"/>
+  <rect width="950" height="320" fill="url(#wns-glow)"/>
+
+  <!-- Left: wordmark + what it is -->
+  <text x="56" y="92" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" letter-spacing="5" fill="#e7503a">CODE · WINDOWS UTILITY</text>
+
+  <text x="56" y="142" font-family="Montserrat, 'Helvetica Neue', sans-serif" font-size="30" font-weight="700" letter-spacing="-0.5" fill="#a1a1aa">Windows</text>
+  <text x="54" y="198" font-family="Montserrat, 'Helvetica Neue', sans-serif" font-size="54" font-weight="800" letter-spacing="-1.5" fill="#f4f3ef">Never Sleep<tspan fill="#e7503a">.</tspan></text>
+
+  <text x="57" y="234" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#a1a1aa">no idle sleep, no idle lock</text>
+  <text x="57" y="255" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#a1a1aa">two-click install · uninstall</text>
+
+  <text x="56" y="290" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" letter-spacing="1" fill="#ff6f59">github.com/byzosc/windows-never-sleep ↗</text>
+
+  <!-- Right: the two-button utility -->
+  <g>
+    <rect x="486" y="48" width="408" height="224" rx="14" fill="#141417" stroke="#26262b" stroke-width="1"/>
+
+    <circle cx="508" cy="72" r="4" fill="#e7503a"/>
+    <circle cx="524" cy="72" r="4" fill="#3a3a42"/>
+    <circle cx="540" cy="72" r="4" fill="#3a3a42"/>
+    <text x="562" y="76" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1.5" fill="#71717a">WINDOWS NEVER SLEEP</text>
+    <line x1="486" y1="90" x2="894" y2="90" stroke="#26262b" stroke-width="1"/>
+
+    <!-- buttons -->
+    <rect x="510" y="108" width="172" height="40" rx="20" fill="#e7503a"/>
+    <text x="596" y="133" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700" fill="#050505">Install.exe</text>
+    <rect x="698.5" y="108.5" width="171" height="39" rx="19.5" fill="none" stroke="#3a3a42" stroke-width="1"/>
+    <text x="784" y="133" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#d4d4d8">Uninstall.exe</text>
+
+    <!-- what it changes -->
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">
+      <text x="510" y="184" fill="#a1a1aa">idle sleep timeout</text>
+      <text x="870" y="184" text-anchor="end" fill="#ff6f59">Never</text>
+      <text x="510" y="216" fill="#a1a1aa">idle lock</text>
+      <text x="870" y="216" text-anchor="end" fill="#ff6f59">prevented</text>
+      <text x="510" y="248" fill="#a1a1aa">Win + L</text>
+      <text x="870" y="248" text-anchor="end" fill="#d4d4d8">still locks</text>
+    </g>
+    <line x1="510" y1="198" x2="870" y2="198" stroke="#26262b" stroke-width="0.5" stroke-opacity="0.8"/>
+    <line x1="510" y1="230" x2="870" y2="230" stroke="#26262b" stroke-width="0.5" stroke-opacity="0.8"/>
+  </g>
+</svg>

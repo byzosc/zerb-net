@@ -28,19 +28,56 @@ export async function getStaticPaths() {
 }
 
 const { entry, prev, next } = Astro.props;
-const { title, summary, cover, year, role, pillars, externalUrl, externalLabel } = entry.data;
+const { title, summary, cover, year, role, pillars, externalUrl, externalLabel, kind, links, app } =
+  entry.data;
 
 const bodyKey = Object.keys(bodies).find((k) => k.endsWith(`/${entry.id}.html`));
 const body = bodyKey ? bodies[bodyKey] : '';
+
+// Product pages describe themselves as SoftwareApplication (fuel for the bare query "zosc").
+// Google needs name + offers.price for the app rich result, plus aggregateRating or review —
+// we have no ratings and never invent them, so this is entity data, not a rich-result bid.
+// url must equal the canonical that Layout.astro emits (same formula).
+const firstLink = (...types: string[]) => links?.find((l) => types.includes(l.type))?.url;
+const downloadUrl = firstLink('download');
+const installUrl = firstLink('store') ?? (downloadUrl ? undefined : firstLink('site', 'source'));
+const appSchema =
+  kind === 'product'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: title,
+        description: summary,
+        url: new URL(Astro.url.pathname, Astro.site).href,
+        image: new URL(cover, Astro.site).href,
+        ...(app ? { applicationCategory: app.category } : {}),
+        ...(app?.os ? { operatingSystem: app.os } : {}),
+        ...(app?.requirements ? { softwareRequirements: app.requirements } : {}),
+        ...(installUrl ? { installUrl } : {}),
+        ...(downloadUrl ? { downloadUrl } : {}),
+        author: { '@type': 'Person', name: 'zosc', url: 'https://zosc.com' },
+        ...(app?.free ? { offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' } } : {}),
+      }
+    : null;
+
+// og:image / twitter:image of a product page = its own cover (absolute URL, same formula as the
+// JSON-LD image above). Raster covers only: X, Facebook and LinkedIn cards don't render SVG, so
+// an SVG cover (windows-never-sleep, s25edge-usa) keeps the site default. Older project pages are
+// unchanged (no image prop → default).
+const ogImage =
+  kind === 'product' && /\.(jpe?g|png|webp|gif)$/i.test(cover) ? new URL(cover, Astro.site).href : undefined;
 ---
 
-<Layout title={`${title} — zosc`} description={summary}>
+<Layout title={`${title} — zosc`} description={summary} image={ogImage}>
+  {appSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(appSchema).replace(/</g, '\\u003c')} />
+  )}
 
   <main class="pt-36 md:pt-44">
     <!-- Hero -->
     <section class="px-6 md:px-10">
       <div class="mx-auto max-w-[1400px]">
-        <a href="/#visual" class="text-sm text-mist transition-colors hover:text-paper">← Back to work</a>
+        <a href={`/#${pillars[0] ?? 'visual'}`} class="text-sm text-mist transition-colors hover:text-paper">← Back to work</a>
         <div class="mt-6 flex flex-wrap items-end justify-between gap-4">
           <h1 class="font-display text-5xl font-black leading-none md:text-8xl">{title}</h1>
           <div class="flex flex-wrap items-center gap-3 text-sm text-mist">
@@ -62,6 +99,25 @@ const body = bodyKey ? bodies[bodyKey] : '';
           >
             {externalLabel} <span aria-hidden="true">→</span>
           </a>
+        )}
+        {links && links.length > 0 && (
+          <div class="mt-8 flex flex-wrap gap-3">
+            {links.map((l, i) => (
+              <a
+                href={l.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cursor="Open"
+                class={
+                  i === 0
+                    ? 'inline-flex items-center gap-2 rounded-full border border-accent px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-accent transition-colors hover:bg-accent hover:text-ink'
+                    : 'inline-flex items-center gap-2 rounded-full border border-line px-6 py-3 font-display text-sm font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:text-accent'
+                }
+              >
+                {l.label} <span aria-hidden="true">→</span>
+              </a>
+            ))}
+          </div>
         )}
         <div class="mt-10 overflow-hidden rounded-2xl">
           <img src={cover} alt={title} class="w-full object-cover" />
@@ -112,4 +168,19 @@ const body = bodyKey ? bodies[bodyKey] : '';
     color: var(--color-mist);
   }
   .entry-content .wp-block-spacer { height: 1.5rem !important; }
+  /* Product bodies (v2). No older body uses lists or .shots, so existing pages are unchanged;
+     the list rules match about/index.astro. */
+  .entry-content ul { padding-left: 1.2rem; list-style: disc; }
+  .entry-content li { margin-block: 0.4rem; color: #d4d4d8; }
+  .entry-content li::marker { color: var(--color-accent); }
+  /* Portrait phone screens side by side instead of one full-width 1:2 image. */
+  .entry-content figure.shots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    max-width: 34rem;
+    margin: 2.5rem auto;
+  }
+  .entry-content figure.shots img { border-radius: 18px; }
+  .entry-content figure.shots figcaption { grid-column: 1 / -1; }
 </style>

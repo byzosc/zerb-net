@@ -29,7 +29,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       limit.reason === 'minute'
         ? 'Slow down a moment — too many questions in a short time.'
         : limit.reason === 'day'
-        ? "You've hit today's question limit. Try again tomorrow, or email zcbgood@gmail.com."
+        ? "You've hit today's question limit. Try again tomorrow, or email hi@zosc.com."
         : 'The assistant is busy right now. Please try again later.';
     return txt(msg, 429);
   }
@@ -71,7 +71,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         }
       } catch (e) {
         controller.enqueue(
-          encoder.encode('\n\n(Sorry — the assistant hit an error. Try again or email zcbgood@gmail.com.)')
+          encoder.encode('\n\n(Sorry — the assistant hit an error. Try again or email hi@zosc.com.)')
         );
         console.error('chat error', e);
       } finally {

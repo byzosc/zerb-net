@@ -1,0 +1,10 @@
+<p class="wp-block-paragraph">Every "simple" blog wants a static-site generator, its templating language, a build, and a deploy to babysit. zero-build-blog is the smallest thing that skips all of it: write a Markdown file, <code>git push</code>, and GitHub Pages serves a site that renders itself. The repo is the website — it runs <a href="https://blog.zosc.com/" target="_blank" rel="noopener noreferrer">blog.zosc.com</a>.</p>
+<h3 class="wp-block-heading">What you get</h3>
+<ul>
+<li><strong>No build step</strong> — no Hugo, Jekyll or Astro, no <code>node_modules</code>, no CI. A small vanilla-JS engine does the rendering in the browser.</li>
+<li><strong>Auto index and prev/next</strong> — drop a post folder in and it appears on the home page, newest first; there's no list to maintain.</li>
+<li><strong>Comments</strong> through GitHub Discussions via Giscus, with no third-party tracker.</li>
+<li><strong>Dark mode</strong> that follows the system theme, syntax highlighting, and per-post images with relative links.</li>
+<li><strong>You own everything</strong> — plain Markdown in a Git repo, no database, no lock-in.</li>
+</ul>
+<p class="wp-block-paragraph">How it works: the home page lists posts by reading the repo's <code>posts/</code> folder through the public GitHub API, and each article's Markdown is fetched and rendered client-side with marked, DOMPurify and highlight.js. That's the whole trick — the data source is the Git repo itself. The engine is MIT-licensed; the writing stays its author's.</p>

@@ -12,7 +12,8 @@ const all = (await getCollection('projects'))
 // there as a CTA button.
 const hrefFor = (p: (typeof all)[number]) => `/project/${p.id}/`;
 
-const filters = ['all', 'motion', 'visual', 'code'] as const;
+// Same order as the homepage sections (v2, 2026-10-08: Code · Motion · Visual).
+const filters = ['all', 'code', 'motion', 'visual'] as const;
 ---
 
 <Layout title="Work — zosc" description="Selected work by zosc.">

@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ zosc — Motion · Visual · Code
+# ⚡ zosc — Code · Motion · Visual
 
 **English** · [中文](README.zh-CN.md)
 
@@ -21,9 +21,9 @@
 
 The personal portfolio of **zosc (Zosc)** — motion design, visual art, and code under one roof. It began as a WordPress export and was rebuilt from scratch into a fast, motion-first **Astro** site, organized around three pillars:
 
+- **Code** — things built, not just designed.
 - **Motion** — systems of movement, interfaces that breathe.
 - **Visual** — worlds, surfaces and light.
-- **Code** — things built, not just designed.
 
 Instead of a stiff nav-and-short-pages layout, it's one long, scroll-driven page with anchored sections — plus an **"AI Ask"** panel that answers questions about any project, the process, or how to get in touch.
 

@@ -1,8 +1,13 @@
 ---
+// Logo: zosc-logo.png is a byte-identical copy of the pre-rename logo file (2026-10-08). Image
+// URLs are crawled, so the URL must not carry the old name; the old file stays in public/ because
+// media is never deleted. Keep this note out of the markup: HTML comments ship in the page.
+
+// Same order as the homepage sections (v2, 2026-10-08: Code · Motion · Visual).
 const links: { label: string; href: string; external?: boolean }[] = [
+  { label: 'Code', href: '/#code' },
   { label: 'Motion', href: '/#motion' },
   { label: 'Visual', href: '/#visual' },
-  { label: 'Code', href: '/#code' },
   { label: 'About', href: '/about/' },
   { label: 'Blog', href: 'https://blog.zosc.com/', external: true },
 ];
@@ -12,7 +17,7 @@ const links: { label: string; href: string; external?: boolean }[] = [
   <div class="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4 md:px-10">
     <a href="/" data-cursor="Home" class="shrink-0" aria-label="zosc home">
       <img
-        src="/media/images/common/brand/zerb-logo.png"
+        src="/media/images/common/brand/zosc-logo.png"
         alt="zosc"
         width="672"
         height="546"
