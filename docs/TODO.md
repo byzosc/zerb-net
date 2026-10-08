@@ -43,6 +43,8 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 - 构建通过；现有 `tools/check-home.py` 的页尾期望同步更新，23 页共享页尾校验通过。
 - 桌面/手机页尾截图均无 MakerLion、坏图 0、横向溢出 0；clip `5fbdt7pyxk` / `7x3aqtysz0`。
 - oscillator 动效工作保持暂停，不为此改 logo、favicon 或动效。
+- 已发布 `c8a4fa1`，生产部署 `dpl_F4QJioBkJDVgzWvAfxJ5hMA3qppn` READY；
+  线上首页/about/works/cubby 页均 200，页尾无 MakerLion。本项完成。
 
 用户原话：「zosc 这种顶级域名…z 作为 logo，然后 osc 作为调音里面的时钟心脏做个特殊效果？…否则 zosc 确实没什么记忆点，就像是缩写拼凑一样」。
 

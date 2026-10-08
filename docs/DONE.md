@@ -7,6 +7,9 @@
 - 移动菜单 toggle/Esc/背景/导航后关闭、Ask AI 跨页后打开与关闭、works 四种筛选通过；
   headless 未提供 fine pointer，光标 hover/标签/复位以模拟 fine-pointer 条件检查。
 - clip 桌面 `5fbdt7pyxk`、手机 `7x3aqtysz0`，上传读回哈希一致。
+- 浏览器逐页复核 23 页 HTTP 200、坏图 0、页尾无 MakerLion。代码发布 `c8a4fa1`，
+  生产部署 `dpl_F4QJioBkJDVgzWvAfxJ5hMA3qppn` READY；常规线上 URL（未加缓存绕过参数）
+  首页、about、works、cubby 均返回新页尾且为 200。
 
 ## 2026-10-08 oscillator 工作暂停与原型归档
 
