@@ -1,3 +1,42 @@
+## 2026-10-08 搜索结果里的 Astro 图标：根因与解法
+
+**不是「缓存还没更新」，是 Google 第一次就抓到了错的，然后按 URL 一直存着。**
+
+```
+10-06  品牌替换把 Layout 引用改成 zosc-favicon-*.png，但文件还叫 zerb-favicon-*.png
+       → 三个图标全 404
+       → Googlebot 恰在此窗口首次抓取 zosc.com，声明的 PNG 全取不到
+       → 回退取 /favicon.svg，而那时它还是 Astro 模板默认 logo
+       → 存入图标缓存
+```
+
+**决定性证据**：GSC 资源列表里 `zerb.net` 显示 Z 标、`zosc.com` 显示 Astro logo。
+两站用同一套图标文件，结果不同，差别只在**首次抓取的时间点**。
+
+**解法：换 URL，不等缓存。** Google 图标缓存按 URL 存，旧 URL 已绑定错误结果，
+改用从未被抓过的新路径强制重取：`zosc-favicon-*.png` → `zosc-mark-*.png`（旧文件保留不删）。
+再在 GSC 对首页点一次「要求建立索引」即可。
+
+**同日按 Google 文档修正的图标声明**（developers.google.com/search/docs/appearance/favicon-in-search）：
+```
+要求：正方形、至少 8x8，建议 >48px      （不存在「必须是 48 的倍数」这条，我差点说错）
+支持：BMP GIF ICO PNG JPEG PPM TIFF     不含 SVG
+明确：不会自动回退取 /favicon.ico，必须在首页显式声明
+```
+原先第一条声明是 32x32（低于建议值），且 ico/svg 文件虽在却未声明。现已把 192 提到最前，
+并补上 `/favicon.ico`（实含 16/32/48 三档）与 svg 声明。
+
+**教训（10-06 那个坑的第二次发作）**：引用改名而文件没改名，当时只造成「图标不显示」，
+看起来是小事；真正的代价是**在那个窗口被 Googlebot 抓到，错误被固化进缓存，两天后才发现，
+且无法手动清除**。全局替换后的引用完整性校验不是洁癖，是防止错误被外部系统固化。
+
+### 邮件转发复核（同日）
+```
+启用  hi@zosc.com → zcbgood@gmail.com
+启用  catch-all   → zcbgood@gmail.com
+```
+用户首次投递失败应为 MX 记录传播窗口，现已确认可用。
+
 ## 2026-10-07 DKIM 补齐授权后权限复查
 
 - 用户授权补齐 Cloudflare 转发 DKIM 公钥，询问是否需要再次提供 token。
