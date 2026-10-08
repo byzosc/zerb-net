@@ -1,3 +1,31 @@
+## 2026-10-08 15:16 SGT v2 改版上线（main 3e5ce5f）
+
+**线上实测（直连 IP 绕过本机解析）**：
+```
+title           zosc — Code · Motion · Visual
+板块顺序        #code → #motion → #visual；Code 板块 3 张：motionpilot / motionrules / cubby（大卡用 cover-large）
+产品页          8 页（+ 原 MotionSheet），各带 SoftwareApplication + 自己的 og:image；sitemap 15 → 23 URL
+about           231 词，雇主锚点保留，无年份/现任雇主/地点词；邮箱 hi@zosc.com（Cloudflare 邮箱混淆会把它
+                改写成 /cdn-cgi/l/email-protection，grep 源码看不到是正常的，浏览器显示正确）
+旧词            zerb-logo / zerb-favicon / zerb.cc.cd 在页面输出中 0 次；blog.zosc.com 标题已是 zosc blog
+```
+**流程**：A 内容与隐私 → B 产品库 → C 首页/标题/logo → E 收尾，各在独立 worktree 分支，主会话逐个独立复核后
+合并 v2，再 `--no-ff` 合并 main。四份报告 `docs/v2/A|B|C|E-REPORT.md`，校验脚本进了 `tools/`
+（check-about / check-projects / check-home / check-motion / shoot-pages / product-covers）。
+
+**备份与回滚**：tag `pre-v2-2026-10-08`（6247c29）；Vercel 生产部署 `dpl_Yamf1VWLCaSspQkSruT3Fyhhr1Di` 可一键 promote；
+线上 15 页 HTML 快照 `.render-tmp/prod-snapshot-2026-10-08/`；about 原文在 zosc-career 私有仓库。
+
+**用户当天定的流程规矩**：自己的站**核完直接推 main，截图推 clip**，不设「先看预览」门槛，不让用户登录后台；
+预览保护已用 API 关闭（`ssoProtection: null`）。
+
+**子任务纠正过主会话的判断**（都对）：私有仓库 README 不进索引；GitHub 自动社交卡含 star 数不能当封面；
+QuantMind / quant-buddy-skills 是 fork、0 提交，不上架。
+
+**遗留（未改，记录在案）**：跨页锚点落点高度 21–160px 浮动（原有问题，疑似 `lenis.scrollTo` 与路由 hash 滚动抢）；
+Hero 三行动效与词的对应变了（Code=遮罩 / Motion=模糊 / Visual=打字机）；`motion.ts` 注释仍按旧顺序命名；
+12 个旧项目页 og:image 仍用 253×83 默认图；gateway 小卡封面底部标签被裁一半；「Zerb Hub」博文历史叙述与 README 旧截图保留。
+
 ## 2026-10-08 公开仓库改名 zerb-net → zosc.com
 
 ```

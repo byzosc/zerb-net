@@ -27,72 +27,9 @@ GitHub                   byzosc；profile README 仓库已改名为 byzosc
 
 详细做法、七个踩过的坑、受保护不可替换的字符串清单，见 `docs/DONE.md` 2026-10-06 条目。
 
-## v2 改版（2026-10-08 用户拍板，本节是各子任务的唯一事实源）
-
-**定位：首页偏产品，节奏不变。** 骨架保持 Hero → 三板块（featured 优先网格）→ AI Ask，
-只改顺序与内容；长度不变，页面数量变多（内容量加在详情页，不加在首页）。
-
-### 已定决策（含理由）
-| 决策 | 内容 | 理由 |
-|---|---|---|
-| 板块顺序 | **Code · Motion · Visual**，板块名不改 | 差异化在 Code（把动效体系落成工具链、上架 Adobe 商店）；改名=再一次抓取周期，只改顺序 |
-| 标题 | `zosc — Code · Motion · Visual`，随 v2 一起推 | 与顺序一致，一次抓取 |
-| Code 首页卡 | 固定 3–4 张 featured：MotionPilot · motionrules · Findly · +1 | 首页不变长；其余产品只在 /works 与详情页 |
-| 产品上架 | MotionPilot / motionrules / Findly / QuantMind / quant-buddy-skills / openwebui-cliproxy-gateway / windows-never-sleep / nas-monitoring / zero-build-blog / s25edge-usa | 每页独立 title/description + `SoftwareApplication` schema，是裸词 zosc 的燃料 |
-| 暂不上 | 第二个 app（游戏，未发布） | 用户定 |
-| about 页 | **压缩不删**：约 120–180 词一段话 + 技能一行 + 认证一行 + 联系方式。拿掉逐条职责 bullet 与起止年份（2015/2019/2023） | 雇主名是实体锚点，短语级上下文保留；年份是暴露感主因且对 SEO 无用 |
-| 备份 | **改 about 之前**先快照到私有仓库 `zosc-career/docs/ABOUT_PUBLIC_SNAPSHOT_2026-10-08.html` + Markdown 并入 RESUME 素材 | 详细履历的正确归宿是 PDF 简历，不是公开站 |
-| AI 问答 | **不保留长版**：`knowledge.ts` 继续读页面短版，不加环境变量 | 压缩的动机是暴露感，AI 一问就背等于只防 Google 没防人；AI 职责是引到作品与联系方式，细节走邮件要 PDF；一份事实源零额外管线（用户 2026-10-08 定） |
-| 对外邮箱 | **统一 `hi@zosc.com`**（Footer / about / knowledge.ts CONTACT / chat.ts 文案 / AskAI） | 品牌域名、实体一致、Gmail 不露；zcbgood 只是转发目的地 |
-| 现任雇主 | **继续不出现在任何公开文本**（现状 0 次，v2 必须保持） | 隐私 + 求职中 |
-| Findly → **Cubby** | 可公开关联，素材向 Findly 会话索取。**公开名 Cubby（英）/ 知物（中），Findly 只是内部代号**；App Store 线上为 1.0「Cubby — where did I put it」，改名版未放出，**页面不写死商店标题/版本** | 用户 2026-10-08 确认；Findly 会话 10-08 补充；注意这是不可逆的公开关联 |
-| 测试方式 | 分支 `v2` + Vercel 预览部署（预览默认 `X-Robots-Tag: noindex`，第一次预览实测确认） | 不碰 main，不在生产站塞测试路由；定稿合并一次 |
-
-### 硬约束（所有子任务）
-- 不碰 `main`；不删任何媒体；改引用后必须跑「引用的文件是否真实存在」校验（10-06 favicon 全 404 的坑）
-- 受保护字符串：`com.zerblion.motionpilot.cep`、`zerbnet-media`、`zerb-cc-cd`（slug，另议）
-- 改 `app/` 前必读 `AGENTS.md`「Astro 重建版工作规则」（View Transitions / 遮罩 / Lenis / 无 Google Fonts）
-- 无头 chromium 是 snap：读不到 `/tmp` 与隐藏目录，渲染/截图一律从 `~/render-tmp/` 起，用完即删
-
-### v2 当前状态（2026-10-08 12:xx SGT，额度耗尽前落盘）
-```
-分支 origin/v2 = 5a8afd9   A（内容与隐私）+ B（产品库 8 页）+ C（首页 Code 优先/标题/logo/about 分段）已全部合并
-预览            Vercel 对 v2 自动部署，x-robots-tag: noindex 已实测；但受 Deployment Protection 保护，打开需登录 Vercel
-博客            blog.zosc.com 标题已改 zosc blog（D 子任务，zero-build-blog@cb8c754，线上实测 zerb 命中 0）
-main            未动。合并 v2 → main 由用户看过预览后决定
-报告            docs/v2/A-REPORT.md · B-REPORT.md · C-REPORT.md（校验输出都在里面）；截图 .render-tmp/v2-c/
-```
-**合并前必须做**：MotionPilot 首页大卡封面裁切——横幅自带字标，手机 3:2 下被切成「nPilot.」，桌面标题压在「Adobe Exchange ↗」上。
-修法：给 motionpilot 条目加 `coverLarge`（schema 已有字段），构图中间与左下不放字。
-
-**十项已按主会话建议拍板（用户 2026-10-08「按你的建议来」），子任务 E 执行中：**
-```
-1 预览：用户登录 Vercel 看        2 App Store 按钮保留       3 s25edge 的 China Mobile 保留
-4 motionrules 标免费              5 MotionSheet 外链改 motionrules.com/app + 封面重做
-6 Hero 三行改 Code/Motion/Visual（只换文字，动效按行位绑定不动）
-7 Code 板块 3 张（gateway 不 featured，仍在 /works）
-8 QuantMind / quant-buddy-skills 不上（fork、0 提交）
-9 博客「Zerb Hub」历史叙述与 README 旧截图保留      10 about 三段保留
-+ MotionPilot 大卡 coverLarge（合并前必修）· Back to work 按板块跳 · favicon 注释挪 frontmatter · README 顺序
-```
-
-**C 顺手改的（不要可一行回退）**：/works 筛选顺序 All·Code·Motion·Visual；.gitignore 加 .render-tmp/；og:image 位图封面产品页各用自己的。
-**小尾巴**：「← Back to work」所有项目都跳 /#visual，可改成按板块跳（一行）；Layout 里 favicon 改名的 HTML 注释会输出到页面，含旧文件名，可挪进 frontmatter。
-
-### 改版前备份（2026-10-08，推 main 之前已做）
-```
-git tag  pre-v2-2026-10-08  → 6247c29（origin/main 改版前最后一次 app 代码状态；tag 已推远端）
-Vercel   生产部署 dpl_Yamf1VWLCaSspQkSruT3Fyhhr1Di（net-website-ennpq8jqh-zerbs-projects.vercel.app），
-         回滚 = 在 Vercel 把它 promote 回 production，秒级，不用重建
-静态快照 .render-tmp/prod-snapshot-2026-10-08/  线上 15 页 HTML 原样（404K，本地，不进 git）
-about 原文 zosc-career/docs/ABOUT_PUBLIC_SNAPSHOT_2026-10-08.{html,md}（私有仓库）
-```
-代码回滚：`git checkout pre-v2-2026-10-08 -- app && git commit && git push origin main`。
-
-### 子任务拆分
-- **A 内容与隐私**：备份快照 → 压缩 about → 确认 knowledge.ts 仍读短版且输出正常 → 邮箱统一
-- **B 产品库**：素材采集（商店页/站点截图/GitHub og 图）→ 10 个产品条目 → 详情页模板 + SoftwareApplication → /works 可筛
-- **C 首页与标题**：顺序 Code 优先 → Code 板块 featured 卡 → 标题 → 预览验收（A/B 合并后做）
+## v2 已于 2026-10-08 上线（main 3e5ce5f）
+决策、备份、遗留项全部记在 `docs/DONE.md` 当日条目；四份子任务报告在 `docs/v2/`。
+下一步候选（用户未排期）：旧项目页补 og:image 大图；跨页锚点落点浮动排查；Hero 动效按词绑定；gateway 小卡封面裁切。
 
 ## 待办
 
