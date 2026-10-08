@@ -99,12 +99,19 @@ const website = {
       不含 SVG，且明确说明「不会自动回退去取 /favicon.ico」——必须在首页显式声明，
       所以 ico 这条不能省。svg 只给浏览器用，对 Google 无效。
       https://developers.google.com/search/docs/appearance/favicon-in-search
+
+      文件名为什么从 zosc-favicon-* 改成 zosc-mark-*（2026-10-08）：
+      Google 的站点图标缓存是**按 URL** 存的。2026-10-06 那次品牌替换把引用改成了
+      zosc-favicon-*.png 但文件还叫 zerb-favicon-*.png，三个图标全 404；Googlebot 正好
+      在那个窗口第一次抓 zosc.com，回退取了当时还是 Astro 默认 logo 的 /favicon.svg 并存下。
+      旧 URL 上已经绑定了错误结果，换成从未被抓过的新路径才能强制重取。
+      旧文件保留，不删（可能有外部引用）。
     -->
-    <link rel="icon" href="/media/images/common/brand/zosc-favicon-192.png" sizes="192x192" />
-    <link rel="icon" href="/media/images/common/brand/zosc-favicon-32.png" sizes="32x32" />
+    <link rel="icon" href="/media/images/common/brand/zosc-mark-192.png" sizes="192x192" />
+    <link rel="icon" href="/media/images/common/brand/zosc-mark-32.png" sizes="32x32" />
     <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/media/images/common/brand/zosc-favicon-180.png" />
+    <link rel="apple-touch-icon" href="/media/images/common/brand/zosc-mark-180.png" />
     <link rel="preload" href="/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/mulish-latin.woff2" as="font" type="font/woff2" crossorigin />
     <noscript>
