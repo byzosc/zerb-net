@@ -79,6 +79,16 @@ main            未动。合并 v2 → main 由用户看过预览后决定
 **C 顺手改的（不要可一行回退）**：/works 筛选顺序 All·Code·Motion·Visual；.gitignore 加 .render-tmp/；og:image 位图封面产品页各用自己的。
 **小尾巴**：「← Back to work」所有项目都跳 /#visual，可改成按板块跳（一行）；Layout 里 favicon 改名的 HTML 注释会输出到页面，含旧文件名，可挪进 frontmatter。
 
+### 改版前备份（2026-10-08，推 main 之前已做）
+```
+git tag  pre-v2-2026-10-08  → 6247c29（origin/main 改版前最后一次 app 代码状态；tag 已推远端）
+Vercel   生产部署 dpl_Yamf1VWLCaSspQkSruT3Fyhhr1Di（net-website-ennpq8jqh-zerbs-projects.vercel.app），
+         回滚 = 在 Vercel 把它 promote 回 production，秒级，不用重建
+静态快照 .render-tmp/prod-snapshot-2026-10-08/  线上 15 页 HTML 原样（404K，本地，不进 git）
+about 原文 zosc-career/docs/ABOUT_PUBLIC_SNAPSHOT_2026-10-08.{html,md}（私有仓库）
+```
+代码回滚：`git checkout pre-v2-2026-10-08 -- app && git commit && git push origin main`。
+
 ### 子任务拆分
 - **A 内容与隐私**：备份快照 → 压缩 about → 确认 knowledge.ts 仍读短版且输出正常 → 邮箱统一
 - **B 产品库**：素材采集（商店页/站点截图/GitHub og 图）→ 10 个产品条目 → 详情页模板 + SoftwareApplication → /works 可筛
