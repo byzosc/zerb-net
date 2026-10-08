@@ -43,7 +43,9 @@ MotionRules 定义时序曲线、MotionPilot 把它敲进 AE，所以「Z 是出
 **签名动效五步**：Z 放电 → 波形起振（高频乱抖）→ 锁相（收敛成正弦）→ 落字（三个弧段停成 o·s·c，必须是路径插值不是淡入）→ 心跳（o 的圆心周期性亮点）。
 **落位**：页头小 logo hover 走一周期波；页面切换用示波器扫描线脉冲；**Hero 不动**（三词节奏已定，别打架）；**favicon 不动**（16px 无动效）。
 波形是全站唯一的橙 #e7503a（示波器美学），不碰 favicon 黑白决定。与 MakerLion 共用 Z 标、不共用动效（造物的冲劲 vs 振荡的精准）。
-**一句话解码**（about / README）："zosc — z · oscillator. The clock behind the motion."
+**一句话解码**（about / README）：**不能落在 motion 上**——用户 2026-10-08：「他还是我的名字，motion 不是全部」。振荡器是任何系统活起来的脉冲（芯片走时 / 音乐发声 / 事件循环 tick / 心跳），动效只是一个应用场景。
+候选（待用户定）：① "z · oscillator. The pulse behind everything built here."（推荐）② "Where things start to tick." ③ "Signal over noise." ④ "The clock that keeps the work alive."
+Hero 副标同理不能是 "Motion systems, shipped as tools."，候选："Design that runs. Code that moves. Things that ship."
 
 **v3 结构方向（同日建议，待用户看稿后定）**：从「作品集带产品」翻成「品牌带作品集」——Hero 副标换品牌主张 + 两个直达动作；
 Hero 下加产品条（三产品各一个直接动作按钮）；首页接 blog 最新 3 篇（posts.json 构建时抓）；页脚生态图；三板块下沉为 Work；
