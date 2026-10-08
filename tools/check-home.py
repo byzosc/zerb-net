@@ -16,7 +16,7 @@ Extended by subtask E (same day): Code = exactly 3 cards, hero words, old names,
 
 Checks (exit code 1 on any failure):
   1. homepage <main> pillar sections are #code, #motion, #visual in that order; cards per
-     section follow the rule in index.astro (Code: featured only; Motion / Visual: first 5 by
+     section follow the rule in index.astro (Code: featured only; Motion / Visual: first 3 by
      order; at most 5 each); Code = EXPECT_CODE with full grid rows (1 large + an even number of
      small cards); each large card shows the entry's coverLarge when it has one
   2. homepage <title>, og:title and twitter:title; no "Motion · Visual · Code" left in any
@@ -58,7 +58,7 @@ SITE = "https://zosc.com"
 ORDER = ["code", "motion", "visual"]
 HERO_ORDER = ["motion", "visual", "code"]  # hero keeps the original cadence on purpose (user, 2026-10-08)
 FEATURED_ONLY = {"code"}
-MAX_CARDS = 5
+MAX_CARDS = 3  # user 2026-10-08: every section shows 3 (large card + one row)
 # User, 2026-10-08: Code shows 3 cards (symmetric grid); openwebui-cliproxy-gateway only on /works.
 EXPECT_CODE = ["motionpilot", "motionrules", "cubby"]
 TITLE = "zosc — Code · Motion · Visual"

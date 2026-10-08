@@ -17,15 +17,16 @@ const hrefFor = (p: (typeof all)[number]) => `/project/${p.id}/`;
 // Which cards a section shows:
 //   featuredOnly: true  → only entries with `featured: true` (Code: the 3–4 flagship products;
 //                         every other product lives on /works and its own page)
-//   featuredOnly: false → the first 5 by `order` (Motion, Visual — same rule as before v2)
-// Either way the first card is the large one and at most 5 are shown, so the section rhythm
-// (one large card + a two-column grid) stays the same.
+//   featuredOnly: false → the first `max` by `order` (Motion, Visual)
+// 2026-10-08 (user): every section shows 3 — one large card + one two-column row. The remaining
+// Visual entries only live on /works; "后两个没啥意思" on the homepage.
+// Either way the first card is the large one, so the section rhythm stays the same.
 const pillars = [
   { id: 'code', label: 'Code', tagline: 'Things built, not just designed.', featuredOnly: true },
   { id: 'motion', label: 'Motion', tagline: 'Systems of movement — interfaces that breathe.', featuredOnly: false },
   { id: 'visual', label: 'Visual', tagline: 'Worlds, surfaces and light.', featuredOnly: false },
 ] as const;
-const MAX_CARDS = 5;
+const MAX_CARDS = 3;
 
 const byPillar = (id: string) => all.filter((p) => p.data.pillars.includes(id as any));
 const cardsFor = (pillar: (typeof pillars)[number]) => {
@@ -68,7 +69,7 @@ const cardsFor = (pillar: (typeof pillars)[number]) => {
     <!-- PILLAR SECTIONS -->
     {
       pillars.map((pillar) => {
-        const [featured, ...rest] = cardsFor(pillar); // large card + up to 4
+        const [featured, ...rest] = cardsFor(pillar); // large card + up to 2
         return (
           <section id={pillar.id} class="border-t border-line px-6 py-28 md:px-10 md:py-40">
             <div class="mx-auto max-w-[1400px]">
