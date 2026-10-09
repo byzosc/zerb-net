@@ -293,8 +293,8 @@ try {
   const rowMid = rowTrace.find((x) => x.op > 0.01 && x.op < 0.99);
   const [rowIn, cardIn] = [firstSeen('op', 0.01), firstSeen('cardOp', 0.01)];
   check(rowTrace[0]?.op === 0 && !!rowMid && rowTrace[rowTrace.length - 1].op === 1 && rowPos.size === 1
-      && rowIn !== null && cardIn !== null && Math.abs(rowIn - cardIn) <= 100,
-    `large card row: hidden until its card reveals, fades in with it (row from ${rowIn} ms, card from ${cardIn} ms, `
+      && rowIn !== null && cardIn !== null && rowIn - cardIn >= 300 && rowIn - cardIn <= 1000,
+    `large card row: hidden until its card has risen, then fades in (2026-10-09: buttons sit on the title line; row from ${rowIn} ms, card from ${cardIn} ms, `
       + `opacity ${rowMid?.op.toFixed(2)} mid-way, end 1); document position ${[...rowPos][0]} in all ${rowTrace.length} frames`,
     `large card row: start ${rowTrace[0]?.op}, mid ${!!rowMid}, end ${rowTrace[rowTrace.length - 1]?.op}, row in ${rowIn} / card in ${cardIn} ms, positions ${[...rowPos].join(' | ')}`);
   // b) real clicks. A direct link: a new tab on its store, no opener access, the homepage stays put.

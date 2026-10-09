@@ -331,7 +331,9 @@ html.overlay-open .hero-dot {
 @media (prefers-reduced-motion: no-preference) {
   html.js .reveal + .card-links {
     opacity: 0;
-    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    /* the buttons sit on the card's title line; wait until the card has mostly risen (its
+       reveal is 0.85s) so they never appear misaligned with the title */
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.55s;
   }
   html.js .reveal.is-in + .card-links { opacity: 1; }
 }

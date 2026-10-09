@@ -2,7 +2,14 @@
 // v3-G (2026-10-08): a homepage card's direct links — where you get the product (directLinks in
 // pages/index.astro) — as one quiet row right under the card. It sits OUTSIDE the card's <a>: a
 // link can't contain a link, and the card's own hover (veil lift, zoom, title colour) stays as is.
-// 2026-10-09 (user: "看起来不像按钮"): now small pills in the hero's secondary-button language —
+// 2026-10-09 (user: the row under the card "排版不搭" — put them next to the title): the row is
+// absolutely positioned inside the card's wrapper (index.astro gives it `relative group`) so it
+// sits on the title's line — small card: right end of the title row; large card: bottom-right of
+// the image, level with the title on the bottom-left. Still OUTSIDE the card's <a> in the DOM (a
+// link can't hold a link); the wrapper's `group` keeps the card's hover (zoom, veil) on while the
+// pointer is on a button. Entrance: the row fades in only after its card has finished rising
+// (global.css transition-delay), so the two never sit misaligned mid-reveal, and it never moves.
+// 2026-10-09 (user: "看起来不像按钮"): small pills in the hero's secondary-button language —
 // rounded-full, border-line, paper text, accent border/text on hover — one size down (px-4 py-2,
 // text-xs) so they read as buttons without competing with the hero's accent button. Nothing here
 // moves: the row fades in with its card's reveal, opacity only (global.css .card-links; AGENTS.md:
@@ -13,16 +20,26 @@
 // nested map Astro drops the plain space (it rendered "Adobe Exchange↗"). No links → nothing.
 interface Props {
   links: { label: string; url: string }[];
-  class?: string; // extra classes (the large card: px-5)
+  // true = the large card: the buttons sit on the image's bottom-right, level with the title
+  // that sits on its bottom-left. false = a small card: right end of the title row under the image.
+  overlay?: boolean;
 }
-const { links, class: className } = Astro.props;
+const { links, overlay = false } = Astro.props;
 ---
 
 {
   links.length > 0 && (
-    <p class:list={['card-links mt-3 flex flex-wrap items-center gap-2', className]}>
+    <p class:list={[
+      'card-links z-20 flex flex-wrap items-center gap-2',
+      // small cards on phones: a title + two pills don't fit one line (Cubby), so below sm the row
+      // flows under the title; from sm up it sits at the title row's right end.
+      overlay ? 'absolute bottom-7 right-5 justify-end md:bottom-[30px]' : 'mt-3 sm:absolute sm:bottom-0 sm:right-0 sm:mt-0 sm:justify-end',
+    ]}>
       {links.map((l) => (
-        <a href={l.url} target="_blank" rel="noopener noreferrer" data-cursor="Open" class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line px-4 py-2 font-display text-xs font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:text-accent">
+        <a href={l.url} target="_blank" rel="noopener noreferrer" data-cursor="Open" class:list={[
+          'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line px-4 py-2 font-display text-xs font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:text-accent',
+          overlay && 'bg-ink/60 backdrop-blur-sm',
+        ]}>
           {l.label}{' '}<span aria-hidden="true">↗</span>
         </a>
       ))}

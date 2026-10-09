@@ -149,7 +149,7 @@ const BTN_SECONDARY =
               {
                 featured ? (
                   <div class="space-y-16">
-                    <div>
+                    <div class="group relative">
                       <ProjectCard
                         featured
                         href={hrefFor(featured)}
@@ -157,12 +157,12 @@ const BTN_SECONDARY =
                         cover={featured.data.coverLarge ?? featured.data.cover}
                         year={featured.data.year}
                       />
-                      <CardLinks links={directLinks(featured)} class="px-5" />
+                      <CardLinks links={directLinks(featured)} overlay />
                     </div>
                     {rest.length > 0 && (
                       <div class="grid grid-cols-1 gap-x-10 gap-y-16 lg:grid-cols-2">
                         {rest.map((p) => (
-                          <div>
+                          <div class="group relative">
                             <ProjectCard
                               href={hrefFor(p)}
                               title={p.data.title}
