@@ -1,9 +1,25 @@
+## 2026-10-09 跨页锚点落点漂移修复（main d38b2c2）
+
+**现象**：从产品页点「← Back to work」或从其他页点页头导航回首页某板块，落点每次不同；probe 10 次实测 -88…147px（目标 96px），
+负值时板块标题藏在固定页头下。
+
+**根因（滚动轨迹实测）**：路由跳 `/#code` 时浏览器按 `html{scroll-behavior:smooth}` 启动原生平滑滚动（194ms 时 scrollY 26），
+120ms 后 `lenis.scrollTo(el)` 用 Lenis 自己的滚动值算目标——该值已被原生动画带偏——254ms 一跳到 1068（应为 884）。
+偏差大小取决于两者撞上的时机，所以看起来随机。
+
+**修法**（`motion.ts` 的 `landOnHash`）：after-swap 对带 hash 的跳转临时设 `scroll-behavior:auto`（不能放 before-swap：
+swap 会复制新 `<html>` 的属性、抹掉内联样式）；用页面**实际** scrollY 算目标，一次瞬时跳转并让 Lenis 同步到同一值；
+350ms 后复核，偏差 >4px 再校正，然后恢复平滑滚动（同页锚点仍平滑）。
+
+**验证**：本地三个板块各 12 次共 36 次全部 96px；生产环境 8 次全部 96px。check-motion 断言由「0–200px」收紧为 96±4，
+新增从 /about/ 点页头导航的跨页用例。
+
 ## 2026-10-09 产品卡按钮压暗、View all 弱化（main aa1bf89）
 
 - 用户：大卡右侧按钮与左侧标题没有主次，按钮应压暗。按钮改为 text-mist + border-white/10 + semibold，悬停才变亮；标题保持最亮。
 - 用户：View all 多余、颜色太重。改为 `All N products / works →` 小号灰字，**仅当板块条目多于首页 3 张时显示**（Motion 正好 3 个 → 不显示）。
   **不能整删**：它是 /works 的唯一站内入口，而 /works 是 6 个非精选产品（nas-monitoring、windows-never-sleep 等）唯一的站内链接来源。
-- 已知：check-motion「从 Cubby 返回落点 -10px」近几次 3 跑 2 败（此前 12 跑约 3 败），属跨页锚点竞态老问题，未修，排在 TODO。clip `1a743crnwv`。
+- 跨页锚点竞态：同日已修（d38b2c2），见上条。clip `1a743crnwv`。
 
 ## 2026-10-09 页脚大小写、产品卡按钮挪到标题旁（main 84ef327 · b4906d3）
 
