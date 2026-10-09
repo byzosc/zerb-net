@@ -1,7 +1,10 @@
 ---
-// Logo: zosc-logo.png is a byte-identical copy of the pre-rename logo file (2026-10-08). Image
-// URLs are crawled, so the URL must not carry the old name; the old file stays in public/ because
-// media is never deleted. Keep this note out of the markup: HTML comments ship in the page.
+// Logo: inline SVG since 2026-10-09 — same Z path as public/favicon.svg. It used to be an <img>
+// (zosc-logo.png, 672x546, transparent), and Google picked it as the search-result thumbnail of
+// the homepage, letterboxed with grey bars. Google does not index inline SVG as an image, so the
+// header can no longer be chosen; the homepage declares its preferred thumbnail in Layout.astro.
+// zosc-logo.png / zerb-logo.png stay in public/ (media is never deleted). Keep notes out of the
+// markup: HTML comments ship in the page.
 
 // Same order as the homepage sections (v2, 2026-10-08: Code · Motion · Visual).
 const links: { label: string; href: string; external?: boolean }[] = [
@@ -16,13 +19,15 @@ const links: { label: string; href: string; external?: boolean }[] = [
 <header id="masthead" transition:persist="site-header" class="fixed top-0 left-0 z-50 w-full">
   <div class="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4 md:px-10">
     <a href="/" data-cursor="Home" class="shrink-0" aria-label="zosc home">
-      <img
-        src="/media/images/common/brand/zosc-logo.png"
-        alt="zosc"
-        width="672"
-        height="546"
-        class="h-6 w-auto opacity-100 transition-opacity md:h-7 md:opacity-65 md:hover:opacity-100"
-      />
+      <svg
+        viewBox="0 0 100 81.58"
+        role="img"
+        aria-label="zosc"
+        class="h-6 w-auto text-paper opacity-100 transition-opacity md:h-7 md:opacity-65 md:hover:opacity-100"
+        style="aspect-ratio: 100 / 81.58"
+      >
+        <path fill="currentColor" fill-rule="evenodd" d="M56.39 0.0L56.24 0.15L45.99 0.15L45.84 0.3L43.16 0.45L39.45 1.19L34.7 2.82L29.94 5.35L26.23 8.17L23.48 10.92L20.51 14.78L18.72 17.9L18.42 18.65L18.65 18.87L19.54 18.28L24.74 15.75L26.97 14.86L32.76 13.08L36.92 12.18L40.64 11.74L40.79 11.59L41.83 11.59L41.98 11.44L48.37 11.14L48.22 11.44L44.35 13.82L35.74 19.91L31.28 23.33L27.93 26.23L44.13 26.37L4.9 74.96L0.0 81.2L0.07 81.58L84.18 81.58L100.0 66.2L99.93 65.97L99.78 66.12L98.89 66.12L97.1 66.57L90.42 67.46L90.27 67.61L89.38 67.61L86.55 68.2L38.63 68.13L70.13 29.49L85.74 10.77L86.78 9.29L94.21 0.22L57.13 0.15L56.39 0.0Z" />
+      </svg>
     </a>
 
     <!-- Desktop nav -->

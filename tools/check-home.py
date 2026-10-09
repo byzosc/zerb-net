@@ -101,7 +101,11 @@ OLD_TITLE_ORDER = "Motion · Visual · Code"
 # MotionSheet domain replaced by motionrules.com/app (the slug zerb-cc-cd is protected and stays).
 OLD_NAMES = ("zerb-logo", "zerb-favicon", "zerb.cc.cd")
 HERO_EFFECTS = ["data-mask", "data-blur", "data-type"]  # motion.ts: line 1, 2, 3 — by position
-DEFAULT_OG = f"{SITE}/media/images/common/brand/cropped-logo_high2.png"
+DEFAULT_OG = f"{SITE}/media/images/common/brand/og-default.png"
+# Homepage only (2026-10-09): Google's search thumbnail must be square, opaque, text-free and
+# not a logo, so the homepage uses a 1080x1080 crop of dynamic-weather-art for og:image and
+# WebPage.primaryImageOfPage; every other non-product page keeps DEFAULT_OG.
+HOME_THUMB = f"{SITE}/media/images/common/brand/home-thumb.jpg"
 
 # v3-F (2026-10-08) — the brand-first homepage.
 OLD_HERO_LINE = "zosc is a motion designer, visual artist & creative developer. Ask the AI anything."
@@ -332,9 +336,12 @@ def main() -> int:
                     server_hits.append(f"{p.relative_to(APP)} {name}×{n - inv}")
     check(not server_hits, f"server bundle: 0 references ({listed} public-file inventory entries — kept old files, not references)",
           f"server bundle references old names: {server_hits}")
-    new_logo = "/media/images/common/brand/zosc-logo.png"
-    check(new_logo in home and (PUBLIC / new_logo.lstrip("/")).is_file(),
-          f"header logo {new_logo} referenced and present", f"header logo {new_logo} not referenced or missing")
+    # Header logo is inline SVG since 2026-10-09: an <img> logo was picked by Google as the
+    # homepage's search thumbnail (letterboxed, grey bars). No logo <img> may come back.
+    head = home[home.find('<header id="masthead"'): home.find("</header>")]
+    check("<svg" in head and 'aria-label="zosc"' in head and "<img" not in head,
+          "header logo is inline SVG (no <img> in the masthead — Google can't pick it as thumbnail)",
+          "header logo is not inline SVG, or the masthead contains an <img>")
 
     print("5. reference integrity (built HTML + CSS)")
     refs: dict[str, set[str]] = {}
@@ -385,10 +392,13 @@ def main() -> int:
         else:
             fail(f"{slug}: og:image {og} / twitter:image {tw}, expected {want}")
     others = [p for p in html_files if "project" not in p.relative_to(DIST).parts]
-    bad = [str(p.relative_to(DIST)) for p in others if meta(p.read_text(encoding="utf-8"), "property", "og:image") != DEFAULT_OG]
+    want_og = lambda p: HOME_THUMB if p.relative_to(DIST).as_posix() == "index.html" else DEFAULT_OG
+    bad = [str(p.relative_to(DIST)) for p in others if meta(p.read_text(encoding="utf-8"), "property", "og:image") != want_og(p)]
     older = sum(1 for _, d in live if d.get("kind") != "product")
-    check(not bad, f"{len(others)} non-project pages + {older} older project pages keep the default og:image",
-          f"non-project pages without the default og:image: {bad}")
+    check(not bad, f"homepage og:image = home-thumb; {len(others) - 1} other non-project pages + {older} older project pages keep the default",
+          f"non-project pages with the wrong og:image: {bad}")
+    thumb = PUBLIC / "media/images/common/brand/home-thumb.jpg"
+    check(thumb.is_file(), "home-thumb.jpg present in public/", "home-thumb.jpg missing")
 
     print("7. about intro paragraphs")
     about = (DIST / "about" / "index.html").read_text(encoding="utf-8")
@@ -589,7 +599,12 @@ def main() -> int:
     blocks = ld_blocks(home)
     by_type = {b.get("@type"): b for b in blocks}
     types = sorted(str(b.get("@type")) for b in blocks)
-    check(types == ["Organization", "Person", "WebSite"], f"homepage blocks: {types}", f"homepage JSON-LD blocks {types}")
+    check(types == ["Organization", "Person", "WebPage", "WebSite"], f"homepage blocks: {types}", f"homepage JSON-LD blocks {types}")
+    wp = by_type.get("WebPage", {})
+    pi = (wp.get("primaryImageOfPage") or {}).get("url")
+    check(pi == HOME_THUMB and wp.get("isPartOf") == {"@id": WEBSITE_ID},
+          f"WebPage.primaryImageOfPage = {pi.replace(SITE, '') if pi else pi}, isPartOf WebSite",
+          f"WebPage.primaryImageOfPage {pi} / isPartOf {wp.get('isPartOf')}")
     org, person, site = by_type.get("Organization", {}), by_type.get("Person", {}), by_type.get("WebSite", {})
     check((org.get("@id"), person.get("@id"), site.get("@id")) == (ORG_ID, PERSON_ID, WEBSITE_ID),
           f"@id {ORG_ID} / {PERSON_ID} / {WEBSITE_ID}",

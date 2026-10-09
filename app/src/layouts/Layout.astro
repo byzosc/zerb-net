@@ -15,6 +15,9 @@ interface Props {
   // Absolute URL for og:image / twitter:image (product pages pass their cover). Optional:
   // without it the page gets the default share card, og-default.png.
   image?: string;
+  // Absolute URL of a square, opaque, text-free image Google should prefer as this page's search
+  // thumbnail. Emitted as WebPage.primaryImageOfPage. Only the homepage passes it (2026-10-09).
+  primaryImage?: string;
 }
 
 // Title order = homepage section order (v2, 2026-10-08: Code · Motion · Visual).
@@ -22,6 +25,7 @@ const {
   title = 'zosc — Code · Motion · Visual',
   description = 'zosc — a motion designer, visual artist & developer. Living interactive interfaces, motion, and visual art; proficient in After Effects, Cinema 4D, Octane.',
   image,
+  primaryImage,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, SITE).href;
@@ -82,6 +86,29 @@ const website = {
   url: SITE,
   publisher: { '@id': ORG_ID },
 };
+
+// Google's search-result thumbnail (2026-10-09). Root cause of the ugly grey-barred "Z" next to
+// the zosc result: Google picked the header logo <img> (zosc-logo.png, 672x546, transparent) —
+// its aspect ratio 1.231 matches the thumbnail (1.227) and no other image on the page does.
+// Google letterboxes non-square picks with grey bars and fills transparency with black.
+// Fixes: (1) the header logo is now inline SVG, which Google does not index as an image;
+// (2) the homepage declares its preferred image explicitly. Google's guidance for that image:
+// representative of the page, not a logo, no text, no extreme aspect ratio, high resolution
+// (developers.google.com/search/docs/appearance/google-images). og-default.png is a logo card
+// with text — right for X/Slack share cards, wrong as a search thumbnail — so the homepage passes
+// a 1080x1080 crop of dynamic-weather-art as both its og:image and primaryImageOfPage.
+const webpage = primaryImage
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      '@id': `${canonical}#webpage`,
+      url: canonical,
+      name: title,
+      isPartOf: { '@id': WEBSITE_ID },
+      about: { '@id': ORG_ID },
+      primaryImageOfPage: { '@type': 'ImageObject', url: primaryImage, width: 1080, height: 1080 },
+    }
+  : null;
 
 // Favicon <link>s in <head>. This note lives here, not in the markup: HTML comments ship in
 // every page, and this one names the old file names.
@@ -153,6 +180,7 @@ const website = {
     <script type="application/ld+json" set:html={JSON.stringify(organization)} />
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
     <script type="application/ld+json" set:html={JSON.stringify(website)} />
+    {webpage && <script type="application/ld+json" set:html={JSON.stringify(webpage)} />}
     <link rel="icon" href="/media/images/common/brand/zosc-mark-192.png" sizes="192x192" />
     <link rel="icon" href="/media/images/common/brand/zosc-mark-32.png" sizes="32x32" />
     <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16" />
