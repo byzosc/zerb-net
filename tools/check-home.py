@@ -141,6 +141,7 @@ BLOG = "https://blog.zosc.com"
 EXPECT_FOOTER = [
     ("X", "https://x.com/byzosc"),
     ("GitHub", "https://github.com/byzosc"),
+    ("Behance", "https://www.behance.net/zosc"),  # 2026-10-09: in sameAs, was missing from the footer
     ("Steam", "https://steamcommunity.com/id/byzosc"),
     ("Blog", f"{BLOG}/"),
     ("MotionRules", "https://motionrules.com/"),
@@ -526,13 +527,17 @@ def main() -> int:
             if not all("↗" in a["inner"] for a in acts):
                 problems.append("a link lacks its ↗")
             row_tokens = set(row_cls.split())
-            if not ROW_TYPE | {"text-mist"} <= row_tokens:
-                problems.append(f"row classes {row_cls!r} lack {sorted(ROW_TYPE | {'text-mist'} - row_tokens)}")
-            if not all({"hover:text-paper", "transition-colors"} <= set(a["cls"].split()) for a in acts):
-                problems.append("a link lacks hover:text-paper / transition-colors")
-            pill = [t for t in row_cls.split() + [t for a in acts for t in a["cls"].split()] if pill_or_fill(t)]
-            if pill:
-                problems.append(f"pill / fill classes {pill}")
+            # 2026-10-09 (user: the old quiet text row "didn't look like buttons"): each link is a
+            # small pill in the hero secondary button's language — no accent FILL (bg-accent stays
+            # the hero primary's alone), and no motion classes.
+            PILL = {"rounded-full", "border", "border-line", "text-paper", "hover:border-accent",
+                    "hover:text-accent", "transition-colors", "uppercase", "tracking-wide"}
+            for a in acts:
+                miss = PILL - set(a["cls"].split())
+                if miss:
+                    problems.append(f"{a['text']!r} lacks pill classes {sorted(miss)}")
+                if re.search(r"(?<![\w:-])bg-accent\b", a["cls"]):
+                    problems.append(f"{a['text']!r} has an accent fill")
             if "reveal" in row_tokens or MOVING.search(row_cls):
                 problems.append(f"the row itself moves: {row_cls!r}")
             moving.extend(f"{slug} {a['text']}" for a in acts if MOVING.search(a["cls"]))
@@ -540,7 +545,7 @@ def main() -> int:
                 fail(f"#code {slug}: {'; '.join(problems)}")
             else:
                 ok(f"#code {slug}: " + " · ".join(f"{t} ↗ {h}" for t, h in got)
-                   + " (after the card's </a>, new tab, noopener noreferrer, no pill / fill)")
+                   + " (after the card's </a>, new tab, noopener noreferrer, small outline pill, no fill)")
     foot_row = re.search(r'<div class="([^"]*)">\s*(?:<a\s[^>]*>[^<]*</a>\s*)+</div>', block(home, "<footer", "</footer>"))
     foot_type = set(foot_row.group(1).split()) & ROW_TYPE if foot_row else set()
     check(foot_type == ROW_TYPE, f"row type = the footer link row's ({' '.join(sorted(ROW_TYPE))}; mist, paper on hover)",

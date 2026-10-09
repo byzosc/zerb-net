@@ -2,8 +2,9 @@
 // v3-G (2026-10-08): a homepage card's direct links — where you get the product (directLinks in
 // pages/index.astro) — as one quiet row right under the card. It sits OUTSIDE the card's <a>: a
 // link can't contain a link, and the card's own hover (veil lift, zoom, title colour) stays as is.
-// Type = the footer's link row: text-sm, uppercase, tracking-wide, mist, paper on hover. No pill
-// border, no accent fill — the hero's two buttons are the homepage's only buttons. Nothing here
+// 2026-10-09 (user: "看起来不像按钮"): now small pills in the hero's secondary-button language —
+// rounded-full, border-line, paper text, accent border/text on hover — one size down (px-4 py-2,
+// text-xs) so they read as buttons without competing with the hero's accent button. Nothing here
 // moves: the row fades in with its card's reveal, opacity only (global.css .card-links; AGENTS.md:
 // a link that moves between mousedown and mouseup loses the click). py-2 = a taller hit area for
 // the trailing custom cursor; with mt-1 the link text box starts 12 px below the card's bottom edge
@@ -19,14 +20,11 @@ const { links, class: className } = Astro.props;
 
 {
   links.length > 0 && (
-    <p class:list={['card-links mt-1 flex flex-wrap items-center gap-x-3 text-sm uppercase tracking-wide text-mist', className]}>
-      {links.map((l, i) => (
-        <Fragment>
-          {i > 0 && <span aria-hidden="true">·</span>}
-          <a href={l.url} target="_blank" rel="noopener noreferrer" data-cursor="Open" class="whitespace-nowrap py-2 transition-colors hover:text-paper">
-            {l.label}{' '}<span aria-hidden="true">↗</span>
-          </a>
-        </Fragment>
+    <p class:list={['card-links mt-3 flex flex-wrap items-center gap-2', className]}>
+      {links.map((l) => (
+        <a href={l.url} target="_blank" rel="noopener noreferrer" data-cursor="Open" class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-line px-4 py-2 font-display text-xs font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:text-accent">
+          {l.label}{' '}<span aria-hidden="true">↗</span>
+        </a>
       ))}
     </p>
   )
