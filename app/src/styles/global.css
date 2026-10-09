@@ -324,6 +324,18 @@ html.overlay-open .hero-dot {
   .proj-media { transition: none; }
 }
 
+/* v3-G: a homepage card's direct links (components/CardLinks.astro) come right after the card's
+   <a>, outside it. They are links, so they never move (AGENTS.md); they fade in with their card's
+   reveal instead — same trigger (.is-in) and timing as .reveal, opacity only. Without JS, or with
+   reduced motion, they are simply shown. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .reveal + .card-links {
+    opacity: 0;
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.js .reveal.is-in + .card-links { opacity: 1; }
+}
+
 /* ── Mobile menu — visibility-driven so it can NEVER get stuck blocking the page */
 #mobile-menu {
   position: fixed;

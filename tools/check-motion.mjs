@@ -20,6 +20,13 @@
 //      work" from one project page per pillar (cross-page: URL hash + that section at the top of
 //      the viewport; the exact offset of the cross-page landing varies, see the note below).
 //   The hero has no links of its own (its dots only change the cursor label); nothing to click.
+//   3. v3-G (2026-10-08) Code cards: each carries a row of direct links right after the card's <a>
+//      (components/CardLinks.astro). a) Frames while the header nav scrolls #code in: the large
+//      card's row fades in with the card's reveal and never moves (its document position is one
+//      point in every frame). b) Real clicks: a direct link (Adobe Exchange on the large card,
+//      Google Play on the Cubby card) opens a NEW tab — no opener access (rel=noopener) — and the
+//      homepage stays where it is; the card itself (large: MotionPilot, small: Cubby) opens its
+//      product page.
 //
 // Same constraints as shoot-pages.mjs: chromium is a snap (no /tmp, no dot-directories), so its
 // profile lives in ~/render-tmp/chrome-profile-motion (deleted at exit); node writes the images.
@@ -60,8 +67,14 @@ await new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; });
 let seq = 0;
 const pending = new Map();
 const waiters = [];
+const targets = new Map(); // targetId -> latest TargetInfo (Target.setDiscoverTargets, section 3)
 ws.onmessage = (ev) => {
   const msg = JSON.parse(ev.data);
+  if (msg.method === 'Target.targetCreated' || msg.method === 'Target.targetInfoChanged') {
+    const info = msg.params.targetInfo;
+    targets.set(info.targetId, { ...targets.get(info.targetId), ...info,
+      urls: [...(targets.get(info.targetId)?.urls ?? []), info.url].filter((u, i, a) => u && a.indexOf(u) === i) });
+  }
   if (msg.id && pending.has(msg.id)) {
     const { res, rej } = pending.get(msg.id);
     pending.delete(msg.id);
@@ -247,6 +260,70 @@ try {
     // too, i.e. not specific to this link — so only "this section is the one at the top" is checked.
     check(r.path === '/' && r.hash === `#${id}` && r.atTop === id && r.top >= 0 && r.top <= 200,
       `/project/${slug}/ "← Back to work": ${r.path}${r.hash}, #${id} at the top (${r.top}px)`, `back from ${slug}: ${JSON.stringify(r)}`);
+  }
+
+  console.log('3. Code cards (v3-G): direct-link rows, real clicks, motion on');
+  await send('Target.setDiscoverTargets', { discover: true });
+  const toCode = async () => {
+    await goto('/');
+    await sleep(2200);
+    await click(`document.querySelector('#masthead nav a[href="/#code"]')`);
+  };
+  const linkJs = (label) => `[...document.querySelectorAll('#code .card-links a')].find((a) => a.textContent.includes(${JSON.stringify(label)}))`;
+  // a) 1440x900: #code starts below the fold, so the nav click scrolls the large card in and reveals
+  //    it while this sampler (started just before the click) records its row every frame.
+  await goto('/');
+  await sleep(2200);
+  await evaluate(`(() => {
+    const row = document.querySelector('#code .card-links'), card = row && row.previousElementSibling;
+    const trace = (window.__rowTrace = []), t0 = performance.now();
+    const sample = () => {
+      const r = row.getBoundingClientRect();
+      trace.push({ t: Math.round(performance.now() - t0), op: +getComputedStyle(row).opacity, cardOp: +getComputedStyle(card).opacity,
+        pos: Math.round(r.left) + ',' + Math.round(r.top + scrollY), inView: r.top < innerHeight && r.bottom > 0 });
+      if (performance.now() - t0 < 3000) requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  })()`);
+  await click(`document.querySelector('#masthead nav a[href="/#code"]')`);
+  await sleep(3200);
+  const rowTrace = await evaluate('window.__rowTrace');
+  const firstSeen = (key, v) => rowTrace.find((x) => x[key] > v)?.t ?? null;
+  const rowPos = new Set(rowTrace.map((x) => x.pos));
+  const rowMid = rowTrace.find((x) => x.op > 0.01 && x.op < 0.99);
+  const [rowIn, cardIn] = [firstSeen('op', 0.01), firstSeen('cardOp', 0.01)];
+  check(rowTrace[0]?.op === 0 && !!rowMid && rowTrace[rowTrace.length - 1].op === 1 && rowPos.size === 1
+      && rowIn !== null && cardIn !== null && Math.abs(rowIn - cardIn) <= 100,
+    `large card row: hidden until its card reveals, fades in with it (row from ${rowIn} ms, card from ${cardIn} ms, `
+      + `opacity ${rowMid?.op.toFixed(2)} mid-way, end 1); document position ${[...rowPos][0]} in all ${rowTrace.length} frames`,
+    `large card row: start ${rowTrace[0]?.op}, mid ${!!rowMid}, end ${rowTrace[rowTrace.length - 1]?.op}, row in ${rowIn} / card in ${cardIn} ms, positions ${[...rowPos].join(' | ')}`);
+  // b) real clicks. A direct link: a new tab on its store, no opener access, the homepage stays put.
+  //    The card: its product page. 1440x1700 for the small cards, so all of #code is in view.
+  for (const [height, slug, label, host] of [[900, 'motionpilot', 'Adobe Exchange', 'exchange.adobe.com'], [1700, 'cubby', 'Google Play', 'play.google.com']]) {
+    await send('Emulation.setDeviceMetricsOverride', { width: 1440, height, deviceScaleFactor: 1, mobile: false }, s);
+    await toCode();
+    await sleep(2200);
+    const mark = await evaluate('(window.__stay = Math.random())');
+    const known = new Set(targets.keys());
+    await click(linkJs(label));
+    let tab = null;
+    for (let i = 0; i < 40 && !tab; i++) {
+      await sleep(250);
+      tab = [...targets.values()].find((t) => !known.has(t.targetId) && t.type === 'page' && t.urls.some((u) => new URL(u, 'about:blank').host === host)) ?? null;
+    }
+    const here = await evaluate(`({ at: location.pathname + location.hash, same: window.__stay === ${mark} })`);
+    check(!!tab && tab.canAccessOpener === false && here.same && here.at === '/#code',
+      `"${label} ↗" (${slug}): new tab ${tab?.urls.join(' -> ')}, opener access ${tab?.canAccessOpener}; homepage stays at ${here.at}, not reloaded`,
+      `"${label} ↗": tab ${JSON.stringify(tab)}, homepage ${JSON.stringify(here)}`);
+    if (tab) await send('Target.closeTarget', { targetId: tab.targetId }).catch(() => {});
+    await goto('/');
+    await sleep(2200);
+    await click(`document.querySelector('#masthead nav a[href="/#code"]')`);
+    await sleep(2200);
+    await click(`document.querySelector('#code a[href="/project/${slug}/"]')`);
+    await sleep(2000);
+    const page = await evaluate(`({ path: location.pathname, h1: document.querySelector('main h1')?.textContent.trim() })`);
+    check(page.path === `/project/${slug}/`, `${slug} card: opens ${page.path} ("${page.h1}")`, `${slug} card: at ${JSON.stringify(page)}`);
   }
 } finally {
   ws.close();
