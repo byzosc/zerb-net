@@ -530,8 +530,9 @@ def main() -> int:
             # 2026-10-09 (user: the old quiet text row "didn't look like buttons"): each link is a
             # small pill in the hero secondary button's language — no accent FILL (bg-accent stays
             # the hero primary's alone), and no motion classes.
-            PILL = {"rounded-full", "border", "border-line", "text-paper", "hover:border-accent",
-                    "hover:text-accent", "transition-colors", "uppercase", "tracking-wide"}
+            # later on 2026-10-09 (user: no hierarchy vs the title — dim them): mist text, faint border
+            PILL = {"rounded-full", "border", "border-white/10", "text-mist", "hover:border-white/40",
+                    "hover:text-paper", "transition-colors", "uppercase", "tracking-wide"}
             for a in acts:
                 miss = PILL - set(a["cls"].split())
                 if miss:

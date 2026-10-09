@@ -30,6 +30,10 @@ const pillars = [
   { id: 'visual', label: 'Visual', tagline: 'Worlds, surfaces and light.', featuredOnly: false },
 ] as const;
 const MAX_CARDS = 3;
+// "All N products / works →" (2026-10-09, user: View all was redundant and too heavy): a small mist
+// text link, shown only when the pillar holds more than the 3 cards on the homepage (Motion has
+// exactly 3 → no link). It can't go entirely: it is the only internal path to /works, and /works
+// is the only page linking the 6 non-featured products.
 
 const byPillar = (id: string) => all.filter((p) => p.data.pillars.includes(id as any));
 const cardsFor = (pillar: (typeof pillars)[number]) => {
@@ -179,14 +183,14 @@ const BTN_SECONDARY =
                   <p class="reveal text-mist">More coming soon.</p>
                 )
               }
-              {featured && (
+              {featured && byPillar(pillar.id).length > MAX_CARDS && (
                 <a
                   href={`/works/?f=${pillar.id}`}
                   data-cursor="View"
-                  class="reveal group mt-16 inline-flex items-center gap-3 font-display text-lg font-bold transition-colors hover:text-accent"
+                  class="reveal mt-12 inline-flex items-center gap-2 text-sm text-mist transition-colors hover:text-paper"
                 >
-                  {pillar.id === 'code' ? 'View all products' : 'View all work'}
-                  <span class="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  {`All ${byPillar(pillar.id).length} ${pillar.id === 'code' ? 'products' : 'works'}`}
+                  <span aria-hidden="true">→</span>
                 </a>
               )}
             </div>
