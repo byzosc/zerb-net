@@ -1,3 +1,11 @@
+## 2026-10-09 about 页邮箱显示 [email protected]（main 7da0e16）
+
+Cloudflare 的 Email Address Obfuscation 会把页面里的邮箱改写成 `[email protected]` 占位 + `/cdn-cgi/l/email-protection` 链接，
+靠它注入的解码脚本在浏览器里还原；本站用 `<ClientRouter />` 无刷新切页，脚本常不执行，about 页就露出占位。
+本机 Cloudflare token **没有 Zone Settings 权限**（PATCH `settings/email_obfuscation` 返回 10000），所以改用 Cloudflare 认可的
+`<!--email_off-->…<!--/email_off-->` 标记包住 Layout 的 body。线上验证：about 页明文 `hi@zosc.com` 4 处、mailto 2 处、占位与 cdn-cgi 链接 0。
+**以后加任何显示邮箱的位置都在 body 内，自动受保护；不要把邮箱放进 `<head>`。**
+
 ## 2026-10-09 10:36 SGT v3-G/H 上线 + Google 缩略图根因修复（main 83407a6）
 
 **合并**：v3-G（删产品条，Code 板块即 PRODUCTS，三张大卡下一行小字直达链接，Motion 上挂 WORK 眉题）、
