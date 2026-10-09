@@ -110,6 +110,13 @@ const webpage = primaryImage
     }
   : null;
 
+// <!--email_off--> … <!--/email_off--> around the body (2026-10-09): Cloudflare's Email Address
+// Obfuscation rewrites every address into "[email protected]" + a /cdn-cgi/ link and relies on its
+// decoder script to restore it in the browser. With <ClientRouter /> page swaps that script often
+// doesn't run, so the about page showed "[email protected]" instead of hi@zosc.com. The zone
+// setting can't be changed with our API token (no Zone Settings permission); Cloudflare honours
+// these markers instead. The address is public on purpose — it's the contact address.
+
 // Favicon <link>s in <head>. This note lives here, not in the markup: HTML comments ship in
 // every page, and this one names the old file names.
 // 顺序有意：大图标在前。Google 文档要求图标为正方形、至少 8x8，并建议 >48px；
@@ -195,10 +202,12 @@ const webpage = primaryImage
     <ClientRouter />
   </head>
   <body class="bg-ink text-paper">
+    <!--email_off-->
     <div id="cursor" transition:persist="cursor" aria-hidden="true"><span class="cursor-label"></span></div>
     <Header />
     <slot />
     <AskAI transition:persist="askai" />
+    <!--/email_off-->
 
     <script>
       import { setupMotion } from '../scripts/motion';
