@@ -24,6 +24,21 @@ function teardown() {
   lenis = undefined;
 }
 
+// Cross-page #hash landing (2026-10-09). The section used to land anywhere from -88 to 147 px
+// (target 96) — tools/probe-anchor-landing.mjs, 10 runs. Two scrollers raced: the router's hash
+// scroll ran as a NATIVE smooth scroll (html { scroll-behavior: smooth }), and 120 ms later
+// lenis.scrollTo(el) computed its target from Lenis's own scroll value, which the native animation
+// had left stale — so the error depended on how far that animation had got. Now: native smooth
+// scroll is off for the jump (after-swap sets inline scroll-behavior:auto), the target comes from
+// the page's ACTUAL scroll position, one instant jump cancels anything in flight, and Lenis is set
+// to the same value so it can't pull the page back.
+const HEADER_OFFSET = 96; // = html { scroll-padding-top } in global.css: clears the fixed header
+function landOnHash(el: HTMLElement) {
+  const y = Math.max(0, Math.round(el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET));
+  window.scrollTo({ top: y, behavior: 'instant' as ScrollBehavior });
+  lenis?.scrollTo(y, { immediate: true, force: true });
+}
+
 function build() {
   if (built) return;
   built = true;
@@ -306,6 +321,10 @@ export function setupMotion() {
   document.addEventListener('astro:after-swap', () =>
     safe(() => {
       if (!location.hash) window.scrollTo(0, 0);
+      // Cross-page #hash jump: no native smooth scroll this time (see landOnHash below).
+      // Set here, not in before-swap: the swap copies the new <html>'s attributes and would
+      // drop an inline style set earlier.
+      else document.documentElement.style.scrollBehavior = 'auto';
     })
   );
   document.addEventListener('astro:page-load', () =>
@@ -316,11 +335,14 @@ export function setupMotion() {
       // short delay lets Lenis finish initialising after build().
       if (location.hash) {
         const el = document.querySelector<HTMLElement>(location.hash);
-        if (el)
+        if (el) {
+          setTimeout(() => landOnHash(el), 120);
+          // re-check once the page has settled; correct only if it is visibly off
           setTimeout(() => {
-            if (lenis) lenis.scrollTo(el, { offset: -96, immediate: true });
-            else el.scrollIntoView();
-          }, 120);
+            if (Math.abs(el.getBoundingClientRect().top - HEADER_OFFSET) > 4) landOnHash(el);
+            document.documentElement.style.scrollBehavior = '';
+          }, 470);
+        } else document.documentElement.style.scrollBehavior = '';
       }
       if (cursorBound) {
         document.documentElement.classList.add('cursor-on');

@@ -249,16 +249,24 @@ try {
     check(r.hash === `#${id}` && r.atTop === id && Math.abs(r.top - 96) <= 24,
       `header nav "${id}": ${r.path}${r.hash}, #${id} top ${r.top}px`, `header nav ${id}: ${JSON.stringify(r)}`);
   }
+  for (const id of ['code', 'visual']) {
+    await goto('/about/');
+    await sleep(800);
+    await click(`document.querySelector('#masthead nav a[href="/#${id}"]')`);
+    await sleep(2500);
+    const r = await landed(id);
+    check(r.path === '/' && r.hash === `#${id}` && r.atTop === id && Math.abs(r.top - 96) <= 4,
+      `/about/ header nav "${id}" (cross-page): #${id} top ${r.top}px`, `about → ${id}: ${JSON.stringify(r)}`);
+  }
   for (const [slug, id] of [['cubby', 'code'], ['vivo-xr', 'motion'], ['dynamic-weather-art', 'visual']]) {
     await goto(`/project/${slug}/`);
     await sleep(800);
     await click(`[...document.querySelectorAll('main a')].find((a) => a.textContent.includes('Back to work'))`);
     await sleep(2500);
     const r = await landed(id);
-    // Cross-page landing (motion.ts: lenis.scrollTo(el, { offset: -96 }) 120 ms after page-load)
-    // varies run to run — 29 to 160 px measured 2026-10-08, the header nav from a project page
-    // too, i.e. not specific to this link — so only "this section is the one at the top" is checked.
-    check(r.path === '/' && r.hash === `#${id}` && r.atTop === id && r.top >= 0 && r.top <= 200,
+    // Cross-page landing is exact since 2026-10-09 (motion.ts landOnHash: the native smooth scroll
+    // and Lenis no longer race; 36/36 probe runs at 96 px). Before that it floated -88…147 px.
+    check(r.path === '/' && r.hash === `#${id}` && r.atTop === id && Math.abs(r.top - 96) <= 4,
       `/project/${slug}/ "← Back to work": ${r.path}${r.hash}, #${id} at the top (${r.top}px)`, `back from ${slug}: ${JSON.stringify(r)}`);
   }
 
