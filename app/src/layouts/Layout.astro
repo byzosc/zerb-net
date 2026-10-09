@@ -13,7 +13,7 @@ interface Props {
   title?: string;
   description?: string;
   // Absolute URL for og:image / twitter:image (product pages pass their cover). Optional:
-  // without it every page keeps the site logo, exactly as before.
+  // without it the page gets the default share card, og-default.png.
   image?: string;
 }
 
@@ -25,7 +25,15 @@ const {
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, SITE).href;
-const ogImage = image ?? new URL('/media/images/common/brand/cropped-logo_high2.png', SITE).href;
+// Default share card (v3-H, 2026-10-08): 1200x630, opaque #050505, Z mark + wordmark + the hero
+// tagline, rendered by tools/og-default.py. When HERO_TAGLINE (index.astro) changes, rerun that
+// tool and update the alt below; its check fails until both match the new line.
+// width / height / alt describe this file only, so they are emitted only when no image is passed
+// (product covers have other sizes). Replaced the 253x83 transparent old "ZERB" wordmark
+// (cropped-logo_high2.png, kept in public/: media is never deleted).
+const ogImage = image ?? new URL('/media/images/common/brand/og-default.png', SITE).href;
+const ogImageAlt =
+  'The zosc Z mark and wordmark on black, above the tagline “Design that runs. Code that moves. Things that ship.”';
 // The five profiles. Both the Person and the Organization claim them (v3 decision): the handles
 // are the zosc brand's accounts.
 const sameAs = [
@@ -129,6 +137,15 @@ const website = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    {
+      !image && (
+        <>
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={ogImageAlt} />
+        </>
+      )
+    }
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
