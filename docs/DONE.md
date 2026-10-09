@@ -1,6 +1,6 @@
 ## 2026-10-09 页脚大小写、产品卡按钮挪到标题旁（main 84ef327 · b4906d3）
 
-- **页脚**：去掉全大写与宽字距；品牌名保留原写法（X / GitHub / Behance / Steam / MotionRules / Cubby），普通词小写（blog / email）。
+- **页脚 / about 联系方式**：去掉全大写与宽字距（about 标签字号 0.72→0.85rem）；品牌名保留原写法（X / GitHub / Behance / Steam / MotionRules / Cubby），普通词小写（blog / email）。**全站规则：全大写只留给板块眉题（PRODUCTS / WORK / SCROLL），凡是名字一律原写法。**
 - **产品卡按钮**：用户嫌放在卡片下方「排版不搭」。桌面：小卡在标题行右端，大卡在图片右下角与左下角标题齐平（半透明底）；
   手机：小卡标题 + 两个按钮一行放不下，sm 以下落到标题下方。DOM 上仍在卡片 `<a>` 之外，外层 `relative group` 让悬停按钮时卡片 hover 不断；
   入场时卡片上移结束后按钮才淡入（transition-delay 0.55s），按钮本身不位移。clip `8jc7f29356` / `ermcb4qcq0`。
