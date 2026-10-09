@@ -1,3 +1,28 @@
+## 2026-10-09 产品卡按钮 + 外部账号索引（main f753ac2 · blog 05c6320）
+
+**产品卡直达链接改药丸按钮**：用户说原来的小字行「看起来不像按钮」。改用 Hero 次按钮同一套样式缩小一号
+（rounded-full / border-line / hover 橙边橙字，无橙色填充，不与 Hero 主按钮竞争，无位移）。check-home 断言同步。clip `83pvq9ymyk`。
+
+**搜 zosc 只出现主站、其他账号没被索引 —— 诊断**（以 Googlebot UA 实测）：
+```
+github.com/byzosc   200，标题「byzosc (zosc) · GitHub」，15 处链回 zosc.com          健康
+behance.net/zosc    200，robots index,follow，标题「zosc lion」，0 处链回 zosc.com
+steamcommunity      200，标题「Steam Community :: zosc」，0 处链回
+x.com/byzosc        对非官方爬虫 403 + x-robots-tag:none，收录由 X 与 Google 的协议决定
+blog.zosc.com       200，但静态 HTML 无 canonical、无链回 zosc.com、无结构化数据，正文靠 JS
+```
+**没有一个被挡住，主因是时间**：handle 2026-10-06 才改，旧 URL 作废，新 URL 对 Google 是三天前出现的新页面。
+
+**已做**：zosc.com 页脚补 Behance（sameAs 有、页脚漏了），X/GitHub/Behance/Steam/Blog 全部 `rel="me"`；
+博客静态 HTML 补 canonical、og、页头/页脚链回 zosc.com（rel=author）、JSON-LD Blog，author/publisher 用与 zosc.com
+**同一个 @id**（`https://zosc.com/#person` / `#organization`），把博客挂到同一实体上。
+
+**已知结构性限制（未改）**：博客用 hash 路由（`/#/post/...`），Google 不把 hash 后的部分当独立 URL，
+10 篇文章对 Google 等于同一个页面。要让文章单独被索引需改成真实路径或预渲染，会打破「零构建」，属另一个决定。
+
+**只有用户能做的**：Behance 资料「网站」栏、Steam 个人简介、X 简介网站栏填 `zosc.com`（让那三个页面链回来）；
+GSC（zosc.com 网域资源已覆盖子域）对 `https://blog.zosc.com/` 点一次「请求编入索引」。
+
 ## 2026-10-09 about 页邮箱显示 [email protected]（main 7da0e16）
 
 Cloudflare 的 Email Address Obfuscation 会把页面里的邮箱改写成 `[email protected]` 占位 + `/cdn-cgi/l/email-protection` 链接，
