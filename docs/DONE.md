@@ -1,3 +1,14 @@
+## 2026-10-09 页脚大小写、产品卡按钮挪到标题旁（main 84ef327 · b4906d3）
+
+- **页脚**：去掉全大写与宽字距；品牌名保留原写法（X / GitHub / Behance / Steam / MotionRules / Cubby），普通词小写（blog / email）。
+- **产品卡按钮**：用户嫌放在卡片下方「排版不搭」。桌面：小卡在标题行右端，大卡在图片右下角与左下角标题齐平（半透明底）；
+  手机：小卡标题 + 两个按钮一行放不下，sm 以下落到标题下方。DOM 上仍在卡片 `<a>` 之外，外层 `relative group` 让悬停按钮时卡片 hover 不断；
+  入场时卡片上移结束后按钮才淡入（transition-delay 0.55s），按钮本身不位移。clip `8jc7f29356` / `ermcb4qcq0`。
+- check-motion 里「从 Cubby 返回落点 -10px」偶发 FAIL，复跑通过——属已记录的跨页锚点竞态老问题，与本次无关。
+- **Steam 加网址无价值**：Steam 外链走 linkfilter 中转页，不传权重；Behance / X 外链为 nofollow，价值仅在实体关联与访客点击。
+- **byzosc 与 zosc 的关联**：handle 只影响 URL 匹配；各平台页面标题取的是显示名（GitHub「byzosc (zosc)」、Steam「:: zosc」、
+  Behance「zosc lion」），zosc.com 的 schema 用 sameAs 精确指向这些 URL 且 alternateName 含 byzosc。结论：不改 handle，保证每个平台显示名是 zosc。
+
 ## 2026-10-09 产品卡按钮 + 外部账号索引（main f753ac2 · blog 05c6320）
 
 **产品卡直达链接改药丸按钮**：用户说原来的小字行「看起来不像按钮」。改用 Hero 次按钮同一套样式缩小一号
