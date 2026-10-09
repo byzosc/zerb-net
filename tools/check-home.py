@@ -132,7 +132,7 @@ STRIP_LEFTOVERS = {
     "boxed-card classes": r"rounded-2xl border border-line bg-ink-soft",
     "strip one-liners": r"applies your motion spec to keyframes|from definition to Lottie handoff|note it in one line, find it later",
 }
-ROW_TYPE = {"text-sm", "uppercase", "tracking-wide"}  # the footer link row's type classes
+ROW_TYPE = {"text-sm"}  # the footer link row's type classes (2026-10-09: no uppercase — names keep their casing, generic words lowercase)
 LABEL_CLASS = "mx-auto max-w-[1400px] text-xs uppercase tracking-widest text-mist"  # F's "Work" label
 # a card's direct links follow the card's <a> immediately, outside it (CardLinks.astro)
 CARD_RE = re.compile(r'<a href="/project/([^/"]+)/"[^>]*>.*?</a>(\s*<p class="([^"]*\bcard-links\b[^"]*)"[^>]*>(.*?)</p>)?', re.S)
@@ -143,10 +143,10 @@ EXPECT_FOOTER = [
     ("GitHub", "https://github.com/byzosc"),
     ("Behance", "https://www.behance.net/zosc"),  # 2026-10-09: in sameAs, was missing from the footer
     ("Steam", "https://steamcommunity.com/id/byzosc"),
-    ("Blog", f"{BLOG}/"),
+    ("blog", f"{BLOG}/"),
     ("MotionRules", "https://motionrules.com/"),
     ("Cubby", "https://byzosc.github.io/findly-site/"),
-    ("Email", "mailto:hi@zosc.com"),
+    ("email", "mailto:hi@zosc.com"),
 ]
 ORG_ID, PERSON_ID, WEBSITE_ID = f"{SITE}/#organization", f"{SITE}/#person", f"{SITE}/#website"
 # classes that move an element; AGENTS.md: a link that moves between mousedown and mouseup loses the click
@@ -548,6 +548,8 @@ def main() -> int:
                    + " (after the card's </a>, new tab, noopener noreferrer, small outline pill, no fill)")
     foot_row = re.search(r'<div class="([^"]*)">\s*(?:<a\s[^>]*>[^<]*</a>\s*)+</div>', block(home, "<footer", "</footer>"))
     foot_type = set(foot_row.group(1).split()) & ROW_TYPE if foot_row else set()
+    check(foot_row is not None and not {"uppercase", "tracking-wide"} & set(foot_row.group(1).split()),
+          "footer row: no uppercase / tracking-wide (names keep their casing)", "footer row still forces uppercase")
     check(foot_type == ROW_TYPE, f"row type = the footer link row's ({' '.join(sorted(ROW_TYPE))}; mist, paper on hover)",
           f"footer row type {sorted(foot_type)} != ROW_TYPE {sorted(ROW_TYPE)}")
     fades = re.findall(r"([^{}]*\.card-links[^{}]*)\{([^}]*)\}", css)
