@@ -1,3 +1,27 @@
+## 2026-10-09 10:36 SGT v3-G/H 上线 + Google 缩略图根因修复（main 83407a6）
+
+**合并**：v3-G（删产品条，Code 板块即 PRODUCTS，三张大卡下一行小字直达链接，Motion 上挂 WORK 眉题）、
+v3-H（默认分享卡 og-default.png 1200×630 纯黑底；旧 og 图上其实写着 ZERB，一并去掉）。
+与 Codex 同期提交（页脚删 MakerLion `c8a4fa1`、logo 原型归档暂停 `f505610`）无冲突，页脚删除保留。
+
+**Google 搜索结果右侧灰边大 Z —— 根因已查实并修复**：
+- 不是 og:image，是**页头 `<img>` logo**（zosc-logo.png，672×546，透明底）。首页 13 张图里只有它比例 1.231 与截图缩略图 1.227 吻合。
+  Google 把非方图等比塞进方框补灰条，透明处填黑。
+- Google 文档原文（developers.google.com/search/docs/appearance/google-images）：**内联 SVG 与 CSS 背景图不被索引为图片**；
+  首选图三种声明方式 primaryImageOfPage / mainEntity.image / og:image；首选图要求「代表页面、**不要 logo、不要带字**、不要极端比例、高分辨率」。
+- 修法：① 页头 logo 改**内联 SVG**（同 favicon.svg 路径，视觉不变）；② 首页 og:image + `WebPage.primaryImageOfPage`
+  指向 `home-thumb.jpg`（dynamic-weather-art 1080×1080 居中裁切，不透明、无字）；③ og-default 品牌卡留给其他页面做社交分享卡。
+- 线上验证：页头 `<img>` 0 个；首页 JSON-LD = Organization / Person / WebPage / WebSite；about 等页仍用 og-default。
+- **生效要等 Google 重抓首页**（缩略图跟网页爬虫，比 favicon 快）。若重抓后仍不显示新图：Google 可能选择不显示缩略图，这也比灰边 Z 好。
+
+**favicon（Astro A）根因**：站内无遗漏。Googlebot UA 经 Cloudflare 取到的全部是 Z（四个入口 md5 一致）。
+Google 图标服务 `faviconV2?url=https://zosc.com` 仍是 10-06 的 Astro 旧记录，而 `?url=https://www.zosc.com`（新抓）已是 Z。
+只能等 Google 图标爬虫轮到这条；复查命令见 `docs/v3/HANDOFF-2026-10-08-night.md`。
+
+**其他**：Code 板块底部 `View all work →` → `View all products →`；大卡标题到直达行 57px 保持（G 的理由：叠到图上会破坏 hover 与入场）。
+check-home 同步三条断言（页头必须内联 SVG、首页 og 用 home-thumb、首页 4 个 JSON-LD 块）；check-projects / check-about / check-motion 全过。
+clip：PRODUCTS 板块 `v9tcsn2e1k` · 手机整页 `emx878std1` · 缩略图 `hkcfax20gq`。
+
 ## 2026-10-08 移除共享页尾 MakerLion
 
 - 对照线上现状，最底部实际为 MakerLion 文字链接；按用户要求删除整项，所有使用共享 Footer 的页面一致生效。
