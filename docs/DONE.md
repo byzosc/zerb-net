@@ -1,3 +1,10 @@
+## 2026-10-09 产品卡按钮压暗、View all 弱化（main aa1bf89）
+
+- 用户：大卡右侧按钮与左侧标题没有主次，按钮应压暗。按钮改为 text-mist + border-white/10 + semibold，悬停才变亮；标题保持最亮。
+- 用户：View all 多余、颜色太重。改为 `All N products / works →` 小号灰字，**仅当板块条目多于首页 3 张时显示**（Motion 正好 3 个 → 不显示）。
+  **不能整删**：它是 /works 的唯一站内入口，而 /works 是 6 个非精选产品（nas-monitoring、windows-never-sleep 等）唯一的站内链接来源。
+- 已知：check-motion「从 Cubby 返回落点 -10px」近几次 3 跑 2 败（此前 12 跑约 3 败），属跨页锚点竞态老问题，未修，排在 TODO。clip `1a743crnwv`。
+
 ## 2026-10-09 页脚大小写、产品卡按钮挪到标题旁（main 84ef327 · b4906d3）
 
 - **页脚 / about 联系方式**：去掉全大写与宽字距（about 标签字号 0.72→0.85rem）；品牌名保留原写法（X / GitHub / Behance / Steam / MotionRules / Cubby），普通词小写（blog / email）。**全站规则：全大写只留给板块眉题（PRODUCTS / WORK / SCROLL），凡是名字一律原写法。**
