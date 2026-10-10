@@ -1,3 +1,14 @@
+## 2026-10-10 MotionPilot 首页大卡 banner 换新（main 9b69f20）
+
+用户嫌旧 banner（网格 + 红曲线 + 旧版 AE 截图）丑，并指出他截不出好看的 AE 全景图，要求「叫隔壁 Codex P 图，提示词你自己写」。
+- **隔壁 = 本 tmux 会话（`zosc`）的 2 号窗口里开着的 Codex**，用 `tmux send-keys -t zosc:2` 发任务。
+  **不要**自己另起 `codex exec`：它的 workspace-write 沙箱在这台服务器起不来（`bwrap: loopback: Failed RTM_NEWADDR`），白跑两趟。
+- 素材：用户提供的真实面板截图（`MotionPilot by zosc` 新版）。提示词 `docs/v3/MP-BANNER-PROMPT.md`，3200 原图 `docs/v3/assets/mp-banner-codex-3200.png`。
+- 成品：暗色简化工作区，左侧时间轴一串刚生成的蓝色关键帧 + 缓动曲线，细蓝线连到右侧真实面板；
+  下拉框的 `gemini-3.1-pro — best quality (paid)` 换成插件源码里真实存在的 `claude-opus-5 — best quality`（不编造界面）。
+  两版里选了更干净的一版（另一版多了彩色图层条，偏杂）。手机 3:2 与桌面 1600:430 裁切下主体完整、底部留空。clip `wn4gnkhrqd`。
+- `tools/product-covers.py motionpilot-large` 已加保护，防止重跑覆盖新图。
+
 ## 2026-10-09 跨页锚点落点漂移修复（main d38b2c2）
 
 **现象**：从产品页点「← Back to work」或从其他页点页头导航回首页某板块，落点每次不同；probe 10 次实测 -88…147px（目标 96px），
