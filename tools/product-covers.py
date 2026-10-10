@@ -213,6 +213,11 @@ html,body{{margin:0;width:{w}px;height:{h}px;overflow:hidden;background:#050505}
 
 
 def motionpilot_large() -> None:
+    # SUPERSEDED 2026-10-10: cover-large.jpg is now the Codex ImageGen banner (timeline with generated
+    # keyframes + the real panel; prompt in docs/v3/MP-BANNER-PROMPT.md). The user disliked this
+    # generator's grid + red curve version. Re-running it would overwrite the approved image.
+    if "--force-old-mp-large" not in sys.argv:
+        sys.exit("motionpilot-large is superseded (see docs/v3/MP-BANNER-PROMPT.md); pass --force-old-mp-large to run anyway")
     spec = fetch(MP_SHOT_SPEC)
     TMP.mkdir(parents=True, exist_ok=True)
     # 990x412 (2.4:1): "Apply to selected keyframes" + gentle / Apply, and the keyframes on the timeline
