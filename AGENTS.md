@@ -104,6 +104,7 @@ rg -n --hidden --glob '!node_modules' --glob '!.git' --glob '!reports/**' '/medi
 ### 架构速览
 - Astro 项目在 `app/`，部署到 Vercel，**Vercel Root Directory = `app`**；`main` 分支是生产部署分支（dev 改完合并到 main）。
 - 视频托管在 Cloudflare R2（公共域名 `https://pub-...r2.dev`，引用见 `media-manifest.json`），不进 Git。
+  **例外（2026-10-10）**：< 5MB 的产品演示短片放 `app/public/media/clips/`（`.gitignore` 对该目录开了例外），因为 R2 上传凭据不在当前机器上。更大的仍走 R2。
 - 图片是真实文件，提交在 `app/public/media/images/`（约 12MB）；`app/public/media/videos` 被忽略。
 - 字体**自托管**在 `app/public/fonts/`（`montserrat-latin.woff2` 显示字体、`mulish-latin.woff2` 正文字体），`@font-face` + `font-display:block` + `<link rel=preload>`。**不要用 Google Fonts**（国内慢/被墙、首屏字体跳变）。
 - AI 问答：`app/src/pages/api/chat.ts`（多 provider 流式，Gemini/OpenAI/Anthropic），key 在 Vercel 环境变量（`GEMINI_API_KEY` 等）；本机受 GFW 影响连不上 Gemini，需 VPN 或线上测。

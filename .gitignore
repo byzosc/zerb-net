@@ -27,3 +27,6 @@ media/videos/
 
 # Render / screenshot scratch on the /data disk (headless chromium output, cover renders). Never committed.
 .render-tmp/
+# Exception (2026-10-10): short product demo clips (< 5 MB) live in Git under app/public/media/clips/,
+# because the R2 upload credentials aren't on this machine. Anything larger still goes to R2.
+!app/public/media/clips/**/*.mp4
