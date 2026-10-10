@@ -1,3 +1,15 @@
+## 2026-10-10 MotionPilot 详情页加演示视频（main 719fb01）
+
+- 源：`keyframe_sheet/public/motionpilot-demo.mp4`（69.6s、1280×652，一句话 → AE 里生成可玩的 Flappy Bird 场景，原生图层/关键帧），
+  也是 motionrules.com/pilot 在用的那段。**录的是改名前的面板，顶栏可读「MotionPilot by ZERB LION」**。
+- `tools/patch-mp-demo-brand.py` 逐帧处理：4 个静止镜头里把该字样盖成面板底色、用 Mulish 写「by zosc」，
+  **仅当该帧标题区与该镜头参考静帧吻合时才补**（镜头未停稳时按固定框补会压住「MotionPilot」——v4 在 1.71s 出过这个问题）；
+  镜头之间的缩放过渡整帧高斯模糊（像运动模糊，旧字不可读）。逐帧模板匹配追踪试过、放弃：界面小字太多，会锁错目标。
+  全片审计（LOG=1）：补字 1061 / 模糊 238 / 不处理 787 帧，不处理的 4 段逐段核对过标题不在画面内。静音音轨（-91dB）去掉。
+- 托管：本机无 R2 上传凭据，< 5MB 的产品演示短片放 `app/public/media/clips/`，`.gitignore` 对该目录开例外，AGENTS.md 已记录。
+- 已知会 keyframe-sheet-38：motionrules.com/pilot 的同一段视频仍是旧品牌，修正版路径已给，换不换由那边定。
+  `motionpilot-hero.mp4`（21s）开头特写同样有旧品牌，未处理。
+
 ## 2026-10-10 MotionPilot 首页大卡 banner 换新（main 9b69f20）
 
 用户嫌旧 banner（网格 + 红曲线 + 旧版 AE 截图）丑，并指出他截不出好看的 AE 全景图，要求「叫隔壁 Codex P 图，提示词你自己写」。
